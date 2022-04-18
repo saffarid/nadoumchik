@@ -1,26 +1,30 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <BorderPane class="site">
+        <template v-slot:top>
+            <Header/>
+        </template>
+        <template v-slot:center>
+            <ListArticle/>
+        </template>
+    </BorderPane>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    import { BorderPane } from 'saffarid-ui-kit'
+    import Header from "@/components/Header";
+    import ListArticle from "@/components/ListArticle";
+
+    export default {
+        name: 'App',
+        components: {
+            ListArticle,
+            Header,
+            BorderPane
+        }
+    }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss">
+    @import "./assets/style/main.scss";
 </style>
