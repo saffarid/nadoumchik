@@ -1,55 +1,67 @@
-const http = require("http");
+// const api = require('api/api_desc')
 const fs = require("fs")
-
+const path = require('path')
 const express = require("express")
+const mongoos = require("mongoose")
 
-const app = express()
+const article = require('./js/article_actions')
+const typeOfArticle = require('./js/type_of_article_actions')
+const typeOfUser = require('./js/type_of_user_actions')
+const user = require('./js/user_actions')
+const viewArticles = require('./js/view_article_actions')
 
-const url = "C:\\Something\\untitled\\www\\index.html"
-const urlencodedParser = express.urlencoded({extended: false});
+/**
+ * Парсер json-в запросах
+ * */
 const jsonParser = express.json();
 
-app.get("/", (req, res) => {
-    fs.readFile(url, (err, data) => {
-        if (err) {
-            res.writeHead(400, {'Content-Type': 'text/plain'});
-            res.write('index.html not found');
-        } else {
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.write(data);
-        }
-        res.end();
+const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING} = process.env;
+const app = express()
+
+const url = path.join(path.resolve(''), '..\\www\\index.html')
+
+/*
+* Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
+* */
+mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, err => {
+    if (err) return console.error(err)
+    app.listen(APP_PORT, APP_IP, () => {
+        console.log("Wait connection")
     })
 })
-    .post("/", jsonParser, (req, res) => {
-        if(!req.body) res.sendStatus(400)
-        console.log('app.js')
-        console.log(req.body)
-        res.json(req.body)
+
+app
+    .get("/", (req, res) => {
+        fs.readFile(url, (err, data) => {
+            if (err) {
+                res.writeHead(400, {'Content-Type': 'text/plain'});
+                res.write('index.html not found');
+            } else {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.write(data);
+            }
+            res.end();
+        })
     })
-    .listen(1234, "127.0.0.1",
-        () => {
-            console.log("Listen start")
-        }
-    )
+    .post(/\/article(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        res.json(article.execute(req.url, req.body))
+    })
+    .post(/\/typeOfArticle(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        res.json(typeOfArticle.execute(req.url, req.body))
+    })
+    .post(/\/typeOfUser(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        res.json(typeOfUser.execute(req.url, req.body))
+    })
+    .post(/\/user(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        res.json(user.execute(req.url, req.body))
+    })
+    .post(/\/viewArticle(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        res.json(viewArticles.execute(req.url, req.body))
+    })
 
 
-// const server = http
-//     .createServer(
-//         (req, res) => {
-//
-//             fs.readFile(url, (err, data) => {
-//                 if (err) {
-//                     res.writeHead(400, {'Content-Type': 'text/plain'});
-//                     res.write('index.html not found');
-//                 } else {
-//                     res.writeHead(200, {'Content-Type': 'text/html'});
-//                     res.write(data);
-//                 }
-//                 res.end();
-//             })
-//         }
-//     )
-//     .listen(1234, "127.0.0.1",
-//         () => { console.log("Listen start") }
-//     );

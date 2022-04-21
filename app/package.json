@@ -7,7 +7,11 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "4.17.3"
+    "express": "4.17.3",
+    "mongodb": "4.1.0"
+  },
+  "devDependencies": {
+    "mongoose": "^6.3.0"
   },
   "keywords": [],
   "author": "",

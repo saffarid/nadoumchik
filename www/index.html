@@ -10,7 +10,7 @@
                 const body = {
                     textBody: text.value
                 }
-                sendData("/", JSON.stringify(body), (res) => {alert(res)})
+                sendData("/article/qweqeasdaxczx", JSON.stringify(body), (res) => {console.log(res)})
             }
 
             function sendGet() {
@@ -42,5 +42,6 @@
             <input type="text" id="test_field1"/>
             <button onclick="sendPost()">Send post</button>
 <!--        </form>-->
+    <input type="color"/>
     </body>
 </html>
