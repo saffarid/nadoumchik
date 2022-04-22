@@ -1,10 +1,12 @@
 <template>
 <!--    <div>-->
         <div class="list">
-            <ArticleListItem
+            <ArticleItem
                     v-for="(art, index) in articles" :key="index"
+                    :class="{'item-on-left': index % 2 ,  'item-on-right': !(index % 2)}"
                     :article="art"
                     @click="showedArticle = art"
+                    :imgOnTheLeft="index%2"
             />
         </div>
         <Popup v-if="showedArticle !== null" @close="showedArticle = null">
@@ -17,7 +19,7 @@
 
 <script>
     import Article from "@/components/articles/Article";
-    import ArticleListItem from "@/components/ArticleListItem";
+    import ArticleItem from "@/components/ArticleItem";
     import {
         Popup
     } from 'saffarid-ui-kit'
@@ -31,7 +33,7 @@
         },
         components: {
             Article,
-            ArticleListItem,
+            ArticleItem,
             Popup
         },
         setup() {
@@ -56,6 +58,14 @@
                 {
                     title: "Article#5",
                     content: "Content#5"
+                },
+                {
+                    title: "Article#5",
+                    content: "Content#5"
+                },
+                {
+                    title: "Article#5",
+                    content: "Content#5"
                 }
             ]
             return {
@@ -71,8 +81,20 @@
     .list{
         display: grid;
         justify-self: center;
+        /*justify-items: center;*/
+
+        margin: 5px;
         padding: 10px;
-        padding-top: 20px;
+        grid-template-columns: minmax(400px, 700px);
+
+        overflow-y: auto;
+
+        .item-on-left{
+            justify-content: start;
+        }
+        .item-on-right{
+            justify-content: end;
+        }
     }
 
 </style>

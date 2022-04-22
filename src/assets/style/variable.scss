@@ -1,5 +1,7 @@
 .dimesion{
-
+  --button_height: 50px;
+  --button_radius: 25px;
+  --button_padding: 5px;
 }
 
 .light {
@@ -9,4 +11,8 @@
   --action_component: #535152;
   --action_component_hover: #535152;
   --action_component_disable: #535152;
+
+  --action_component_content: #535152;
+  --action_component_content_hover: white;
+  --action_component_content_disable: #535152;
 }

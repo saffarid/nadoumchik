@@ -1,0 +1,25 @@
+.image-button{
+  border: var(--action_component) 2px solid;
+  height: auto;
+  border-radius: 50%;
+  padding:  7.5px;
+  &:hover{
+    background-color: var(--action_component);
+  }
+  &:disabled{
+    background-color: var(--action_component_disable);
+  }
+}
+
+.text-button{
+  border: var(--action_component) 2px solid;
+  height: auto;
+  border-radius: var(--button_radius);
+  padding:  var(--button_padding);
+  &:hover{
+    background-color: var(--action_component);
+  }
+  &:disabled{
+    background-color: var(--action_component_disable);
+  }
+}

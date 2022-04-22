@@ -1,26 +1,30 @@
 <template>
-    <BorderPane class="site">
+    <BorderPane
+            class="dimesion light site">
         <template v-slot:top>
             <Header/>
         </template>
         <template v-slot:center>
-            <ListArticle/>
+            <MainContent/>
         </template>
     </BorderPane>
 </template>
 
 <script>
 
-    import { BorderPane } from 'saffarid-ui-kit'
     import Header from "@/components/Header";
-    import ListArticle from "@/components/ListArticle";
+    import MainContent from "./components/MainContent";
+    import {
+        BorderPane
+    } from 'saffarid-ui-kit'
+
 
     export default {
         name: 'App',
         components: {
-            ListArticle,
+            BorderPane,
             Header,
-            BorderPane
+            MainContent
         }
     }
 </script>
