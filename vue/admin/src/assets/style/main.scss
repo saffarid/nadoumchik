@@ -1,0 +1,42 @@
+@import "variable";
+@import "button";
+@import "header";
+@import "tabs-component";
+@import "new-publications";
+@import "list-of-publications";
+@import "navigation-menu";
+
+
+body {
+    margin: 0;
+    height: 100vh;
+}
+
+#app {
+    height: 100vh;
+
+    .workspace {
+        width: 80%;
+        margin: 5px;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #343A40;
+    margin: 1px;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #747474;
+}

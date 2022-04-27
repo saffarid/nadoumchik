@@ -1,0 +1,12 @@
+.navigation-menu {
+    border-right: grey 1px solid;
+    grid-template-rows: repeat(auto-fit, 34px );
+    height: 100%;
+    width: var(--navigate_menu_width);
+    align-items: stretch;
+    .button {
+        justify-content: start;
+        height: var(--navigate_button_height);
+        padding: var(--button_padding);
+    }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "gui-nadoumchick-admin",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@tinymce/tinymce-vue": "5.0.0",
+    "@vue/runtime-core": "^3.2.33",
+    "core-js": "3.22.0",
+    "node-sass": "6.0.0",
+    "nouislider": "14.6.3",
+    "saffarid-ui-kit": "0.1.8",
+    "@vue/reactivity": "3.2.2",
+    "sass-loader": "10.2.1",
+    "vue": "3.2.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.17",
+    "@vue/cli-plugin-eslint": "~4.5.17",
+    "@vue/cli-service": "~4.5.17",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/reactivity": "3.2.2",
+    "vue3-tabs-component": "1.0.7",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

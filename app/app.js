@@ -18,7 +18,8 @@ const jsonParser = express.json();
 const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING} = process.env;
 const app = express()
 
-const url = path.join(path.resolve(''), '..\\www\\index.html')
+const urlIndex = path.join(path.resolve(''), '..\\www\\index\\index.html')
+const urlAdmin = path.join(path.resolve(''), '..\\www\\admin\\dist\\index.html')
 
 /*
 * Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
@@ -29,10 +30,22 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
         console.log("Wait connection")
     })
 })
-
 app
-    .get("/", (req, res) => {
-        fs.readFile(url, (err, data) => {
+    .use(express.static(__dirname + '\\..\\www'))
+    .get('/', (req, res) => {
+        fs.readFile(urlIndex, (err, data) => {
+            if (err) {
+                res.writeHead(400, {'Content-Type': 'text/plain'});
+                res.write('index.html not found');
+            } else {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.write(data);
+            }
+            res.end();
+        })
+    })
+    .get('/admin', (req, res) => {
+        fs.readFile(urlAdmin, (err, data) => {
             if (err) {
                 res.writeHead(400, {'Content-Type': 'text/plain'});
                 res.write('index.html not found');
@@ -45,7 +58,7 @@ app
     })
     .post(/\/article(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        res.json(article.execute(req.url, req.body))
+        article.execute(req.url, req.body, res)
     })
     .post(/\/typeOfArticle(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)

@@ -1,0 +1,6 @@
+.list-of-publications {
+    row-gap: 5px;
+    @import "toolbar";
+    @import "publication-item";
+
+}

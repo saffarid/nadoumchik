@@ -37,7 +37,7 @@ module.exports = {
             /**
              * Статьи
              * */
-            article: 'article',
+            articles: 'articles',
             /**
              * Категории статей
              * */
@@ -49,7 +49,7 @@ module.exports = {
             /**
              * Пользователи
              * */
-            user: 'user',
+            users: 'users',
             /**
              * Описание правил отображения статей в списке
              * */

@@ -1,0 +1,33 @@
+.tabs-component {
+    .tabs-component-tabs {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-bottom: grey 1px solid;
+
+        .tabs-component-tab {
+            padding: 5px;
+            background-color: transparent;
+
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            &:hover {
+                background-color: grey;
+                a{
+                    color: white;
+                }
+            }
+
+        }
+        .is-active{
+            border-bottom: grey 3px solid;
+            a {
+                border: 0;
+            }
+        }
+    }
+}

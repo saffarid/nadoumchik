@@ -1,0 +1,42 @@
+.header {
+    //padding: 5px;
+    border-bottom: grey 1px solid;
+
+    .left {
+        display: grid;
+        align-self: center;
+        align-content: center;
+        justify-content: center;
+        margin: 5px;
+    }
+
+    .center {
+        display: grid;
+        .title {
+            display: grid;
+            align-self: stretch;
+            align-content: center;
+            justify-content: start;
+            padding: 15px;
+            font-size: 50px;
+        }
+    }
+
+    .right {
+        display: grid;
+        align-content: center;
+        justify-content: center;
+
+        padding: 15px;
+        .link {
+            svg {
+                fill: var(--action_component_content)
+            }
+            &:hover {
+                svg {
+                    fill: var(--action_component_content_hover);
+                }
+            }
+        }
+    }
+}

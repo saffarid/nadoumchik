@@ -1,0 +1,48 @@
+.image-left{
+    grid-template-areas: "image text";
+    grid-template-columns: 100px auto;
+}
+
+.image-right{
+    grid-template-areas: "text image";
+    grid-template-columns: 540px 100px;
+}
+
+.publication-item{
+    display: grid;
+    padding: 0;
+    margin: 0;
+    align-content: center;
+    align-items: center;
+    height: 100px;
+    border: darkred 2px solid;
+
+    .image{
+        display: grid;
+        grid-area: image;
+        width: 100px;
+        height: 100px;
+        align-content: center;
+        justify-content: center;
+    }
+
+    .text{
+        grid-area: text;
+        padding: 15px;
+        justify-content: start;
+        justify-items: start;
+        justify-self: start;
+    }
+
+    /*.text-left{*/
+    /*    justify-content: right;*/
+    /*    justify-items: right;*/
+    /*    justify-self: right;*/
+    /*}*/
+
+    /*.text-right{*/
+    /*    justify-content: left;*/
+    /*    justify-items: left;*/
+    /*    justify-self: left;*/
+    /*}*/
+}
