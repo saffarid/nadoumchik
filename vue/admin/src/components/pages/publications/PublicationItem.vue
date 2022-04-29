@@ -1,12 +1,13 @@
 <template>
     <div    @click="$emit('click', publication)"
             :class="{'image-left':imgOnLeft, 'image-right':!imgOnLeft}"
-            class="publication-item">
+            class="publication-item"
+            :style="`background-color:${backgroundColor}`">
         <div class="image">
             <ArticleLogo :height="90" :width="90"/>
         </div>
         <div
-                :class="{'text-right':imgOnLeft, 'text-left':!imgOnLeft}"
+                :class="{'text-right':imgOnLeft, 'text-left':!imgOnLeft, 'text-is-dark':textIsDark, 'text-is-light':!textIsDark}"
                 class="text">
             <TextLabel :label="publication.title"/>
         </div>
@@ -43,6 +44,9 @@
                 type: Boolean,
                 required: true
             }
+        },
+        setup(){
+            return { }
         }
     }
 </script>

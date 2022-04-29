@@ -7,35 +7,91 @@ const articleSchema = new Schema({
     /**
      * uuid статьи
      * */
-    _id: String,
+    _id: {
+        type: String,
+        required: true
+    },
     /**
-     * Тип статьи, в это полу устанавливается идентификатор из коллекции typesOfArticles
+     * Содержимое публикации
      * */
-    type: String,
+    content:{
+        /**
+         * Тип статьи, в это полу устанавливается идентификатор из коллекции typesOfArticles
+         * */
+        type: {
+            type: String,
+            required: false
+        },
+        /**
+         * Заголовок статьи
+         * */
+        title: {
+            type: String,
+            required: true
+        },
+        /**
+         * Основное содержимое статьи
+         * */
+        content: {
+            type: String,
+            required: true
+        },
+        /**
+         * Дата создания статьи
+         * */
+        dateStamp: {
+            type: Date,
+            required: true
+        },
+        /**
+         * Кол-во лайков
+         * */
+        likes: {
+            type: Number,
+            required: false
+        },
+        /**
+         * Кол-во дизлайков
+         * */
+        dislikes: {
+            type: Number,
+            required: false
+        },
+        /**
+         * Кол-во просмотров
+         * */
+        views: {
+            type: Number,
+            required: false
+        }
+    },
     /**
-     * Заголовок статьи
+     * Внешнее отображение публикации
      * */
-    title: String,
-    /**
-     * Основное содержимое статьи
-     * */
-    content: String,
-    /**
-     * Дата создания статьи
-     * */
-    dateStamp: Date,
-    /**
-     * Кол-во лайков
-     * */
-    likes: Number,
-    /**
-     * Кол-во дизлайков
-     * */
-    dislikes: Number,
-    /**
-     * Кол-во просмотров
-     * */
-    views: Number
+    preview:{
+        /**
+         * Флаг положения изображения
+         * */
+        imgOnLeft: {
+            type:Boolean,
+            required: true
+        },
+        /**
+         * Цвет фона
+         * */
+        backgroundColor: {
+            type: String,
+            required: true
+        },
+        /**
+         * Флаг цвета текста
+         * */
+        textIsDark: {
+            type: Boolean,
+            required: true
+        },
+    }
+
 })
 const ArticleModel = mongoose.model("Article", articleSchema)
 /**
@@ -66,37 +122,38 @@ const execute = (url, data, res) => {
  * */
 const insert = (data, res) => {
     console.log('insert')
-    new Promise((resolve, reject) => {
-        const article = new ArticleModel({
-            _id: uuid(),
-            title: data.title,
-            content: data.content,
-            dateStamp: new Date(),
-        })
-        article.save()
-            .then(value => {
-                resolve(value)
-            })
-            .catch(err => {
-                reject()
-            })
-    })
-        .then(data => {
-            console.log('Объект успешно добавлен')
-            console.log(data)
-            res.json({
-                responseCode: 200,
-                message: 'Объект добавлен'
-            })
-        })
-        .catch((data) => {
-            console.log('Объект не добавлен')
-            console.log(data)
-            res.json({
-                responseCode: 400,
-                message: 'Объект не добавлен'
-            })
-        })
+    console.log(data)
+    // new Promise((resolve, reject) => {
+        // const article = new ArticleModel({
+        //     _id: uuid(),
+        //     title: data.title,
+        //     content: data.content,
+        //     dateStamp: new Date(),
+        // })
+        // article.save()
+        //     .then(value => {
+        //         resolve(value)
+        //     })
+        //     .catch(err => {
+        //         reject()
+        //     })
+    // })
+        // .then(data => {
+        //     console.log('Объект успешно добавлен')
+        //     console.log(data)
+        //     res.json({
+        //         responseCode: 200,
+        //         message: 'Объект добавлен'
+        //     })
+        // })
+        // .catch((data) => {
+        //     console.log('Объект не добавлен')
+        //     console.log(data)
+        //     res.json({
+        //         responseCode: 400,
+        //         message: 'Объект не добавлен'
+        //     })
+        // })
 
 }
 

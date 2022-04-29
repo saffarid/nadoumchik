@@ -15,7 +15,7 @@
             </template>
             <template v-slot:center>
                 <div v-if="isReady">
-                    <PublicationItem v-for="(publication, index) in articles" :key="index" :publication="publication"/>
+                    <PublicationItem v-for="(publication, index) in articles" :key="index" :publication="publication" :imgOnLeft="true" :textIsDark="true"/>
                     <Button text="Загрузить ещё" @click="loadPublications"/>
                 </div>
                 <div v-else>

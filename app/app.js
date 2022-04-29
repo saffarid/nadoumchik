@@ -27,7 +27,7 @@ const urlAdmin = path.join(path.resolve(''), '..\\www\\admin\\dist\\index.html')
 mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, err => {
     if (err) return console.error(err)
     app.listen(APP_PORT, APP_IP, () => {
-        console.log("Wait connection")
+        console.log(`Wait connection to ${APP_IP}:${APP_PORT}`)
     })
 })
 app
