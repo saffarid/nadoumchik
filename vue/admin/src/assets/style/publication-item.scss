@@ -1,10 +1,10 @@
 .image-left{
-    grid-template-areas: "image text";
+    grid-template-areas: "image text buttons";
     grid-template-columns: 100px 540px;
 }
 
 .image-right{
-    grid-template-areas: "text image";
+    grid-template-areas: "buttons text image";
     grid-template-columns: 540px 100px;
 }
 
@@ -56,5 +56,9 @@
         justify-content: left;
         justify-items: left;
         justify-self: left;
+    }
+
+    .buttons{
+        grid-area: buttons;
     }
 }

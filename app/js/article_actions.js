@@ -3,13 +3,41 @@ const {v4: uuid} = require('uuid')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const articleSchema = new Schema({
+const publicationSchema = new Schema({
     /**
      * uuid статьи
      * */
     _id: {
         type: String,
         required: true
+    },
+    /**
+     * Дата создания статьи
+     * */
+    dateStamp: {
+        type: Date,
+        required: true
+    },
+    /**
+     * Кол-во лайков
+     * */
+    likes: {
+        type: Number,
+        required: false
+    },
+    /**
+     * Кол-во дизлайков
+     * */
+    dislikes: {
+        type: Number,
+        required: false
+    },
+    /**
+     * Кол-во просмотров
+     * */
+    views: {
+        type: Number,
+        required: false
     },
     /**
      * Содержимое публикации
@@ -36,34 +64,6 @@ const articleSchema = new Schema({
             type: String,
             required: true
         },
-        /**
-         * Дата создания статьи
-         * */
-        dateStamp: {
-            type: Date,
-            required: true
-        },
-        /**
-         * Кол-во лайков
-         * */
-        likes: {
-            type: Number,
-            required: false
-        },
-        /**
-         * Кол-во дизлайков
-         * */
-        dislikes: {
-            type: Number,
-            required: false
-        },
-        /**
-         * Кол-во просмотров
-         * */
-        views: {
-            type: Number,
-            required: false
-        }
     },
     /**
      * Внешнее отображение публикации
@@ -93,7 +93,7 @@ const articleSchema = new Schema({
     }
 
 })
-const ArticleModel = mongoose.model("Article", articleSchema)
+const PublicationModel = mongoose.model("Article", publicationSchema)
 /**
  * @param url {String}
  * @param data {json|Object}
@@ -103,9 +103,9 @@ const execute = (url, data, res) => {
     if (url.includes(api.ACTS.insert)) {
         insert(data, res)
     } else if (url.includes(api.ACTS.remove)) {
-        remove()
+        remove(data, res)
     } else if (url.includes(api.ACTS.update)) {
-        update()
+        update(data, res)
     } else if (url.includes(api.ACTS.select)) {
         select(data, res)
     } else {
@@ -123,37 +123,45 @@ const execute = (url, data, res) => {
 const insert = (data, res) => {
     console.log('insert')
     console.log(data)
-    // new Promise((resolve, reject) => {
-        // const article = new ArticleModel({
-        //     _id: uuid(),
-        //     title: data.title,
-        //     content: data.content,
-        //     dateStamp: new Date(),
-        // })
-        // article.save()
-        //     .then(value => {
-        //         resolve(value)
-        //     })
-        //     .catch(err => {
-        //         reject()
-        //     })
-    // })
-        // .then(data => {
-        //     console.log('Объект успешно добавлен')
-        //     console.log(data)
-        //     res.json({
-        //         responseCode: 200,
-        //         message: 'Объект добавлен'
-        //     })
-        // })
-        // .catch((data) => {
-        //     console.log('Объект не добавлен')
-        //     console.log(data)
-        //     res.json({
-        //         responseCode: 400,
-        //         message: 'Объект не добавлен'
-        //     })
-        // })
+    new Promise((resolve, reject) => {
+        const article = new PublicationModel({
+            _id: uuid(),
+            dateStamp: new Date(),
+            content:{
+                // type: data.content.type,
+                title: data.content.title,
+                content: data.content.content,
+            },
+            preview:{
+                imgOnLeft: data.preview.imgOnLeft,
+                backgroundColor: data.preview.backgroundColor,
+                textIsDark: data.preview.textIsDark,
+            }
+        })
+        article.save()
+            .then(value => {
+                resolve(value)
+            })
+            .catch(err => {
+                reject()
+            })
+    })
+        .then(data => {
+            console.log('Объект успешно добавлен')
+            console.log(data)
+            res.json({
+                responseCode: 200,
+                message: 'Объект добавлен'
+            })
+        })
+        .catch((data) => {
+            console.log('Объект не добавлен')
+            console.log(data)
+            res.json({
+                responseCode: 400,
+                message: 'Объект не добавлен'
+            })
+        })
 
 }
 
@@ -161,14 +169,27 @@ const insert = (data, res) => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const remove = () => {
+const remove = (data, res) => {
     console.log('remove')
+    console.log(data)
     new Promise((resolve, reject) => {
-
+        PublicationModel.findByIdAndDelete(data._id)
+            .then(value => resolve(value))
+            .catch(err => reject(err))
     }).then(data => {
-
+        console.log('Объект успешно обновлён')
+        console.log(data)
+        res.json({
+            responseCode: 200,
+            message: 'Объект обновлён'
+        })
     }).catch(data => {
-
+        console.log('Объект не обновлён')
+        console.log(data)
+        res.json({
+            responseCode: 400,
+            message: 'Объект не обновлён'
+        })
     })
 }
 
@@ -176,14 +197,27 @@ const remove = () => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const update = () => {
+const update = (data, res) => {
     console.log('update')
+    console.log(data)
     new Promise((resolve, reject) => {
-
+        PublicationModel.findByIdAndUpdate(data._id, data)
+            .then(value => resolve(value))
+            .catch(err => reject(err))
     }).then(data => {
-
+        console.log('Объект успешно обновлён')
+        console.log(data)
+        res.json({
+            responseCode: 200,
+            message: 'Объект обновлён'
+        })
     }).catch(data => {
-
+        console.log('Объект не обновлён')
+        console.log(data)
+        res.json({
+            responseCode: 400,
+            message: 'Объект не обновлён'
+        })
     })
 }
 
@@ -194,7 +228,7 @@ const update = () => {
 const select = (data, res) => {
     console.log('select')
     new Promise((resolve, reject) => {
-        ArticleModel.find({})
+        PublicationModel.find({})
             .then(docs => {
                 try {
                     let result = null

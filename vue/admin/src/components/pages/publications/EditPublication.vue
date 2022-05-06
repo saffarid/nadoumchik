@@ -8,32 +8,29 @@
                 <Tab :name="'ОТОБРАЖЕНИЕ В СПИСКЕ'">
                     <div class="new-publication-item-view">
                         <PublicationItem
-                                :publication="publication.content"
-                                :backgroundColor="publication.preview.backgroundColor"
-                                :textIsDark="publication.preview.textIsDark"
-                                :imgOnLeft="publication.preview.imgOnLeft"
+                                :publication="localPublication"
                         />
                         <Row>
-                            <TextLabel :label="`Положение изображения: ${publication.preview.imgOnLeft?'Да':'Нет'}`"/>
+                            <TextLabel :label="`Положение изображения: ${localPublication.preview.imgOnLeft?'Да':'Нет'}`"/>
                             <Toggle
                                     id="imgOnLeft"
-                                    v-model="publication.preview.imgOnLeft"
+                                    v-model="localPublication.preview.imgOnLeft"
                                     :true-value="true"
                                     :false-value="false"
                             />
                         </Row>
                         <Row>
-                            <TextLabel :label="`Цвет текста: ${publication.preview.textIsDark?'Темный':'Светлый'}`"/>
+                            <TextLabel :label="`Цвет текста: ${localPublication.preview.textIsDark?'Темный':'Светлый'}`"/>
                             <Toggle
                                     id="textIsDark"
-                                    v-model="publication.preview.textIsDark"
+                                    v-model="localPublication.preview.textIsDark"
                                     :true-value="true"
                                     :false-value="false"
                             />
                         </Row>
                         <Row>
                             <TextLabel :label="`Цвет фона`"/>
-                            <input type="color" v-model="publication.preview.backgroundColor">
+                            <input type="color" v-model="localPublication.preview.backgroundColor">
                         </Row>
 
                     </div>
@@ -52,7 +49,7 @@
                                     <TextField
                                             class="title"
                                             type="text"
-                                            v-model="publication.content.title"
+                                            v-model="localPublication.content.title"
                                     />
                                     <editor
                                             ref="edit"
@@ -61,15 +58,17 @@
                                 plugins: 'lists link image table code help wordcount preview media save visualblocks emoticons'
                             }"
                                             initial-value="publication.content"
-                                            v-model="publication.content.content"
+                                            v-model="localPublication.content.content"
                                     />
                                 </div>
                                 <div ref="result">
                                 </div>
                             </template>
                         </BorderPane>
-                        <Popup v-show="popupIsShow" @close="popupIsShow = false" style="z-index: 2"
-                               :title="publication.content.title">
+                        <Popup v-show="popupIsShow" @close="popupIsShow = false" style="z-index: 2">
+                            <template v-slot:header>
+                                <TextLabel :label='localPublication.content.title'/>
+                            </template>
                             <template v-slot:content>
                                 <div ref="articleView">
                                 </div>
@@ -86,9 +85,10 @@
 <script>
     import {
         ref,
-        reactive,
         watch,
-        onMounted
+        onMounted,
+        reactive,
+        toRaw
     } from 'vue'
     import {Tabs, Tab} from 'vue3-tabs-component'
     import editor from '@tinymce/tinymce-vue'
@@ -108,7 +108,7 @@
     import PublicationItem from "@/components/pages/publications/PublicationItem";
 
     export default {
-        name: "NewPublication",
+        name: "EditPublication",
         components: {
             PublicationItem,
             Eye,
@@ -123,22 +123,31 @@
             Tab,
             Tabs
         },
-        setup() {
+        props:{
+          publication: {
+              type: Object,
+              required: true
+          }
+        },
+        setup(props) {
             const articleView = ref(null)
             const popupIsShow = ref(false)
+            const initialPublication = toRaw(props.publication)
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
              * */
-            const publication = reactive({
+            const localPublication = reactive({
+                _id: initialPublication._id,
+                dateStamp: initialPublication.dateStamp,
                 content: {
-                    title: 'Your title is here',
-                    content: 'Your publication`s content is here'
+                    title: initialPublication.content.title,
+                    content: initialPublication.content.content
                 },
                 preview: {
-                    imgOnLeft: true,
-                    backgroundColor: '#640707',
-                    textIsDark: true,
-                    image: ''
+                    imgOnLeft: initialPublication.preview.imgOnLeft,
+                    backgroundColor: initialPublication.preview.backgroundColor,
+                    textIsDark: initialPublication.preview.textIsDark,
+                    image: initialPublication.preview.image
                 }
             })
 
@@ -146,24 +155,36 @@
              * Функция собирает объект публикации и отсылает его на сервер
              * */
             const publish = () => {
-                asyncRequest('/articles/insert', JSON.stringify(publication))
-                    .then(data => {
-                        console.log(data)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
+
+                if(localPublication._id){
+                    asyncRequest('/articles/update', JSON.stringify(localPublication))
+                        .then(data => {
+                            console.log(data)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                } else {
+                    asyncRequest('/articles/insert', JSON.stringify(localPublication))
+                        .then(data => {
+                            console.log(data)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                }
+
             }
 
             const refreshContentView = () => {
-                articleView.value.innerHTML = publication.content.content
+                articleView.value.innerHTML = localPublication.content.content
             };
 
             onMounted(refreshContentView)
-            watch(publication, refreshContentView)
+            watch(localPublication, refreshContentView)
 
             return {
-                publication,
+                localPublication,
                 articleView,
                 publish,
                 popupIsShow
@@ -171,8 +192,3 @@
         }
     }
 </script>
-
-<style lang="scss" scoped>
-
-
-</style>

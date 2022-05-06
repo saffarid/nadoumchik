@@ -12,7 +12,7 @@
             <div class="workspace">
                 <Main v-if="pages.Main.vIf" v-show="pages.Main.active"/>
                 <Publications v-if="pages.Publications.vIf" v-show="pages.Publications.active"/>
-                <NewPublication v-if="pages.NewPublication.vIf" v-show="pages.NewPublication.active"/>
+                <EditPublication v-if="pages.NewPublication.vIf" v-show="pages.NewPublication.active"/>
             </div>
         </template>
     </BorderPane>
@@ -29,7 +29,7 @@
     import Header from "@/components/Header";
     import Main from "@/components/pages/Main";
     import Publications from "@/components/pages/publications/Publications";
-    import NewPublication from "@/components/pages/publications/NewPublication";
+    import EditPublication from "@/components/pages/publications/EditPublication";
     // import {reactive} from "@vue/reactivity";
 
     // function debug() {    }
@@ -71,7 +71,7 @@
             Publications,
             BorderPane,
             NavigationMenu,
-            NewPublication,
+            EditPublication,
             Main,
             Header
         },
