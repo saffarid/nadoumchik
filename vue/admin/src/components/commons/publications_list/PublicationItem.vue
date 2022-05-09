@@ -11,11 +11,11 @@
                 class="text">
             <TextLabel :label="publication.content.title"/>
         </div>
-        <div class="buttons">
-            <Button @click="$emit('remove')">
+        <div class="buttons" v-if="canEdit">
+            <Button class="image-button" @click="$emit('remove')">
                 <trash :height="20" :width="20"/>
             </Button>
-            <Button @click="$emit('edit')">
+            <Button class="image-button" @click="$emit('edit')">
                 <edit :height="20" :width="20"/>
             </Button>
         </div>
@@ -48,13 +48,10 @@
                 type: Object,
                 required: true
             },
-            edit: {
-                type: Function,
-                required: true,
-            },
-            remove: {
-                type: Function,
-                required: true,
+            canEdit:{
+                type: Boolean,
+                required: false,
+                default: false
             }
         },
         setup() {

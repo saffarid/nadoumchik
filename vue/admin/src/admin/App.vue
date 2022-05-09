@@ -1,12 +1,10 @@
 <template>
     <Studio
-            class="dimension light site"
-    />
+        class="light dimension site"/>
 </template>
 
 <script>
-    import Studio from "@/components/Studio";
-
+    import Studio from "@/components/admin/Studio";
     export default {
         name: 'App',
         components: {
@@ -16,5 +14,5 @@
 </script>
 
 <style lang="scss">
-    @import "assets/style/main";
+    @import "../assets/style/main";
 </style>

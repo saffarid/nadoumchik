@@ -12,7 +12,7 @@
             <div class="workspace">
                 <Main v-if="pages.Main.vIf" v-show="pages.Main.active"/>
                 <Publications v-if="pages.Publications.vIf" v-show="pages.Publications.active"/>
-                <EditPublication v-if="pages.NewPublication.vIf" v-show="pages.NewPublication.active"/>
+                <Categories v-if="pages.Categories.vIf" v-show="pages.Categories.active"/>
             </div>
         </template>
     </BorderPane>
@@ -26,10 +26,10 @@
         NavigationMenu
     } from 'saffarid-ui-kit'
 
-    import Header from "@/components/Header";
-    import Main from "@/components/pages/Main";
-    import Publications from "@/components/pages/publications/Publications";
-    import EditPublication from "@/components/pages/publications/EditPublication";
+    import Header from "@/components/commons/Header";
+    import Main from "@/components/admin/pages/Main";
+    import Publications from "@/components/admin/pages/publications/Publications";
+    import Categories from "@/components/admin/pages/Categories";
     // import {reactive} from "@vue/reactivity";
 
     // function debug() {    }
@@ -57,8 +57,8 @@
                         active: false,
                         vIf: false,
                     },
-                    NewPublication: {
-                        title: 'Новая публикация',
+                    Categories: {
+                        title: 'Категории публикаций',
                         img: 'net',
                         changed: false,
                         active: false,
@@ -68,10 +68,10 @@
             }
         },
         components: {
+            Categories,
             Publications,
             BorderPane,
             NavigationMenu,
-            EditPublication,
             Main,
             Header
         },
@@ -133,6 +133,6 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import "./src/assets/style/main";
 </style>

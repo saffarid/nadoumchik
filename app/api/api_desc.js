@@ -73,17 +73,17 @@ module.exports = {
             setUrl: `/article/update`
         },
 
-        'typeOfArticle.insert': {
-            setUrl: `/typeOfArticle/insert`
+        'themesOfPublication.insert': {
+            setUrl: `/themesOfPublication/insert`
         },
-        'typeOfArticle.remove': {
-            setUrl: `/typeOfArticle/remove`
+        'themesOfPublication.remove': {
+            setUrl: `/themesOfPublication/remove`
         },
-        'typeOfArticle.select': {
-            getUrl: `/typeOfArticle/select`
+        'themesOfPublication.select': {
+            getUrl: `/themesOfPublication/select`
         },
-        'typeOfArticle.update': {
-            setUrl: `/typeOfArticle/update`
+        'themesOfPublication.update': {
+            setUrl: `/themesOfPublication/update`
         },
 
         'typeOfUser.insert': {

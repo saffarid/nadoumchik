@@ -1,5 +1,12 @@
 .list-of-publications {
-    row-gap: 5px;
-    @import "toolbar";
+  row-gap: 5px;
+  @import "toolbar";
+  @import "response-bar";
 
+  .list {
+    display: grid;
+    row-gap: 5px;
+    max-height: 78.6vh;
+    overflow: auto
+  }
 }

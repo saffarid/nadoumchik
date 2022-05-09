@@ -3,8 +3,14 @@
   height: auto;
   border-radius: 50%;
   padding:  7.5px;
+  svg {
+    fill: var(--action_component_content)
+  }
   &:hover{
     background-color: var(--action_component);
+    svg {
+      fill: var(--action_component_content_hover);
+    }
   }
   &:disabled{
     background-color: var(--action_component_disable);

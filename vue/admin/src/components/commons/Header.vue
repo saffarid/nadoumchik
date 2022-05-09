@@ -23,7 +23,7 @@
         Button,
         TextLabel
     } from 'saffarid-ui-kit'
-    import Mail from "../assets/img/mail";
+    import Mail from "../../assets/img/mail";
 
     export default {
         name: "Header",

@@ -94,6 +94,7 @@ const publicationSchema = new Schema({
 
 })
 const PublicationModel = mongoose.model("Article", publicationSchema)
+
 /**
  * @param url {String}
  * @param data {json|Object}
@@ -156,7 +157,6 @@ const insert = (data, res) => {
         })
         .catch((data) => {
             console.log('Объект не добавлен')
-            console.log(data)
             res.json({
                 responseCode: 400,
                 message: 'Объект не добавлен'
@@ -181,11 +181,10 @@ const remove = (data, res) => {
         console.log(data)
         res.json({
             responseCode: 200,
-            message: 'Объект обновлён'
+            message: 'Объект удалён'
         })
     }).catch(data => {
         console.log('Объект не обновлён')
-        console.log(data)
         res.json({
             responseCode: 400,
             message: 'Объект не обновлён'
@@ -204,16 +203,16 @@ const update = (data, res) => {
         PublicationModel.findByIdAndUpdate(data._id, data)
             .then(value => resolve(value))
             .catch(err => reject(err))
-    }).then(data => {
+    }).then(value => {
         console.log('Объект успешно обновлён')
-        console.log(data)
+        console.log(value)
         res.json({
             responseCode: 200,
             message: 'Объект обновлён'
         })
-    }).catch(data => {
+    }).catch(err => {
         console.log('Объект не обновлён')
-        console.log(data)
+        console.log(err)
         res.json({
             responseCode: 400,
             message: 'Объект не обновлён'
@@ -258,7 +257,6 @@ const select = (data, res) => {
         res.json(data)
     }).catch(data => {
         console.log('Выборка не удалась')
-        console.log(data)
         res.json({
             responseCode: 400,
             message: 'Выборка не удалась',

@@ -5,10 +5,9 @@ const express = require("express")
 const mongoos = require("mongoose")
 
 const article = require('./js/article_actions')
-const typeOfArticle = require('./js/type_of_article_actions')
+const themesOfPublications = require('./js/themes_of_publication_actions')
 const typeOfUser = require('./js/type_of_user_actions')
 const user = require('./js/user_actions')
-const viewArticles = require('./js/view_article_actions')
 
 /**
  * Парсер json-в запросах
@@ -18,8 +17,8 @@ const jsonParser = express.json();
 const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING} = process.env;
 const app = express()
 
-const urlIndex = path.join(path.resolve(''), '..\\www\\index\\index.html')
-const urlAdmin = path.join(path.resolve(''), '..\\www\\admin\\dist\\index.html')
+const urlIndex = path.join(path.resolve(''), '..\\www\\index.html')
+const urlAdmin = path.join(path.resolve(''), '..\\www\\admin.html')
 
 /*
 * Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
@@ -60,21 +59,15 @@ app
         if (!req.body) res.sendStatus(400)
         article.execute(req.url, req.body, res)
     })
-    .post(/\/typeOfArticle(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/themesOfPublication(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        res.json(typeOfArticle.execute(req.url, req.body))
+        themesOfPublications.execute(req.url, req.body, res)
     })
     .post(/\/typeOfUser(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        res.json(typeOfUser.execute(req.url, req.body))
+        typeOfUser.execute(req.url, req.body)
     })
     .post(/\/user(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        res.json(user.execute(req.url, req.body))
+        user.execute(req.url, req.body)
     })
-    .post(/\/viewArticle(\/.+)?/, jsonParser, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        res.json(viewArticles.execute(req.url, req.body))
-    })
-
-

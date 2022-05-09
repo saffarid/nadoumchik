@@ -1,11 +1,11 @@
 .image-left{
     grid-template-areas: "image text buttons";
-    grid-template-columns: 100px 540px;
+    grid-template-columns: 100px 540px 50px;
 }
 
 .image-right{
     grid-template-areas: "buttons text image";
-    grid-template-columns: 540px 100px;
+    grid-template-columns: 50px 540px 100px;
 }
 
 .publication-item{
@@ -59,6 +59,17 @@
     }
 
     .buttons{
+        display: grid;
         grid-area: buttons;
+        opacity: 0;
+        padding: 5px;
+        align-items: center;
+        justify-items: center;
+        row-gap: 5px;
+    }
+    &:hover{
+        .buttons{
+            opacity: 1;
+        }
     }
 }
