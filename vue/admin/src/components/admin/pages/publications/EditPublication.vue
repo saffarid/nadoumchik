@@ -1,7 +1,16 @@
 <template>
     <BorderPane class="new-publication">
         <template v-slot:top>
-            <Button class="text-button publish" :text="localPublication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'" @click="$emit('publish')"/>
+            <Button
+                    class="image-button preview"
+                    @click="popupIsShow = true">
+                <eye
+                        :height="36" :width="36"/>
+            </Button>
+            <Button
+                    class="text-button publish"
+                    :text="localPublication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
+                    @click="$emit('publish')"/>
         </template>
         <template v-slot:center>
             <Tabs :options="{ useUrlFragment: false }">
@@ -41,12 +50,6 @@
                 <Tab :name="'СОДЕРЖИМОЕ'">
                     <div>
                         <BorderPane class="new-publication-content">
-                            <template v-slot:top>
-                                <eye
-                                        :height="50" :width="50"
-                                        @click="popupIsShow = true"/>
-
-                            </template>
                             <template v-slot:center>
                                 <div class="editor">
                                     <TextField
@@ -68,13 +71,17 @@
                                 </div>
                             </template>
                         </BorderPane>
-                        <PublicationView v-if="popupIsShow" :publication="localPublication" @close="popupIsShow = false"/>
+
                     </div>
                 </Tab>
             </Tabs>
         </template>
     </BorderPane>
-
+    <PublicationView
+            v-if="popupIsShow"
+            :publication="localPublication"
+            @close="popupIsShow = false"
+    />
 </template>
 
 <script>
@@ -99,7 +106,7 @@
     } from 'saffarid-ui-kit'
     import Eye from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
-    import PublicationView from "@/components/commons/publications_list/PublicationView";
+    import PublicationView from "@/components/commons/publications/PublicationView";
 
     export default {
         name: "EditPublication",

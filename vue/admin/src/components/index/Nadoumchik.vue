@@ -1,5 +1,4 @@
 <template>
-    <div>
         <BorderPane>
             <template v-slot:top>
                 <Header/>
@@ -12,8 +11,11 @@
                 </div>
             </template>
         </BorderPane>
-        <PublicationView v-if="showedPublication._id" :publication="showedPublication" @close="closePublication"/>
-    </div>
+        <PublicationView
+                v-if="showedPublication._id"
+                :publication="showedPublication"
+                @close="closePublication"
+        />
 </template>
 
 <script>
@@ -26,7 +28,7 @@
     import {
         BorderPane
     } from 'saffarid-ui-kit'
-    import PublicationView from "@/components/commons/publications_list/PublicationView";
+    import PublicationView from "@/components/commons/publications/PublicationView";
 
     export default {
         name: "Nadoumchik",

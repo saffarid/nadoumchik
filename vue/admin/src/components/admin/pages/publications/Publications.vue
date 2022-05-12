@@ -27,9 +27,15 @@
                 <ResponseBar :response="response"/>
             </template>
         </BorderPane>
-        <Popup v-if="editPublicationShow" @close="editPublicationShow = false">
+        <Popup
+                class="new-publication-popup"
+                v-if="editPublicationShow"
+                @close="editPublicationShow = false">
             <template v-slot:content>
-                <EditPublication @publish="publish" :publication="publication"/>
+                <EditPublication
+                        :publication="publication"
+                        @publish="publish"
+                />
             </template>
         </Popup>
     </div>

@@ -29,40 +29,19 @@
         box-shadow: black 0 0 20px;
         width: 75%;
         height: 90vh;
-        padding: 10px;
+        //padding: 10px;
         border-radius: 20px;
 
         .popup_header {
             display: grid;
-            align-items: center;
-            height: max-content;
-            padding-bottom: 5px;
-
-            p {
-                justify-self: left;
-                margin: 0;
-                word-wrap: break-spaces;
-                word-break: break-all;
-                margin-left: 10px;
-            }
-
         }
 
         .content {
             display: grid;
-            gap: 5px;
-            align-self: start;
-            align-content: start;
-            overflow-y: auto;
-            height: 82.5vh;
-            padding: 0;
-            margin-top: 10px;
-            margin-bottom: 10px;
         }
 
         .footer{
             display: grid;
-
         }
     }
 }
