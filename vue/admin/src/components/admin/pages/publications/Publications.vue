@@ -14,18 +14,13 @@
                 </BorderPane>
             </template>
             <template v-slot:center>
-                <div class="list" v-if="isReady">
-                    <PublicationItem v-for="(publication, index) in articles"
-                                     :key="index" :publication="publication"
-                                     @edit="updatePublication(publication)"
-                                     @remove="removePublication(publication)"
-                                     :can-edit="true"
-                    />
-                    <Button text="Загрузить ещё" @click="loadPublications(articles.length, countLoadPublications)"/>
-                </div>
-                <div v-else>
-                    Загрузка...
-                </div>
+                <PublicationList
+                        class="cab"
+                        :can-edit-publications="true"
+                        @edit="updatePublication"
+                        @remove="removePublication"
+                        ref="publicationsList"
+                />
             </template>
             <template v-slot:bottom>
                 <!-- Строка состояния ответа -->
@@ -54,24 +49,25 @@
         TextLabel,
         Popup,
     } from 'saffarid-ui-kit'
-    import PublicationItem from "@/components/commons/publications_list/PublicationItem";
     import Plus from "@/assets/img/plus";
     import EditPublication from "@/components/admin/pages/publications/EditPublication";
     import ResponseBar from "@/components/admin/pages/publications/ResponseBar";
+    import PublicationList from "@/components/commons/publications_list/PublicationList";
 
     export default {
         name: "Publications",
         components: {
+            PublicationList,
             ResponseBar,
             EditPublication,
             Button,
             Plus,
-            PublicationItem,
             BorderPane,
             TextLabel,
             Popup,
         },
         setup() {
+            const publicationsList = ref(null)
             const editPublicationShow = ref(false)
             const isReady = ref(false)
             const articles = ref([])
@@ -95,7 +91,7 @@
                 },
                 preview: {
                     imgOnLeft: true,
-                    backgroundColor: '#640707',
+                    backgroundColor: '#B7AEAE',
                     textIsDark: true,
                     image: ''
                 }
@@ -149,15 +145,7 @@
                         response.code = data.responseCode
                         response.message = data.message
 
-                        loadPublications(
-                            0,
-                            articles.value.length - 1,
-                            data => {
-                                setTimeout(() => {
-                                    articles.value = data.articles
-                                    isReady.value = true
-                                }, 300)
-                            })
+                        publicationsList.value.refreshList(-1)
                     })
                     .catch(err => {
                         console.log('Объект успешно не удалён')
@@ -166,37 +154,11 @@
             }
 
             /**
-             * Функция отправляет запрос на получение новой порции публикаций,
-             * если запрос проходит удачно, публикации добавляются в список для отображения
-             * */
-            const loadPublications = (shift, count, resolve) => {
-                if (resolve === undefined) {
-                    resolve = data => {
-                        setTimeout(() => {
-                            articles.value = articles.value.concat(data.articles)
-                            isReady.value = true
-                        }, 300)
-                    }
-                }
-                asyncRequest('/articles/select', JSON.stringify({
-                        shift: shift,
-                        count: count
-                    })
-                )
-                    .then(resolve)
-                    .catch(err => {
-                        console.log(err)
-                    })
-            }
-            loadPublications(
-                articles.value.length,
-                countLoadPublications.value)
-
-            /**
              * Функция собирает объект публикации и отсылает его на сервер
              * */
             const publish = () => {
                 if (publication._id) {
+                    console.log(publication)
                     asyncRequest('/articles/update', JSON.stringify(publication))
                         .then(data => {
                             console.log(data)
@@ -205,15 +167,7 @@
                             response.code = data.responseCode
                             response.message = data.message
 
-                            loadPublications(
-                                0,
-                                articles.value.length,
-                                data => {
-                                    setTimeout(() => {
-                                        articles.value = data.articles
-                                        isReady.value = true
-                                    }, 300)
-                                })
+                            publicationsList.value.refreshList(0)
                         })
                         .catch(err => {
                             console.log(err)
@@ -227,15 +181,7 @@
                             response.code = data.responseCode
                             response.message = data.message
 
-                            loadPublications(
-                                0,
-                                articles.value.length + 1,
-                                data => {
-                                    setTimeout(() => {
-                                        articles.value = data.articles
-                                        isReady.value = true
-                                    }, 300)
-                                })
+                            publicationsList.value.refreshList(1)
                         })
                         .catch(err => {
                             console.log(err)
@@ -248,13 +194,13 @@
                 publish,
                 articles,
                 isReady,
-                loadPublications,
                 countLoadPublications,
                 editPublicationShow,
                 newPublication,
                 removePublication,
                 updatePublication,
-                publication
+                publication,
+                publicationsList
             }
         }
     }

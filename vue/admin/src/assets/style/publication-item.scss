@@ -66,6 +66,16 @@
         align-items: center;
         justify-items: center;
         row-gap: 5px;
+        .image-button {
+            svg {
+                fill: var(--textColor);
+            }
+            &:hover {
+                svg {
+                    fill: white;
+                }
+            }
+        }
     }
     &:hover{
         .buttons{

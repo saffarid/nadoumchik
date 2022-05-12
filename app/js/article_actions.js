@@ -90,6 +90,13 @@ const publicationSchema = new Schema({
             type: Boolean,
             required: true
         },
+        /**
+         * Флаг цвета текста
+         * */
+        image: {
+            type: String,
+            required: true
+        },
     }
 
 })
@@ -103,13 +110,17 @@ const PublicationModel = mongoose.model("Article", publicationSchema)
 const execute = (url, data, res) => {
     if (url.includes(api.ACTS.insert)) {
         insert(data, res)
-    } else if (url.includes(api.ACTS.remove)) {
+    }
+    else if (url.includes(api.ACTS.remove)) {
         remove(data, res)
-    } else if (url.includes(api.ACTS.update)) {
+    }
+    else if (url.includes(api.ACTS.update)) {
         update(data, res)
-    } else if (url.includes(api.ACTS.select)) {
+    }
+    else if (url.includes(api.ACTS.select)) {
         select(data, res)
-    } else {
+    }
+    else {
         res.json({
             responseCode: 400,
             message: 'Запрос на несущетвующий ресурс'
@@ -137,6 +148,7 @@ const insert = (data, res) => {
                 imgOnLeft: data.preview.imgOnLeft,
                 backgroundColor: data.preview.backgroundColor,
                 textIsDark: data.preview.textIsDark,
+                image: data.preview.image
             }
         })
         article.save()
@@ -236,16 +248,20 @@ const select = (data, res) => {
                     if (data.shift > docs.length) throw new Error('Nothing return')
                     const range = data.shift + data.count
                     if (range < docs.length){
-                        result = docs.slice(data.shift, range)
+                        // result = docs.slice(data.shift, range)
+                        resolve({
+                            articles: docs.slice(data.shift, range),
+                            thereIsMore:true
+                        })
                     } else {
-                        result = docs.slice(data.shift, docs.length)
+                        // result = docs.slice(data.shift, docs.length)
+                        resolve({
+                            articles: docs.slice(data.shift, docs.length),
+                            thereIsMore:false
+                        })
                     }
-                     console.log(result)
+                    console.log(result)
 
-
-                    resolve({
-                        articles: result
-                    })
                 } catch (e) {
                     reject(e)
                 }

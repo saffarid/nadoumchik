@@ -32,7 +32,10 @@
                             <TextLabel :label="`Цвет фона`"/>
                             <input type="color" v-model="localPublication.preview.backgroundColor">
                         </Row>
-
+                        <Row>
+                            <TextLabel :label="`Изображение`"/>
+                            <input type="file" @change="loadImage">
+                        </Row>
                     </div>
                 </Tab>
                 <Tab :name="'СОДЕРЖИМОЕ'">
@@ -65,15 +68,7 @@
                                 </div>
                             </template>
                         </BorderPane>
-                        <Popup v-show="popupIsShow" @close="popupIsShow = false" style="z-index: 2">
-                            <template v-slot:header>
-                                <TextLabel :label='localPublication.content.title'/>
-                            </template>
-                            <template v-slot:content>
-                                <div ref="articleView">
-                                </div>
-                            </template>
-                        </Popup>
+                        <PublicationView v-if="popupIsShow" :publication="localPublication" @close="popupIsShow = false"/>
                     </div>
                 </Tab>
             </Tabs>
@@ -99,15 +94,17 @@
         TextField,
         Toggle,
         TextLabel,
-        Popup,
+        // Popup,
         Row
     } from 'saffarid-ui-kit'
     import Eye from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
+    import PublicationView from "@/components/commons/publications_list/PublicationView";
 
     export default {
         name: "EditPublication",
         components: {
+            PublicationView,
             PublicationItem,
             Eye,
             editor,
@@ -116,7 +113,7 @@
             TextField,
             TextLabel,
             Toggle,
-            Popup,
+            // Popup,
             Row,
             Tab,
             Tabs
@@ -140,10 +137,22 @@
             onMounted(refreshContentView)
             watch(localPublication, refreshContentView)
 
+            const loadImage = (event) => {
+                const file = event.target.files[0];
+                console.log(file.size)
+                const reader = new FileReader()
+                // localPublication.preview.image = URL.createObjectURL(file)
+                reader.onload = ev => {
+                    localPublication.preview.image = ev.target.result
+                }
+                reader.readAsDataURL(file)
+            }
+
             return {
                 localPublication,
                 articleView,
-                popupIsShow
+                popupIsShow,
+                loadImage
             }
         }
     }

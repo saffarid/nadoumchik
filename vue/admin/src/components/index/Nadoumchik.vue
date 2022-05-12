@@ -5,8 +5,11 @@
                 <Header/>
             </template>
             <template v-slot:center>
-                <PublicationList
-                        @read="showPublication"/>
+                <div class="list-of-publications" style="display:grid; justify-self: center; justify-items: center; height: 100%">
+                    <PublicationList
+                            class="lst"
+                            @read="showPublication"/>
+                </div>
             </template>
         </BorderPane>
         <PublicationView v-if="showedPublication._id" :publication="showedPublication" @close="closePublication"/>

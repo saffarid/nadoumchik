@@ -3,6 +3,7 @@ const fs = require("fs")
 const path = require('path')
 const express = require("express")
 const mongoos = require("mongoose")
+const bodyParser = require("body-parser")
 
 const article = require('./js/article_actions')
 const themesOfPublications = require('./js/themes_of_publication_actions')
@@ -30,6 +31,7 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
     })
 })
 app
+    .use(bodyParser.json({limit: '50mb'}))
     .use(express.static(__dirname + '\\..\\www'))
     .get('/', (req, res) => {
         fs.readFile(urlIndex, (err, data) => {
@@ -55,7 +57,7 @@ app
             res.end();
         })
     })
-    .post(/\/article(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/article(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         article.execute(req.url, req.body, res)
     })

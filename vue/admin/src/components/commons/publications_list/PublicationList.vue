@@ -1,5 +1,5 @@
 <template>
-    <div style="display:grid; justify-self: center; justify-items: center">
+    <div>
         <div class="list" v-if="isReady">
             <PublicationItem v-for="(publication, index) in articles"
                              :key="index" :publication="publication"
@@ -8,7 +8,12 @@
                              @click="$emit('read', publication )"
                              :can-edit="canEditPublications"
             />
-            <Button text="Загрузить ещё" @click="loadPublications(articles.length, countLoadPublications)"/>
+            <PageLoading v-if="isLoading"/>
+            <Button
+                    v-if="!isLoading && thereIsMore"
+                    class="text-button"
+                    text="Загрузить ещё"
+                    @click="loadPublications(articles.length, countLoadPublications)"/>
         </div>
         <div v-else>
             Загрузка...
@@ -20,11 +25,13 @@
     import {
         reactive,
         ref,
+        // watch
     } from 'vue'
     import {asyncRequest} from "@/js/web";
 
     import {
         Button,
+        PageLoading
     } from 'saffarid-ui-kit'
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
 
@@ -33,19 +40,37 @@
         components: {
             Button,
             PublicationItem,
+            PageLoading
         },
-        props:{
-          canEditPublications:{
-              type: Boolean,
-              required: false,
-              default: false
-          }
+        props: {
+            canEditPublications: {
+                type: Boolean,
+                required: false,
+                default: false
+            }
         },
         setup() {
             const editPublicationShow = ref(false)
+            /**
+             * Флаг готовности отображать считанные публикации
+             * */
             const isReady = ref(false)
+            /**
+             * Флаг окончания загрузкиновых публикаций
+             * */
+            const isLoading = ref(false)
+            /**
+             * Флаг считвания всех публикаций с сервера
+             * */
+            const thereIsMore = ref(false)
+            /**
+             * Массив публикацй
+             * */
             const articles = ref([])
-            let countLoadPublications = ref(10)
+            /**
+             * Кол-во загружаемых публикаций
+             * */
+            const countLoadPublications = ref(10)
 
             const response = reactive({
                 code: -1,
@@ -60,11 +85,18 @@
                 if (resolve === undefined) {
                     resolve = data => {
                         setTimeout(() => {
-                            articles.value = articles.value.concat(data.articles)
+                            if(shift === 0){
+                                articles.value = data.articles
+                            } else {
+                                articles.value = articles.value.concat(data.articles)
+                            }
+                            thereIsMore.value = data.thereIsMore
                             isReady.value = true
+                            isLoading.value = false
                         }, 300)
                     }
                 }
+                isLoading.value = true
                 asyncRequest('/articles/select', JSON.stringify({
                         shift: shift,
                         count: count
@@ -79,14 +111,20 @@
                 articles.value.length,
                 countLoadPublications.value)
 
+            const refreshList = (append) => {
+                loadPublications(0, articles.value.length + append)
+            }
 
             return {
                 response,
                 articles,
                 isReady,
+                isLoading,
+                thereIsMore,
                 loadPublications,
                 countLoadPublications,
                 editPublicationShow,
+                refreshList
             }
         }
     }

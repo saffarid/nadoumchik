@@ -1,3 +1,11 @@
+.cab{
+  --h:78.6vh;
+}
+
+.lst{
+  --h:85vh;
+}
+
 .list-of-publications {
   row-gap: 5px;
   @import "toolbar";
@@ -6,7 +14,8 @@
   .list {
     display: grid;
     row-gap: 5px;
-    max-height: 78.6vh;
-    overflow: auto
+    max-height: var(--h);
+    overflow: auto;
+    padding-right: 5px;
   }
 }

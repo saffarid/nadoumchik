@@ -4,14 +4,18 @@
          class="publication-item"
          :style="`background-color:${publication.preview.backgroundColor}`">
         <div class="image">
-            <ArticleLogo :height="90" :width="90"/>
+            <ArticleLogo v-if="!publication.preview.image" :height="100" :width="100"/>
+                <img v-else :src="publication.preview.image" :height="100" :width="100"/>
         </div>
         <div
                 :class="{'text-right':publication.preview.imgOnLeft, 'text-left':!publication.preview.imgOnLeft, 'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark}"
                 class="text">
-            <TextLabel :label="publication.content.title"/>
+            <TextLabel :label="publication.content.title.toUpperCase()"/>
         </div>
-        <div class="buttons" v-if="canEdit">
+        <div
+                :class="{'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark}"
+                class="buttons"
+                v-if="canEdit">
             <Button class="image-button" @click="$emit('remove')">
                 <trash :height="20" :width="20"/>
             </Button>
@@ -55,11 +59,9 @@
             }
         },
         setup() {
-            return {}
+            return {
+
+            }
         }
     }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
