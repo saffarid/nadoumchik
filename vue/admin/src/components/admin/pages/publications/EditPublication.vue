@@ -20,7 +20,8 @@
                                 :publication="localPublication"
                         />
                         <Row>
-                            <TextLabel :label="`Положение изображения: ${localPublication.preview.imgOnLeft?'Да':'Нет'}`"/>
+                            <TextLabel
+                                    :label="`Положение изображения: ${localPublication.preview.imgOnLeft?'Да':'Нет'}`"/>
                             <Toggle
                                     id="imgOnLeft"
                                     v-model="localPublication.preview.imgOnLeft"
@@ -29,7 +30,8 @@
                             />
                         </Row>
                         <Row>
-                            <TextLabel :label="`Цвет текста: ${localPublication.preview.textIsDark?'Темный':'Светлый'}`"/>
+                            <TextLabel
+                                    :label="`Цвет текста: ${localPublication.preview.textIsDark?'Темный':'Светлый'}`"/>
                             <Toggle
                                     id="textIsDark"
                                     v-model="localPublication.preview.textIsDark"
@@ -43,7 +45,7 @@
                         </Row>
                         <Row>
                             <TextLabel :label="`Изображение`"/>
-                            <input type="file" @change="loadImage">
+                            <input type="file" @change="loadImage($event,'preview')">
                         </Row>
                     </div>
                 </Tab>
@@ -74,6 +76,37 @@
 
                     </div>
                 </Tab>
+                <Tab :name="'ЗАГОЛОВОК'">
+                    <Title :publication="localPublication" style="min-height: 150px; max-height: min-content"/>
+                    <Row>
+                        <TextLabel :label="`Цвет текста`"/>
+                        <input type="color" v-model="localPublication.view.title.textColor"/>
+                    </Row>
+                    <Row>
+                        <TextLabel
+                                :label="`Использовать фоновое изображение: ${localPublication.view.title.useImage?'Да':'Нет'}`"/>
+                        <Toggle
+                                id="useImage"
+                                v-model="localPublication.view.title.useImage"
+                                :true-value="true"
+                                :false-value="false"
+                        />
+                    </Row>
+                    <template v-if="localPublication.view.title.useImage">
+                        <Row>
+                            <TextLabel :label="`Фоновое зображение`"/>
+                            <input :disabled="!localPublication.view.title.useImage" type="file"
+                                   @change="loadImage($event,'title')">
+                        </Row>
+                    </template>
+                    <template v-else>
+                        <Row>
+                            <TextLabel :label="`Фоновое зображение`"/>
+                            <input :disabled="localPublication.view.title.useImage" type="color"
+                                   v-model="localPublication.view.title.image">
+                        </Row>
+                    </template>
+                </Tab>
             </Tabs>
         </template>
     </BorderPane>
@@ -87,8 +120,6 @@
 <script>
     import {
         ref,
-        watch,
-        onMounted,
         reactive
     } from 'vue'
     import {Tabs, Tab} from 'vue3-tabs-component'
@@ -107,10 +138,12 @@
     import Eye from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
+    import Title from "@/components/commons/publications/Title";
 
     export default {
         name: "EditPublication",
         components: {
+            Title,
             PublicationView,
             PublicationItem,
             Eye,
@@ -125,39 +158,38 @@
             Tab,
             Tabs
         },
-        props:{
-          publication: {
-              type: Object,
-              required: true
-          }
+        props: {
+            publication: {
+                type: Object,
+                required: true
+            }
         },
         setup(props) {
-            const articleView = ref(null)
             const popupIsShow = ref(false)
 
             const localPublication = reactive(props.publication)
 
-            const refreshContentView = () => {
-                articleView.value.innerHTML = localPublication.content.content
-            };
-
-            onMounted(refreshContentView)
-            watch(localPublication, refreshContentView)
-
-            const loadImage = (event) => {
+            const loadImage = (event, key) => {
                 const file = event.target.files[0];
                 console.log(file.size)
                 const reader = new FileReader()
                 // localPublication.preview.image = URL.createObjectURL(file)
-                reader.onload = ev => {
-                    localPublication.preview.image = ev.target.result
+
+                if (!key.localeCompare('preview')) {
+                    reader.onload = ev => {
+                        localPublication.preview.image = ev.target.result
+                    }
+                }
+                if (!key.localeCompare('title')) {
+                    reader.onload = ev => {
+                        localPublication.view.title.image = ev.target.result
+                    }
                 }
                 reader.readAsDataURL(file)
             }
 
             return {
                 localPublication,
-                articleView,
                 popupIsShow,
                 loadImage
             }

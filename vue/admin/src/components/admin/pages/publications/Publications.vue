@@ -17,6 +17,7 @@
                 <PublicationList
                         class="cab"
                         :can-edit-publications="true"
+                        :has-row-gap="true"
                         @edit="updatePublication"
                         @remove="removePublication"
                         ref="publicationsList"
@@ -100,6 +101,22 @@
                     backgroundColor: '#B7AEAE',
                     textIsDark: true,
                     image: ''
+                },
+                view: {
+                    title: {
+                        useImage: false,
+                        textColor: '#2b2b2b',
+                        image: '#724242',
+                        blur: {
+                            size: 100,
+                            blur: 10,
+                            position_y: 50
+                        },
+                        clear: {
+                            size: 50,
+                            position_y:50
+                        }
+                    },
                 }
             })
 

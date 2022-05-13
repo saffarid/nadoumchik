@@ -7,6 +7,7 @@
                 <div class="list-of-publications" style="display:grid; justify-self: center; justify-items: center; height: 100%">
                     <PublicationList
                             class="lst"
+                            :figure="true"
                             @read="showPublication"/>
                 </div>
             </template>

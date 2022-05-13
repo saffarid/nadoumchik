@@ -1,14 +1,17 @@
 <template>
     <div @click="$emit('click', publication)"
-         :class="{'image-left':publication.preview.imgOnLeft, 'image-right':!publication.preview.imgOnLeft}"
+         :class="{'image-left':(publication.preview.imgOnLeft || canEdit), 'image-right':(!publication.preview.imgOnLeft && !canEdit)}"
          class="publication-item"
          :style="`background-color:${publication.preview.backgroundColor}`">
         <div class="image">
-            <ArticleLogo v-if="!publication.preview.image" :height="100" :width="100"/>
-                <img v-else :src="publication.preview.image" :height="100" :width="100"/>
+            <ArticleLogo v-if="!publication.preview.image" :height="140" :width="140"/>
+            <img v-else :src="publication.preview.image" :height="140" :width="140"/>
         </div>
         <div
-                :class="{'text-right':publication.preview.imgOnLeft, 'text-left':!publication.preview.imgOnLeft, 'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark}"
+                :class="{
+            // 'text-right':publication.preview.imgOnLeft, 'text-left':!publication.preview.imgOnLeft,
+             'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark
+        }"
                 class="text">
             <TextLabel :label="publication.content.title.toUpperCase()"/>
         </div>
@@ -52,16 +55,14 @@
                 type: Object,
                 required: true
             },
-            canEdit:{
+            canEdit: {
                 type: Boolean,
                 required: false,
                 default: false
             }
         },
         setup() {
-            return {
-
-            }
+            return {}
         }
     }
 </script>

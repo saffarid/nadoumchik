@@ -6,6 +6,18 @@
   --h:85vh;
 }
 
+.item-on-left{
+  justify-self: start;
+}
+
+.item-on-right{
+  justify-self: end;
+}
+
+.gap{
+  row-gap: 5px;
+}
+
 .list-of-publications {
   row-gap: 5px;
   @import "toolbar";
@@ -13,9 +25,8 @@
 
   .list {
     display: grid;
-    row-gap: 5px;
     max-height: var(--h);
     overflow: auto;
-    padding-right: 5px;
+    width: 790px;
   }
 }

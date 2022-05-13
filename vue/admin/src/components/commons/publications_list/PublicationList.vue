@@ -1,8 +1,12 @@
 <template>
-    <div>
-        <div class="list" v-if="isReady">
+    <div class="">
+        <div
+                class="list"
+                :class="{'gap':hasRowGap}"
+                v-if="isReady">
             <PublicationItem v-for="(publication, index) in articles"
                              :key="index" :publication="publication"
+                             :class="{'item-on-left':(publication.preview.imgOnLeft || !figure), 'item-on-right':(!publication.preview.imgOnLeft && figure)}"
                              @edit="$emit('edit', publication)"
                              @remove="$emit('remove', publication)"
                              @click="$emit('read', publication )"
@@ -44,6 +48,16 @@
         },
         props: {
             canEditPublications: {
+                type: Boolean,
+                required: false,
+                default: false
+            },
+            hasRowGap:{
+                type: Boolean,
+                required: false,
+                default: false
+            },
+            figure:{
                 type: Boolean,
                 required: false,
                 default: false

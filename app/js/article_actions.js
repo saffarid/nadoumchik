@@ -42,7 +42,7 @@ const publicationSchema = new Schema({
     /**
      * Содержимое публикации
      * */
-    content:{
+    content: {
         /**
          * Тип статьи, в это полу устанавливается идентификатор из коллекции typesOfArticles
          * */
@@ -66,14 +66,14 @@ const publicationSchema = new Schema({
         },
     },
     /**
-     * Внешнее отображение публикации
+     * Внешнее отображение предпросмотра публикации
      * */
-    preview:{
+    preview: {
         /**
          * Флаг положения изображения
          * */
         imgOnLeft: {
-            type:Boolean,
+            type: Boolean,
             required: true
         },
         /**
@@ -91,14 +91,57 @@ const publicationSchema = new Schema({
             required: true
         },
         /**
-         * Флаг цвета текста
+         * Изображение предпросмотра
          * */
         image: {
             type: String,
             required: true
         },
+    },
+    /**
+     * Внешнее отображение предпросмотра публикации
+     * */
+    view: {
+        title: {
+            useImage:{
+              type: Boolean,
+              required:true,
+              default: false
+            },
+            textColor:{
+                type: String,
+                required: true
+            },
+            image: {
+                type: String,
+                required: false
+            },
+            blur: {
+                size:{
+                    type:Number,
+                    required:false
+                },
+                blur:{
+                    type:Number,
+                    required:false
+                },
+                position_y:{
+                    type:Number,
+                    required:false
+                }
+            },
+            clear: {
+                size:{
+                    type:Number,
+                    required:false
+                },
+                position_y:{
+                    type:Number,
+                    required:false
+                }
+            }
+        },
     }
-
 })
 const PublicationModel = mongoose.model("Article", publicationSchema)
 
@@ -110,17 +153,13 @@ const PublicationModel = mongoose.model("Article", publicationSchema)
 const execute = (url, data, res) => {
     if (url.includes(api.ACTS.insert)) {
         insert(data, res)
-    }
-    else if (url.includes(api.ACTS.remove)) {
+    } else if (url.includes(api.ACTS.remove)) {
         remove(data, res)
-    }
-    else if (url.includes(api.ACTS.update)) {
+    } else if (url.includes(api.ACTS.update)) {
         update(data, res)
-    }
-    else if (url.includes(api.ACTS.select)) {
+    } else if (url.includes(api.ACTS.select)) {
         select(data, res)
-    }
-    else {
+    } else {
         res.json({
             responseCode: 400,
             message: 'Запрос на несущетвующий ресурс'
@@ -139,12 +178,12 @@ const insert = (data, res) => {
         const article = new PublicationModel({
             _id: uuid(),
             dateStamp: new Date(),
-            content:{
+            content: {
                 // type: data.content.type,
                 title: data.content.title,
                 content: data.content.content,
             },
-            preview:{
+            preview: {
                 imgOnLeft: data.preview.imgOnLeft,
                 backgroundColor: data.preview.backgroundColor,
                 textIsDark: data.preview.textIsDark,
@@ -247,17 +286,17 @@ const select = (data, res) => {
                     docs = docs.reverse()
                     if (data.shift > docs.length) throw new Error('Nothing return')
                     const range = data.shift + data.count
-                    if (range < docs.length){
+                    if (range < docs.length) {
                         // result = docs.slice(data.shift, range)
                         resolve({
                             articles: docs.slice(data.shift, range),
-                            thereIsMore:true
+                            thereIsMore: true
                         })
                     } else {
                         // result = docs.slice(data.shift, docs.length)
                         resolve({
                             articles: docs.slice(data.shift, docs.length),
-                            thereIsMore:false
+                            thereIsMore: false
                         })
                     }
                     console.log(result)

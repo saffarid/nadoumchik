@@ -1,11 +1,11 @@
 .image-left{
     grid-template-areas: "image text buttons";
-    grid-template-columns: 100px 540px 50px;
+    grid-template-columns: 140px auto min-content;
 }
 
 .image-right{
     grid-template-areas: "buttons text image";
-    grid-template-columns: 50px 540px 100px;
+    grid-template-columns: min-content auto 140px;
 }
 
 .publication-item{
@@ -14,43 +14,43 @@
     margin: 0;
     align-content: center;
     align-items: center;
-    height: 100px;
-    width: fit-content;
+    height: 140px;
+    width: 650px;
 
     .image{
         display: grid;
         grid-area: image;
-        width: 100px;
-        height: 100px;
+        width: 140px;
+        height: 140px;
         align-content: center;
         justify-content: center;
     }
 
-
-
     .text{
         grid-area: text;
+        display: grid;
         padding: 15px;
-        justify-content: start;
-        justify-items: start;
-        justify-self: start;
+        justify-content: stretch;
+        justify-items: stretch;
+        justify-self: stretch;
 
         label{
             color: var(--textColor);
+            text-align: center;
         }
     }
 
-    .text-left{
-        justify-content: right;
-        justify-items: right;
-        justify-self: right;
-    }
-
-    .text-right{
-        justify-content: left;
-        justify-items: left;
-        justify-self: left;
-    }
+    //.text-left{
+    //    justify-content: right;
+    //    justify-items: right;
+    //    justify-self: right;
+    //}
+    //
+    //.text-right{
+    //    justify-content: left;
+    //    justify-items: left;
+    //    justify-self: left;
+    //}
 
     .buttons{
         display: grid;
