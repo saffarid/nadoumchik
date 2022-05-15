@@ -4,11 +4,19 @@
     }
 }
 
+.row>div{
+    display: grid;
+    grid-template-columns: 50px auto;
+    align-items: center;
+    justify-items: stretch;
+    column-gap: 5px;
+}
+
 .new-publication {
     .top {
         display: grid;
         justify-content: stretch;
-        grid-template-columns: repeat(auto-fit, minmax(50px, 150px));
+        grid-template-columns: repeat(auto-fit, minmax(50px, min-content));
         padding: 5px;
         .preview{
             justify-self: start;
@@ -42,12 +50,21 @@
         display: grid;
         row-gap: 5px;
 
+        .tox{
+            min-height: 600px;
+            max-height: 600px;
+        }
+
         .title {
             height: 40px;
             border: #eeeeee 2px solid;
             border-radius: 10px;
             font-size: 30px;
             padding-left: 10px;
+
+            &:focus-visible{
+                outline: 0;
+            }
         }
     }
 }

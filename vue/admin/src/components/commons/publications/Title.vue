@@ -64,6 +64,8 @@
 
     .title {
         display: grid;
+        min-height: 150px;
+        max-height: min-content;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
 
@@ -82,7 +84,7 @@
         background: var(--img);
         background-repeat: no-repeat;
         background-position-x: center;
-        background-size: var(--blur-size);
+        background-size: 100%;
         background-position-y: var(--blur-position-y);
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;

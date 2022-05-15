@@ -1,4 +1,5 @@
 <template>
+    <div>
         <BorderPane>
             <template v-slot:top>
                 <Header/>
@@ -17,6 +18,7 @@
                 :publication="showedPublication"
                 @close="closePublication"
         />
+    </div>
 </template>
 
 <script>
@@ -69,6 +71,7 @@
                     textIsDark: publication.preview.textIsDark,
                     image: publication.preview.image
                 }
+                showedPublication.view = publication.view
             }
 
             const closePublication = () => {

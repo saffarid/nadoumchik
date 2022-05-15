@@ -5,7 +5,7 @@
                     class="image-button preview"
                     @click="popupIsShow = true">
                 <eye
-                        :height="36" :width="36"/>
+                        :height="31" :width="31"/>
             </Button>
             <Button
                     class="text-button publish"
@@ -67,6 +67,7 @@
                             }"
                                             initial-value="publication.content"
                                             v-model="localPublication.content.content"
+
                                     />
                                 </div>
                                 <div ref="result">
@@ -78,34 +79,106 @@
                 </Tab>
                 <Tab :name="'ЗАГОЛОВОК'">
                     <Title :publication="localPublication" style="min-height: 150px; max-height: min-content"/>
-                    <Row>
-                        <TextLabel :label="`Цвет текста`"/>
-                        <input type="color" v-model="localPublication.view.title.textColor"/>
-                    </Row>
-                    <Row>
-                        <TextLabel
-                                :label="`Использовать фоновое изображение: ${localPublication.view.title.useImage?'Да':'Нет'}`"/>
-                        <Toggle
-                                id="useImage"
-                                v-model="localPublication.view.title.useImage"
-                                :true-value="true"
-                                :false-value="false"
-                        />
-                    </Row>
-                    <template v-if="localPublication.view.title.useImage">
+                    <div class="new-publication-item-view">
                         <Row>
-                            <TextLabel :label="`Фоновое зображение`"/>
-                            <input :disabled="!localPublication.view.title.useImage" type="file"
-                                   @change="loadImage($event,'title')">
+                            <TextLabel :label="`Цвет текста`"/>
+                            <input type="color" v-model="localPublication.view.title.textColor"/>
                         </Row>
-                    </template>
-                    <template v-else>
                         <Row>
-                            <TextLabel :label="`Фоновое зображение`"/>
-                            <input :disabled="localPublication.view.title.useImage" type="color"
-                                   v-model="localPublication.view.title.image">
+                            <TextLabel
+                                    :label="`Использовать фоновое изображение: ${localPublication.view.title.useImage?'Да':'Нет'}`"/>
+                            <Toggle
+                                    id="useImage"
+                                    v-model="localPublication.view.title.useImage"
+                                    :true-value="true"
+                                    :false-value="false"
+                            />
                         </Row>
-                    </template>
+                        <template v-if="localPublication.view.title.useImage">
+                            <Row>
+                                <TextLabel :label="`Фоновое изображение`"/>
+                                <input :disabled="!localPublication.view.title.useImage" type="file"
+                                       @change="loadImage($event,'title')">
+
+                            </Row>
+                            <!--                            <Row>-->
+                            <!--                                <TextLabel :label="`Размер размытого изображения`"/>-->
+                            <!--                                <input :disabled="!localPublication.view.title.useImage" type="number"-->
+                            <!--                                       v-model="localPublication.view.title.blur.size">-->
+                            <!--                            </Row>-->
+                            <Row>
+                                <TextLabel :label="`Положение размытого изображения`"/>
+                                <div>
+                                    <input :disabled="!localPublication.view.title.useImage"
+                                           type="number" min="0" max="100" step="0.1"
+                                           v-model="localPublication.view.title.blur.position_y">
+                                    <div style="width: 250px">
+                                        <Slider
+                                                :range="{min:0, max: 100}"
+                                                :step="0.1"
+                                                v-model="localPublication.view.title.blur.position_y"
+                                                :tooltips="false"
+                                        />
+                                    </div>
+                                </div>
+                            </Row>
+                            <Row>
+                                <TextLabel :label="`Размытие изображения`"/>
+                                <div>
+                                    <input :disabled="!localPublication.view.title.useImage"
+                                           type="number" min="0" max="10" step="0.1"
+                                           v-model="localPublication.view.title.blur.blur">
+                                    <div style="width: 250px">
+                                        <Slider
+                                                :range="{min:0, max: 10}"
+                                                :step="0.1"
+                                                v-model="localPublication.view.title.blur.blur"
+                                                :tooltips="false"
+                                        />
+                                    </div>
+                                </div>
+                            </Row>
+                            <Row>
+                                <TextLabel :label="`Размер изображения`"/>
+                                <div>
+                                    <input :disabled="!localPublication.view.title.useImage"
+                                           type="number" min="0" max="100" step="0.1"
+                                           v-model="localPublication.view.title.clear.size">
+                                    <div style="width: 250px">
+                                        <Slider
+                                                :range="{min:0, max: 100}"
+                                                :step="0.1"
+                                                v-model="localPublication.view.title.clear.size"
+                                                :tooltips="false"
+                                        />
+                                    </div>
+                                </div>
+                            </Row>
+                            <Row>
+                                <TextLabel :label="`Положение изображения`"/>
+                                <div>
+                                    <input :disabled="!localPublication.view.title.useImage"
+                                           type="number" min="0" max="100" step="0.1"
+                                           v-model="localPublication.view.title.clear.position_y">
+                                    <div style="width: 250px">
+                                        <Slider
+                                                :range="{min:0, max: 100}"
+                                                :step="0.1"
+                                                v-model="localPublication.view.title.clear.position_y"
+                                                :tooltips="false"
+                                        />
+                                    </div>
+                                </div>
+                            </Row>
+                        </template>
+                        <template v-else>
+                            <Row>
+                                <TextLabel :label="`Фоновое зображение`"/>
+                                <input :disabled="localPublication.view.title.useImage" type="color"
+                                       v-model="localPublication.view.title.image">
+                            </Row>
+                        </template>
+                    </div>
                 </Tab>
             </Tabs>
         </template>
@@ -125,20 +198,19 @@
     import {Tabs, Tab} from 'vue3-tabs-component'
     import editor from '@tinymce/tinymce-vue'
 
-
     import {
         Button,
         BorderPane,
         TextField,
         Toggle,
         TextLabel,
-        // Popup,
-        Row
+        Slider
     } from 'saffarid-ui-kit'
     import Eye from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
     import Title from "@/components/commons/publications/Title";
+    import Row from "@/components/commons/Row";
 
     export default {
         name: "EditPublication",
@@ -153,10 +225,10 @@
             TextField,
             TextLabel,
             Toggle,
-            // Popup,
             Row,
             Tab,
-            Tabs
+            Tabs,
+            Slider
         },
         props: {
             publication: {
@@ -173,7 +245,6 @@
                 const file = event.target.files[0];
                 console.log(file.size)
                 const reader = new FileReader()
-                // localPublication.preview.image = URL.createObjectURL(file)
 
                 if (!key.localeCompare('preview')) {
                     reader.onload = ev => {

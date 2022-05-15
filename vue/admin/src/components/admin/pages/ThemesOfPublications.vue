@@ -1,5 +1,5 @@
 <template>
-    <BorderPane class="categories">
+    <BorderPane class="themes-of-publications">
         <template v-slot:top>
             <div class="edit-category">
                 <TextField v-model="localCategory.value"/>
@@ -8,7 +8,7 @@
         </template>
         <template v-slot:center>
             <div v-if="isReady">
-                <div class="category" v-for="(category, index) in categories" :key="index">
+                <div class="theme-of-publications" v-for="(category, index) in categories" :key="index">
                     <TextLabel :label="category.value"/>
                     <Button text="Удалить" @click="removeCategory(category)"/>
                     <Button text="Редактировать" @click="updateCategory(category)"/>
@@ -35,7 +35,7 @@
     } from 'vue'
 
     export default {
-        name: "Categories",
+        name: "ThemesOfPublications",
         components: {
             BorderPane,
             Button,
@@ -51,7 +51,7 @@
             })
 
             const loadCategories = () => {
-                asyncRequest('/themesOfPublication./select', JSON.stringify({}))
+                asyncRequest('/themesOfPublication/select', JSON.stringify({}))
                     .then(data => {
                         categories.length = 0
                         data.forEach((category) => {

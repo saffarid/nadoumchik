@@ -13,7 +13,8 @@
     "core-js": "3.22.0",
     "node-sass": "6.0.0",
     "nouislider": "14.6.3",
-    "saffarid-ui-kit": "0.1.11",
+    "wnumb": "1.2.0",
+    "saffarid-ui-kit": "0.1.12",
     "@vue/reactivity": "3.2.2",
     "sass-loader": "10.2.1",
     "vue": "3.2.2"

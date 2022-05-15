@@ -136,6 +136,22 @@
                     textIsDark: true,
                     image: ''
                 }
+                publication.view = {
+                    title: {
+                        useImage: false,
+                        textColor: '#2b2b2b',
+                        image: '#724242',
+                        blur: {
+                            size: 100,
+                            blur: 10,
+                            position_y: 50
+                        },
+                        clear: {
+                            size: 50,
+                            position_y:50
+                        }
+                    },
+                }
                 editPublicationShow.value = true
             }
 
@@ -155,6 +171,22 @@
                     backgroundColor: publ.preview.backgroundColor,
                     textIsDark: publ.preview.textIsDark,
                     image: publ.preview.image
+                }
+                publication.view = {
+                    title: {
+                        useImage: publ.view.title.useImage,
+                        textColor: publ.view.title.textColor,
+                        image: publ.view.title.image,
+                        blur: {
+                            size: publ.view.title.blur.size,
+                            blur: publ.view.title.blur.blur,
+                            position_y: publ.view.title.blur.position_y
+                        },
+                        clear: {
+                            size: publ.view.title.clear.size,
+                            position_y: publ.view.title.clear.position_y
+                        }
+                    }
                 }
                 editPublicationShow.value = true
             }

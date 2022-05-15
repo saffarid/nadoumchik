@@ -188,6 +188,22 @@ const insert = (data, res) => {
                 backgroundColor: data.preview.backgroundColor,
                 textIsDark: data.preview.textIsDark,
                 image: data.preview.image
+            },
+            view:{
+                title:{
+                    useImage: data.view.title.useImage,
+                    textColor: data.view.title.textColor,
+                    image: data.view.title.image,
+                    blur: {
+                        size:data.view.title.blur.size,
+                        blur:data.view.title.blur.blur,
+                        position_y:data.view.title.blur.position_y
+                    },
+                    clear: {
+                        size:data.view.title.clear.size,
+                        position_y:data.view.title.clear.position_y
+                    }
+                }
             }
         })
         article.save()
@@ -195,7 +211,7 @@ const insert = (data, res) => {
                 resolve(value)
             })
             .catch(err => {
-                reject()
+                reject(err)
             })
     })
         .then(data => {
@@ -206,11 +222,13 @@ const insert = (data, res) => {
                 message: 'Объект добавлен'
             })
         })
-        .catch((data) => {
+        .catch((err) => {
             console.log('Объект не добавлен')
+            console.log(err)
             res.json({
                 responseCode: 400,
-                message: 'Объект не добавлен'
+                message: 'Объект не добавлен',
+                err: err
             })
         })
 
