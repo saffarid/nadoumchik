@@ -32,7 +32,7 @@
     import Header from "@/components/commons/Header";
     import Main from "@/components/admin/pages/Main";
     import Publications from "@/components/admin/pages/publications/Publications";
-    import ThemesOfPublications from "@/components/admin/pages/ThemesOfPublications";
+    import ThemesOfPublications from "@/components/admin/pages/themes/ThemesOfPublications";
 
     // function debug() {    }
     function debug(val) {

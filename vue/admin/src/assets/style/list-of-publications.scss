@@ -1,9 +1,11 @@
 .cab{
   --h:78.6vh;
+  --w: min-content;
 }
 
 .lst{
   --h:85vh;
+  --w:790px;
 }
 
 .item-on-left{
@@ -15,18 +17,19 @@
 }
 
 .gap{
-  row-gap: 5px;
+  row-gap: 2px;
 }
 
 .list-of-publications {
-  row-gap: 5px;
+  row-gap: 0px;
   @import "toolbar";
   @import "response-bar";
 
   .list {
+    padding-top: 2px;
     display: grid;
     max-height: var(--h);
     overflow: auto;
-    width: 790px;
+    width: var(--w);
   }
 }

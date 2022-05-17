@@ -5,7 +5,7 @@
                     class="image-button preview"
                     @click="popupIsShow = true">
                 <eye
-                        :height="31" :width="31"/>
+                        :height="20" :width="20"/>
             </Button>
             <Button
                     class="text-button publish"
@@ -179,6 +179,9 @@
                             </Row>
                         </template>
                     </div>
+                </Tab>
+                <Tab :name="'ПРОЧИЕ АТРИБУТЫ'">
+
                 </Tab>
             </Tabs>
         </template>

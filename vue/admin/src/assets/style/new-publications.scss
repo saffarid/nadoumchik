@@ -17,6 +17,7 @@
         display: grid;
         justify-content: stretch;
         grid-template-columns: repeat(auto-fit, minmax(50px, min-content));
+        column-gap: 5px;
         padding: 5px;
         .preview{
             justify-self: start;

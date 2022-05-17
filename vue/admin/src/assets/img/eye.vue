@@ -1,9 +1,14 @@
 <template>
-    <svg :x="x" :y="y" :height="height" :width="width" viewBox="0 0 32 32">
-        <path d="  M16,7C9.934,7,4.798,10.776,3,16c1.798,5.224,6.934,9,13,9s11.202-3.776,13-9C27.202,10.776,22.066,7,16,7z"
-              fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
-        <circle cx="16" cy="16" fill="none" r="5" stroke-linecap="round"
-                stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+    <svg :x="x" :y="y" :height="height" :width="width" viewBox="0 0 40 40">
+        <g>
+            <rect width="40" height="40" opacity="0"/>
+            <path
+                  d="M35.119,15.836C34.053,13.986,28.186,4.7,18.219,5c-9.217.233-14.55,8.333-16,10.833a1.667,1.667,0,0,0,0,1.667C3.269,19.32,8.886,28.336,18.7,28.336h.417C28.336,28.1,33.686,20,35.119,17.5A1.667,1.667,0,0,0,35.119,15.836ZM19.036,25C11.853,25.17,7.169,19.02,5.7,16.67,7.369,13.986,11.719,8.5,18.386,8.336c7.15-.183,11.85,5.983,13.333,8.333C30,19.353,25.7,24.836,19.036,25Z"
+                  transform="translate(1.331 3.33)"/>
+            <path
+                  d="M14.333,8.5a5.833,5.833,0,1,0,5.833,5.833A5.833,5.833,0,0,0,14.333,8.5Zm0,8.333a2.5,2.5,0,1,1,2.5-2.5A2.5,2.5,0,0,1,14.333,16.833Z"
+                  transform="translate(5.667 5.667)"/>
+        </g>
     </svg>
 </template>
 
@@ -12,7 +17,7 @@
 
     export default {
         name: "eye",
-        mixins:[
+        mixins: [
             Svg
         ]
     }

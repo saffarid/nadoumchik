@@ -2,7 +2,7 @@
   border: var(--action_component) var(--button_border) solid;
   height: auto;
   border-radius: 50%;
-  padding:  7.5px;
+  padding:  var(--button_padding);
   svg {
     fill: var(--action_component_content)
   }
@@ -19,7 +19,7 @@
 
 .text-button{
   border: var(--action_component) var(--button_border) solid;
-  height: var(--button_height);
+  font-size: var(--button-font);
   border-radius: var(--button_radius);
   padding:  var(--button_padding);
   &:hover{

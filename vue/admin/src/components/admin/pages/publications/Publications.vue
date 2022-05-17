@@ -2,16 +2,13 @@
     <div style="height: 100%">
         <BorderPane class="list-of-publications">
             <template v-slot:top>
-                <BorderPane class="tool-bar">
-                    <template v-slot:left>
-                        <TextLabel label="ПУБЛИКАЦИИ"/>
-                    </template>
-                    <template v-slot:right>
-                        <Button class="image-button" @click="newPublication">
-                            <plus height="16" width="16"/>
-                        </Button>
-                    </template>
-                </BorderPane>
+                <div class="tool-bar">
+                    <TextLabel label="ПУБЛИКАЦИИ"/>
+
+                    <Button class="image-button" @click="newPublication">
+                        <plus height="16" width="16"/>
+                    </Button>
+                </div>
             </template>
             <template v-slot:center>
                 <PublicationList
@@ -114,7 +111,7 @@
                         },
                         clear: {
                             size: 50,
-                            position_y:50
+                            position_y: 50
                         }
                     },
                 }
@@ -148,7 +145,7 @@
                         },
                         clear: {
                             size: 50,
-                            position_y:50
+                            position_y: 50
                         }
                     },
                 }
