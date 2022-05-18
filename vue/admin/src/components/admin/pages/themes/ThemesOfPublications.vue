@@ -11,6 +11,9 @@
                 <Button class="image-button" @click="clearLocalTheme">
                     <cancel :height="20" :width="20"/>
                 </Button>
+                <div class="response" v-show="response.localeCompare('') !== 0">
+                    {{response.toUpperCase()}}
+                </div>
             </div>
         </template>
         <template v-slot:center>
@@ -68,12 +71,22 @@
                 value: '',
             })
 
+            const response = ref('')
+
+            const setResponseMessage = (message) => {
+                response.value = message
+                if (message != '') setTimeout(() => {response.value = ''}, 3000)
+            }
+
             const loadThemes = () => {
                 asyncRequest('/themesOfPublication/select', JSON.stringify({}))
                     .then(data => {
                         themes.length = 0
                         data.forEach((category) => {
                             themes.push(category)
+                        })
+                        themes.sort((theme1, theme2) => {
+                            return theme1.value.localeCompare(theme2.value)
                         })
                         isReady.value = true
                     })
@@ -94,21 +107,29 @@
             }
 
             const sendTheme = () => {
-                if (localTheme.value.localeCompare('')) return
+                if (localTheme.value.localeCompare('') === 0) return
                 if (localTheme._id){
                     asyncRequest('/themesOfPublication/update', JSON.stringify(localTheme))
-                        .then(() => {
-                            clearLocalTheme()
-                            loadThemes()
+                        .then((data) => {
+                            if(data.responseCode === 200) {
+                                clearLocalTheme()
+                                loadThemes()
+                            } else {
+                                setResponseMessage(data.message)
+                            }
                         })
                         .catch(err => {
                             console.log(err)
                         })
                 } else {
                     asyncRequest('/themesOfPublication/insert', JSON.stringify(localTheme))
-                        .then(() => {
-                            clearLocalTheme()
-                            loadThemes()
+                        .then((data) => {
+                            if(data.responseCode === 200) {
+                                clearLocalTheme()
+                                loadThemes()
+                            } else {
+                                setResponseMessage(data.message)
+                            }
                         })
                         .catch(err => {
                             console.log(err)
@@ -142,7 +163,8 @@
                 removeTheme,
                 updateTheme,
                 clearLocalTheme,
-                themesList
+                themesList,
+                response
             }
         }
     }
@@ -155,7 +177,7 @@
         align-items: center;
         border-bottom: #888888 1px solid;
         display: grid;
-        grid-template-columns: 300px min-content min-content;
+        grid-template-columns: 300px min-content min-content auto;
         padding: 5px;
         /*width: fit-content;*/
         column-gap: 5px;
@@ -167,12 +189,25 @@
                 outline: 0;
             }
         }
+        .response{
+            display: grid;
+            align-content: center;
+            justify-content: left;
+        }
+    }
+
+    themes-of-publications{
+        .left, .right{
+            width: 0;
+            max-width: 0;
+        }
     }
 
     .theme-of-publications{
         display: grid;
         row-gap: 2px;
         margin-top: 2px;
+
         .edit{
             background-color: #888888;
         }

@@ -4,11 +4,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const themeSchema = new Schema({
-    _id:{
+    _id: {
         type: String,
         required: true
     },
-    value:{
+    value: {
         type: String,
         required: true
     }
@@ -31,7 +31,7 @@ const execute = (url, data, res) => {
         select(data, res)
     } else {
         return {
-            responseCode:400,
+            responseCode: 400,
             message: 'Запрос на несущетвующий ресурс'
         }
     }
@@ -42,29 +42,46 @@ const execute = (url, data, res) => {
  * @param res {Response}
  * */
 const insert = (data, res) => {
-    new Promise((resolve, reject) => {
-        const category = new ThemeModel({
-            _id: uuid(),
-            value: data.value
-        })
-        category.save()
-            .then(value => resolve(value))
-            .catch(err => reject(err))
-    })
-        .then(data => {
-            console.log('Объект успешно добавлен')
-            console.log(data)
-            res.json({
-                responseCode: 200,
-                message: 'Объект добавлен'
-            })
-        })
-        .catch((data) => {
-            console.log('Объект не добавлен')
-            res.json({
-                responseCode: 400,
-                message: 'Объект не добавлен'
-            })
+
+    /*
+    * Перед вставкой новой темы в БД, проверяем не будет ли в БД дубликатов тем
+    * */
+    ThemeModel.findOne({value: data.value})
+        .then(doc => {
+            if (doc !== null) {
+                console.log('Объект дублирует уже существующий')
+                res.json({
+                    responseCode: 400,
+                    message: 'Объект дублирует уже существующий'
+                })
+            } else {
+                new Promise((resolve, reject) => {
+
+                    const category = new ThemeModel({
+                        _id: uuid(),
+                        value: data.value
+                    })
+                    category.save()
+                        .then(value => resolve(value))
+                        .catch(err => reject(err))
+                })
+                    .then(data => {
+                        console.log('Объект успешно добавлен')
+                        console.log(data)
+                        res.json({
+                            responseCode: 200,
+                            message: 'Объект добавлен'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log('Объект не добавлен')
+                        res.json({
+                            responseCode: 400,
+                            message: 'Объект не добавлен',
+                            err: err
+                        })
+                    })
+            }
         })
 }
 
@@ -102,25 +119,40 @@ const remove = (data, res) => {
 const update = (data, res) => {
     console.log('update')
     console.log(data)
-    new Promise((resolve, reject) => {
-        ThemeModel.findByIdAndUpdate(data._id, data)
-            .then(value => resolve(value))
-            .catch(err => reject(err))
-    }).then(value => {
-        console.log('Объект успешно обновлён')
-        console.log(value)
-        res.json({
-            responseCode: 200,
-            message: 'Объект обновлён'
+
+
+    ThemeModel.findOne({value: data.value})
+        .then(doc => {
+            if (doc !== null) {
+                console.log('Объект дублирует уже существующий')
+                res.json({
+                    responseCode: 400,
+                    message: 'Объект дублирует уже существующий'
+                })
+            } else {
+                new Promise((resolve, reject) => {
+                    ThemeModel.findByIdAndUpdate(data._id, data)
+                        .then(value => resolve(value))
+                        .catch(err => reject(err))
+                })
+                    .then(value => {
+                        console.log('Объект успешно обновлён')
+                        console.log(value)
+                        res.json({
+                            responseCode: 200,
+                            message: 'Объект обновлён'
+                        })
+                    })
+                    .catch(err => {
+                        console.log('Объект не обновлён')
+                        console.log(err)
+                        res.json({
+                            responseCode: 400,
+                            message: 'Объект не обновлён'
+                        })
+                    })
+            }
         })
-    }).catch(err => {
-        console.log('Объект не обновлён')
-        console.log(err)
-        res.json({
-            responseCode: 400,
-            message: 'Объект не обновлён'
-        })
-    })
 }
 
 /**
