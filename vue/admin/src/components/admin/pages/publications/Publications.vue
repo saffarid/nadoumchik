@@ -96,12 +96,13 @@
                 preview: {
                     imgOnLeft: true,
                     backgroundColor: '#B7AEAE',
-                    textIsDark: true,
+                    textColor: '#ff5d5d',
                     image: ''
                 },
                 view: {
                     title: {
                         useImage: false,
+                        height: 150,
                         textColor: '#2b2b2b',
                         image: '#724242',
                         blur: {
@@ -130,12 +131,13 @@
                 publication.preview = {
                     imgOnLeft: true,
                     backgroundColor: '#640707',
-                    textIsDark: true,
+                    textColor: '#e77b7b',
                     image: ''
                 }
                 publication.view = {
                     title: {
                         useImage: false,
+                        height: 150,
                         textColor: '#2b2b2b',
                         image: '#724242',
                         blur: {
@@ -166,12 +168,13 @@
                 publication.preview = {
                     imgOnLeft: publ.preview.imgOnLeft,
                     backgroundColor: publ.preview.backgroundColor,
-                    textIsDark: publ.preview.textIsDark,
+                    textColor: publ.preview.textColor,
                     image: publ.preview.image
                 }
                 publication.view = {
                     title: {
                         useImage: publ.view.title.useImage,
+                        height: publ.view.title.height,
                         textColor: publ.view.title.textColor,
                         image: publ.view.title.image,
                         blur: {

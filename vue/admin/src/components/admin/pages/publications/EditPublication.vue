@@ -30,21 +30,15 @@
                             />
                         </Row>
                         <Row>
-                            <TextLabel
-                                    :label="`Цвет текста: ${localPublication.preview.textIsDark?'Темный':'Светлый'}`"/>
-                            <Toggle
-                                    id="textIsDark"
-                                    v-model="localPublication.preview.textIsDark"
-                                    :true-value="true"
-                                    :false-value="false"
-                            />
+                            <TextLabel label="Цвет текста"/>
+                            <input type="color" v-model="localPublication.preview.textColor">
                         </Row>
                         <Row>
-                            <TextLabel :label="`Цвет фона`"/>
+                            <TextLabel label="Цвет фона"/>
                             <input type="color" v-model="localPublication.preview.backgroundColor">
                         </Row>
                         <Row>
-                            <TextLabel :label="`Изображение`"/>
+                            <TextLabel label="Изображение"/>
                             <input type="file" @change="loadImage($event,'preview')">
                         </Row>
                     </div>
@@ -78,11 +72,26 @@
                     </div>
                 </Tab>
                 <Tab :name="'ЗАГОЛОВОК'">
-                    <Title :publication="localPublication" style="min-height: 150px; max-height: min-content"/>
+                    <Title :publication="localPublication" :style="`min-height: ${localPublication.view.header}px; max-height: min-content`"/>
                     <div class="new-publication-item-view">
                         <Row>
                             <TextLabel :label="`Цвет текста`"/>
                             <input type="color" v-model="localPublication.view.title.textColor"/>
+                        </Row>
+                        <Row>
+                            <TextLabel label="Высота заголовка"/>
+                            <div>
+                                <input type="number" min="50" max="300" step="1"
+                                       v-model="localPublication.view.title.height">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:50, max: 300}"
+                                            :step="1"
+                                            v-model="localPublication.view.title.height"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
                         </Row>
                         <Row>
                             <TextLabel

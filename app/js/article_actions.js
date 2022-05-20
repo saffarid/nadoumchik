@@ -84,10 +84,10 @@ const publicationSchema = new Schema({
             required: true
         },
         /**
-         * Флаг цвета текста
+         * Цвет текста
          * */
-        textIsDark: {
-            type: Boolean,
+        textColor: {
+            type: String,
             required: true
         },
         /**
@@ -110,6 +110,10 @@ const publicationSchema = new Schema({
             },
             textColor:{
                 type: String,
+                required: true
+            },
+            height:{
+                type:Number,
                 required: true
             },
             image: {
@@ -186,12 +190,13 @@ const insert = (data, res) => {
             preview: {
                 imgOnLeft: data.preview.imgOnLeft,
                 backgroundColor: data.preview.backgroundColor,
-                textIsDark: data.preview.textIsDark,
+                textColor: data.preview.textColor,
                 image: data.preview.image
             },
             view:{
                 title:{
                     useImage: data.view.title.useImage,
+                    height: data.view.title.height,
                     textColor: data.view.title.textColor,
                     image: data.view.title.image,
                     blur: {

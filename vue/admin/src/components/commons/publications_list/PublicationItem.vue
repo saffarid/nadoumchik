@@ -7,16 +7,10 @@
             <ArticleLogo v-if="!publication.preview.image" :height="140" :width="140"/>
             <img v-else :src="publication.preview.image" :height="140" :width="140"/>
         </div>
-        <div
-                :class="{
-            // 'text-right':publication.preview.imgOnLeft, 'text-left':!publication.preview.imgOnLeft,
-             'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark
-        }"
-                class="text">
-            <TextLabel :label="publication.content.title.toUpperCase()"/>
+        <div class="text">
+            <TextLabel :label="publication.content.title.toUpperCase()" :style="`color: ${publication.preview.textColor}`"/>
         </div>
         <div
-                :class="{'text-is-dark':publication.preview.textIsDark, 'text-is-light':!publication.preview.textIsDark}"
                 class="buttons"
                 v-if="canEdit">
             <Button class="image-button" @click="$emit('remove')">

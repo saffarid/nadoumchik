@@ -32,6 +32,7 @@
                 '--blur': localPublication.view.title.blur.blur + 'px',
                 '--size': localPublication.view.title.clear.size + '%',
                 '--position-y': localPublication.view.title.clear.position_y + '%',
+                '--height': localPublication.view.title.height + 'px',
             })
 
             const refreshContentView = () => {
@@ -41,6 +42,7 @@
                 styleTitleVar['--blur'] = localPublication.view.title.blur.blur + 'px'
                 styleTitleVar['--size'] = localPublication.view.title.clear.size + '%'
                 styleTitleVar['--position-y'] = localPublication.view.title.clear.position_y + '%'
+                styleTitleVar['--height'] = localPublication.view.title.height + 'px'
 
                 if (localPublication.view.title.image !== undefined && localPublication.view.title.useImage) {
                     styleTitleVar['--img'] = `url(${localPublication.view.title.image})`
@@ -64,7 +66,7 @@
 
     .title {
         display: grid;
-        min-height: 150px;
+        min-height: var(--height);
         max-height: min-content;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
