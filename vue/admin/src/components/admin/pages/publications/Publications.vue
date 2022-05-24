@@ -88,7 +88,7 @@
              * */
             const publication = reactive({
                 _id: undefined,
-                dateStamp: undefined,
+                dateStamp: new Date(),
                 content: {
                     title: 'Your title is here',
                     content: 'Your publication`s content is here'
@@ -103,8 +103,13 @@
                     title: {
                         useImage: false,
                         height: 150,
-                        textColor: '#2b2b2b',
                         image: '#724242',
+                        text:{
+                            textColor: '#2b2b2b',
+                            fontFamily: 'YST',
+                            fontWeight: 400,
+                            fontStyle: 'normal'
+                        },
                         blur: {
                             size: 100,
                             blur: 10,
@@ -123,7 +128,7 @@
              * */
             const newPublication = () => {
                 publication._id = undefined
-                publication.dateStamp = undefined
+                publication.dateStamp = new Date()
                 publication.content = {
                     title: 'Your title is here',
                     content: 'Your publication`s content is here'
@@ -138,8 +143,13 @@
                     title: {
                         useImage: false,
                         height: 150,
-                        textColor: '#2b2b2b',
                         image: '#724242',
+                        text:{
+                            textColor: '#2b2b2b',
+                            fontFamily: 'YST',
+                            fontWeight: 400,
+                            fontStyle: 'normal'
+                        },
                         blur: {
                             size: 100,
                             blur: 10,
@@ -175,8 +185,13 @@
                     title: {
                         useImage: publ.view.title.useImage,
                         height: publ.view.title.height,
-                        textColor: publ.view.title.textColor,
                         image: publ.view.title.image,
+                        text:{
+                            textColor: publ.view.title.text.textColor,
+                            fontFamily: publ.view.title.text.fontFamily,
+                            fontWeight: publ.view.title.text.fontWeight,
+                            fontStyle: publ.view.title.text.fontStyle
+                        },
                         blur: {
                             size: publ.view.title.blur.size,
                             blur: publ.view.title.blur.blur,

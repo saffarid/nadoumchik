@@ -1,14 +1,24 @@
 <template>
     <div @click="$emit('click', publication)"
+         @mouseenter="isAnimFrom = true"
+         @mouseleave="isAnimFrom = false"
          :class="{'image-left':(publication.preview.imgOnLeft || canEdit), 'image-right':(!publication.preview.imgOnLeft && !canEdit)}"
          class="publication-item"
          :style="`background-color:${publication.preview.backgroundColor}`">
-        <div class="image">
+        <div
+                :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null && !canEdit, 'mouse-leave':!isAnimFrom && isAnimFrom !== null && !canEdit}"
+                class="image">
             <ArticleLogo v-if="!publication.preview.image" :height="140" :width="140"/>
             <img v-else :src="publication.preview.image" :height="140" :width="140"/>
         </div>
-        <div class="text">
-            <TextLabel :label="publication.content.title.toUpperCase()" :style="`color: ${publication.preview.textColor}`"/>
+        <div
+                class="text">
+            <TextLabel
+                    :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null && !canEdit, 'mouse-leave':!isAnimFrom && isAnimFrom !== null && !canEdit}"
+                    :label="publication.content.title.toUpperCase()" :style="`color: ${publication.preview.textColor}`"
+                    style="position: relative; top: 10px"
+            />
+            <TextLabel :label="`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`" :style="`color: ${publication.preview.textColor}`"/>
         </div>
         <div
                 class="buttons"
@@ -24,6 +34,9 @@
 </template>
 
 <script>
+    import {
+        ref
+    } from 'vue'
     import {
         Button,
         TextLabel
@@ -55,8 +68,15 @@
                 default: false
             }
         },
-        setup() {
-            return {}
+        setup(props) {
+            const isAnimFrom = ref(null)
+
+            let date = new Date(props.publication.dateStamp);
+
+            return {
+                date,
+                isAnimFrom
+            }
         }
     }
 </script>

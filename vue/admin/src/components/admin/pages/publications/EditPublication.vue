@@ -72,11 +72,43 @@
                     </div>
                 </Tab>
                 <Tab :name="'ЗАГОЛОВОК'">
-                    <Title :publication="localPublication" :style="`min-height: ${localPublication.view.header}px; max-height: min-content`"/>
+                    <Title :publication="localPublication"/>
                     <div class="new-publication-item-view">
                         <Row>
                             <TextLabel :label="`Цвет текста`"/>
-                            <input type="color" v-model="localPublication.view.title.textColor"/>
+                            <input type="color" v-model="localPublication.view.title.text.textColor"/>
+                        </Row>
+                        <Row>
+                            <TextLabel label="Шрифт"/>
+                            <ComboBox
+                                    :options="font"
+                                    :modelValue="localPublication.view.title.text.fontFamily"
+                                    @update:modelValue="setFont"
+                            />
+                        </Row>
+                        <Row>
+                            <TextLabel label="Насыщеность шрифта"/>
+                            <div>
+                                <input type="number" min="100" max="900" step="100"
+                                       v-model="localPublication.view.title.text.fontWeight">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:100, max: 900}"
+                                            :step="100"
+                                            v-model="localPublication.view.title.text.fontWeight"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+                        <Row>
+                            <TextLabel label="Наклонный текст"/>
+                            <Toggle
+                                    id="fontStyle"
+                                    v-model="localPublication.view.title.text.fontStyle"
+                                    :true-value="'oblique'"
+                                    :false-value="'normal'"
+                            />
                         </Row>
                         <Row>
                             <TextLabel label="Высота заголовка"/>
@@ -205,12 +237,15 @@
 <script>
     import {
         ref,
-        reactive
+        reactive,
+        computed
     } from 'vue'
     import {Tabs, Tab} from 'vue3-tabs-component'
     import editor from '@tinymce/tinymce-vue'
+    import {fonts} from "@/js/fonts";
 
     import {
+        ComboBox,
         Button,
         BorderPane,
         TextField,
@@ -227,6 +262,7 @@
     export default {
         name: "EditPublication",
         components: {
+            ComboBox,
             Title,
             PublicationView,
             PublicationItem,
@@ -250,12 +286,21 @@
         },
         setup(props) {
             const popupIsShow = ref(false)
+            const font = fonts
 
             const localPublication = reactive(props.publication)
 
+            const setFont = (value) => {
+                console.log(value)
+                localPublication.view.title.text.fontFamily = value
+            }
+
+            const fontIndex = computed(() => {
+                return font[localPublication.view.title.text.fontFamily]
+            })
+
             const loadImage = (event, key) => {
                 const file = event.target.files[0];
-                console.log(file.size)
                 const reader = new FileReader()
 
                 if (!key.localeCompare('preview')) {
@@ -272,8 +317,11 @@
             }
 
             return {
+                font,
+                fontIndex,
                 localPublication,
                 popupIsShow,
+                setFont,
                 loadImage
             }
         }

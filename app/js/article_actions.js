@@ -103,45 +103,59 @@ const publicationSchema = new Schema({
      * */
     view: {
         title: {
-            useImage:{
-              type: Boolean,
-              required:true,
-              default: false
+            useImage: {
+                type: Boolean,
+                required: true,
+                default: false
             },
-            textColor:{
-                type: String,
-                required: true
-            },
-            height:{
-                type:Number,
+            height: {
+                type: Number,
                 required: true
             },
             image: {
                 type: String,
                 required: false
             },
+            text: {
+                textColor: {
+                    type: String,
+                    required: true
+                },
+                fontFamily: {
+                    type: String,
+                    required: true
+                },
+                fontWeight: {
+                    type: Number,
+                    required: true
+                },
+                fontStyle: {
+                    type: String,
+                    required: true
+                }
+            },
             blur: {
-                size:{
-                    type:Number,
-                    required:false
+                size: {
+                    type: Number,
+                    required: false
                 },
-                blur:{
-                    type:Number,
-                    required:false
+                blur: {
+                    type: Number,
+                    required: false
                 },
-                position_y:{
-                    type:Number,
-                    required:false
+                position_y: {
+                    type: Number,
+                    required: false
                 }
             },
             clear: {
-                size:{
-                    type:Number,
-                    required:false
+                size: {
+                    type: Number,
+                    required: false
                 },
-                position_y:{
-                    type:Number,
-                    required:false
+                position_y: {
+                    type: Number,
+                    required: false
                 }
             }
         },
@@ -182,34 +196,45 @@ const insert = (data, res) => {
         const article = new PublicationModel({
             _id: uuid(),
             dateStamp: new Date(),
-            content: {
+            content: data.content,
+                // {
                 // type: data.content.type,
-                title: data.content.title,
-                content: data.content.content,
-            },
-            preview: {
-                imgOnLeft: data.preview.imgOnLeft,
-                backgroundColor: data.preview.backgroundColor,
-                textColor: data.preview.textColor,
-                image: data.preview.image
-            },
-            view:{
-                title:{
-                    useImage: data.view.title.useImage,
-                    height: data.view.title.height,
-                    textColor: data.view.title.textColor,
-                    image: data.view.title.image,
-                    blur: {
-                        size:data.view.title.blur.size,
-                        blur:data.view.title.blur.blur,
-                        position_y:data.view.title.blur.position_y
-                    },
-                    clear: {
-                        size:data.view.title.clear.size,
-                        position_y:data.view.title.clear.position_y
-                    }
-                }
-            }
+                // title: data.content.title,
+                // content: data.content.content,
+            // },
+            preview: data.preview,
+                // {
+                // imgOnLeft: data.preview.imgOnLeft,
+                // backgroundColor: data.preview.backgroundColor,
+                // textColor: data.preview.textColor,
+                // image: data.preview.image
+            // },
+            view: data.view,
+                // {
+                // title: {
+                //     useImage: data.view.title.useImage,
+                //     height: data.view.title.height,
+                //     image: data.view.title.image,
+                //     text: data.view.title.text,
+                    // text: {
+                    //     textColor: data.view.title.text.textColor,
+                    //     fontFamily: data.view.title.text.fontFamily,
+                    //     fontWeight: data.view.title.text.fontWeight,
+                    //     fontStyle: data.view.title.text.fontStyle
+                    // },
+                    // blur: data.view.title.blur,
+                    // blur: {
+                    //     size: data.view.title.blur.size,
+                    //     blur: data.view.title.blur.blur,
+                    //     position_y: data.view.title.blur.position_y
+                    // },
+                    // clear: data.view.title.clear,
+                    // clear: {
+                    //     size: data.view.title.clear.size,
+                    //     position_y: data.view.title.clear.position_y
+                    // }
+                // }
+            // }
         })
         article.save()
             .then(value => {

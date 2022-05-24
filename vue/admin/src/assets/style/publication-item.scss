@@ -1,79 +1,101 @@
-.image-left{
-    grid-template-areas: "image text buttons";
-    grid-template-columns: 140px auto min-content;
+.image-left {
+  grid-template-areas: "image text buttons";
+  grid-template-columns: 140px auto min-content;
 }
 
-.image-right{
-    grid-template-areas: "buttons text image";
-    grid-template-columns: min-content auto 140px;
+.image-right {
+  grid-template-areas: "buttons text image";
+  grid-template-columns: min-content auto 140px;
 }
 
-.publication-item{
+@keyframes transform-scale-to {
+  from {
+    transform: scale(1.0)
+  }
+  to {
+    transform: scale(1.075)
+  }
+}
+
+@keyframes transform-scale-from {
+  from {
+    transform: scale(1.075)
+  }
+  to {
+    transform: scale(1.0)
+  }
+}
+
+.mouse-leave {
+  animation: transform-scale-from 0.5s;
+  transform: scale(1.0);
+}
+
+.mouse-enter {
+  animation: transform-scale-to 0.5s;
+  transform: scale(1.075);
+}
+
+.publication-item {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  align-content: center;
+  align-items: center;
+  height: 140px;
+  width: 650px;
+
+  .image {
     display: grid;
-    padding: 0;
-    margin: 0;
-    align-content: center;
-    align-items: center;
+    grid-area: image;
+    width: 140px;
     height: 140px;
-    width: 650px;
+    align-content: center;
+    justify-content: center;
 
-    .image{
-        display: grid;
-        grid-area: image;
-        width: 140px;
-        height: 140px;
-        align-content: center;
-        justify-content: center;
+  }
+
+  .text {
+    grid-area: text;
+    display: grid;
+    padding: 15px;
+    align-self: stretch;
+    align-items: end;
+    justify-content: stretch;
+    justify-items: stretch;
+    justify-self: stretch;
+
+    label {
+      color: var(--textColor);
+      text-align: center;
     }
+  }
 
-    .text{
-        grid-area: text;
-        display: grid;
-        padding: 15px;
-        justify-content: stretch;
-        justify-items: stretch;
-        justify-self: stretch;
+  .buttons {
+    display: grid;
+    grid-area: buttons;
+    opacity: 0;
+    padding: 5px;
+    align-items: center;
+    justify-items: center;
+    row-gap: 5px;
 
-        label{
-            color: var(--textColor);
-            text-align: center;
+    .image-button {
+      //svg {
+      //  fill: var(--textColor);
+      //}
+
+      &:hover {
+        svg {
+          fill: white;
         }
+      }
     }
+  }
 
-    //.text-left{
-    //    justify-content: right;
-    //    justify-items: right;
-    //    justify-self: right;
-    //}
-    //
-    //.text-right{
-    //    justify-content: left;
-    //    justify-items: left;
-    //    justify-self: left;
-    //}
-
-    .buttons{
-        display: grid;
-        grid-area: buttons;
-        opacity: 0;
-        padding: 5px;
-        align-items: center;
-        justify-items: center;
-        row-gap: 5px;
-        .image-button {
-            svg {
-                fill: var(--textColor);
-            }
-            &:hover {
-                svg {
-                    fill: white;
-                }
-            }
-        }
+  &:hover {
+    .buttons {
+      opacity: 1;
     }
-    &:hover{
-        .buttons{
-            opacity: 1;
-        }
-    }
+  }
 }

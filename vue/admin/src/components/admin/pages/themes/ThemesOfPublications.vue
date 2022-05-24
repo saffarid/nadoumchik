@@ -11,7 +11,7 @@
                 <Button class="image-button" @click="clearLocalTheme">
                     <cancel :height="20" :width="20"/>
                 </Button>
-                <div class="response" v-show="response.localeCompare('') !== 0">
+                <div class="response">
                     {{response.toUpperCase()}}
                 </div>
             </div>
@@ -172,44 +172,51 @@
 
 <style lang="scss" scoped>
 
-    .edit-category{
-        align-content: center;
-        align-items: center;
-        border-bottom: #888888 1px solid;
-        display: grid;
-        grid-template-columns: 300px min-content min-content auto;
-        padding: 5px;
-        /*width: fit-content;*/
-        column-gap: 5px;
-        input{
-            height:100%;
-            border: 0;
-            border-bottom: #888888 1px solid;
-            &:focus-visible{
-                outline: 0;
+    .themes-of-publications{
+        .top {
+            .edit-category {
+                align-content: center;
+                align-items: center;
+                border-bottom: #888888 1px solid;
+                display: grid;
+                grid-template-columns: 300px min-content min-content auto;
+                padding: 5px;
+                /*width: fit-content;*/
+                column-gap: 5px;
+
+                input {
+                    height: 100%;
+                    border: 0;
+                    border-bottom: #888888 1px solid;
+
+                    &:focus-visible {
+                        outline: 0;
+                    }
+                }
+
+                .response {
+                    display: grid;
+                    align-content: center;
+                    justify-content: left;
+                }
             }
         }
-        .response{
-            display: grid;
-            align-content: center;
-            justify-content: left;
-        }
-    }
 
-    themes-of-publications{
+        .center {
+            .theme-of-publications {
+                display: grid;
+                row-gap: 2px;
+                margin-top: 2px;
+
+                .edit {
+                    background-color: #888888;
+                }
+            }
+        }
+
         .left, .right{
             width: 0;
             max-width: 0;
-        }
-    }
-
-    .theme-of-publications{
-        display: grid;
-        row-gap: 2px;
-        margin-top: 2px;
-
-        .edit{
-            background-color: #888888;
         }
     }
 

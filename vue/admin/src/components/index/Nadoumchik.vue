@@ -5,11 +5,20 @@
                 <Header/>
             </template>
             <template v-slot:center>
-                <div class="list-of-publications" style="display:grid; justify-self: center; justify-items: center; height: 100%">
-                    <PublicationList
-                            class="lst"
-                            :figure="true"
-                            @read="showPublication"/>
+                <div class="list-with-ads">
+                    <div class="ads">
+                        <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300" width="200"/>
+                    </div>
+                    <div class="list-of-publications"
+                         style="display:grid; justify-self: center; justify-items: center; height: 100%">
+                        <PublicationList
+                                class="lst"
+                                :figure="true"
+                                @read="showPublication"/>
+                    </div>
+                    <div class="ads">
+                        <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300" width="200"/>
+                    </div>
                 </div>
             </template>
         </BorderPane>
@@ -90,3 +99,22 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .list-with-ads{
+        display: grid;
+        grid-template-columns: repeat(3, min-content);
+        justify-self: center;
+        justify-content: center;
+        max-height: 85vh;
+        overflow-y: auto;
+        .list-of-publications{
+            .lst {
+                .list {
+                    overflow-y: hidden;
+                    max-height: max-content;
+                }
+            }
+        }
+    }
+</style>
