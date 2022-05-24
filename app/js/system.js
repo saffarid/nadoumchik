@@ -5,6 +5,13 @@ const Schema = mongoose.Schema
 
 const systemSchema = new Schema({
     /**
+     * uuid статьи
+     * */
+    _id: {
+        type: String,
+        required: true
+    },
+    /**
      * Рекламный блок
      * */
     ads: {
@@ -24,29 +31,24 @@ const SystemModel = mongoose.model("System", systemSchema)
  * @param data {json|Object}
  * @param res {Response}
  * */
-const execute = (url, data, res) => {
-    if (url.includes(api.ACTS.insert))
-    {
-        insert(data, res)
+const execute = (url, data) => {
+    if (url.includes(api.ACTS.insert)) {
+        return insert(data)
     }
-    else if (url.includes(api.ACTS.remove))
-    {
-        remove(data, res)
+    else if (url.includes(api.ACTS.remove)) {
+        return remove(data)
     }
-    else if (url.includes(api.ACTS.update))
-    {
-        update(data, res)
+    else if (url.includes(api.ACTS.update)) {
+        return update(data)
     }
-    else if (url.includes(api.ACTS.select))
-    {
-        select(data, res)
+    else if (url.includes(api.ACTS.select)) {
+        return select(data)
     }
-    else
-    {
-        res.json({
-            responseCode: 400,
-            message: 'Запрос на несущетвующий ресурс'
-        })
+    else {
+        // res.json({
+        //     responseCode: 400,
+        //     message: 'Запрос на несущетвующий ресурс'
+        // })
     }
 }
 
@@ -54,89 +56,42 @@ const execute = (url, data, res) => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const insert = (data, res) => {
+const insert = (data) => {
     console.log('insert')
     console.log(data)
 
     SystemModel.find()
-        .then(data => {
-            if (data !== null){
-                update(data, res)
-            }
+        .then(readData => {
+            // if (data !== null) {
+            //     return update(data)
+            // }
 
-            new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 const system = new SystemModel({
+                    _id: uuid(),
                     ads: data.ads,
                 })
                 system.save()
                     .then(value => resolve(value))
                     .catch(err => reject(err))
             })
-                .then(data => {
-                    console.log('Объект успешно добавлен')
-                    console.log(data)
-                    res.json({
-                        responseCode: 200,
-                        message: 'Объект добавлен'
-                    })
-                })
-                .catch(err => {
-                    console.log('Объект не добавлен')
-                    res.json({
-                        responseCode: 400,
-                        message: 'Объект не добавлен',
-                        err: err
-                    })
-                })
         })
         .catch(err => {
             console.log(err)
         })
-
-    new Promise((resolve, reject) => {
-
-    })
-        .then(data => {
-            console.log('Объект успешно добавлен')
-            console.log(data)
-            res.json({
-                responseCode: 200,
-                message: 'Объект добавлен'
-            })
-        })
-        .catch((err) => {
-            console.log('Объект не добавлен')
-            console.log(err)
-            res.json({
-                responseCode: 400,
-                message: 'Объект не добавлен',
-                err: err
-            })
-        })
 }
 
 /**
  * @param data {json|Object}
  * @param res {Response}
  * */
-const remove = (data, res) => {
+const remove = (data) => {
     console.log('remove')
     console.log(data)
-    new Promise((resolve, reject) => {
-    })
-        .then(data => {
-        console.log('Объект успешно обновлён')
-        console.log(data)
-        res.json({
-            responseCode: 200,
-            message: 'Объект удалён'
-        })
-    })
-        .catch(data => {
-        console.log('Объект не обновлён')
-        res.json({
+    return new Promise((resolve, reject) => {
+        reject({
             responseCode: 400,
-            message: 'Объект не обновлён'
+            message: 'Функция не поддерживается'
         })
     })
 }
@@ -145,50 +100,26 @@ const remove = (data, res) => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const update = (data, res) => {
+const update = (data) => {
     console.log('update')
     console.log(data)
-    new Promise((resolve, reject) => {
-        SystemModel.updateOne({}, data)
+    return new Promise((resolve, reject) => {
+        SystemModel.findByIdAndUpdate(data._id, data)
             .then(data => resolve(data))
             .catch(err => reject(err))
     })
-        .then(value => {
-        console.log('Объект успешно обновлён')
-        console.log(value)
-        res.json({
-            responseCode: 200,
-            message: 'Объект обновлён'
-        })
-    })
-        .catch(err => {
-        console.log('Объект не обновлён')
-        console.log(err)
-        res.json({
-            responseCode: 400,
-            message: 'Объект не обновлён'
-        })
-    })
 }
 
 /**
  * @param data {json|Object}
  * @param res {Response}
  * */
-const select = (data, res) => {
+const select = (data) => {
     console.log('select')
-    new Promise((resolve, reject) => {
-    })
-        .then(data => {
-        res.json(data)
-    })
-        .catch(data => {
-        console.log('Выборка не удалась')
-        res.json({
-            responseCode: 400,
-            message: 'Выборка не удалась',
-            err: data
-        })
+    return new Promise((resolve, reject) => {
+        SystemModel.findOne({})
+            .then(data => resolve(data))
+            .catch(err => reject(err))
     })
 }
 

@@ -20,20 +20,24 @@ const ThemeModel = mongoose.model("themesOfPublication", themeSchema)
  * @param data {json|Object}
  * @param res {Response}
  * */
-const execute = (url, data, res) => {
+const execute = (url, data) => {
     if (url.includes(api.ACTS.insert)) {
-        insert(data, res)
-    } else if (url.includes(api.ACTS.remove)) {
-        remove(data, res)
-    } else if (url.includes(api.ACTS.update)) {
-        update(data, res)
-    } else if (url.includes(api.ACTS.select)) {
-        select(data, res)
-    } else {
-        return {
-            responseCode: 400,
-            message: 'Запрос на несущетвующий ресурс'
-        }
+        return insert(data)
+    }
+    else if (url.includes(api.ACTS.remove)) {
+        return remove(data)
+    }
+    else if (url.includes(api.ACTS.update)) {
+        return update(data)
+    }
+    else if (url.includes(api.ACTS.select)) {
+        return select(data)
+    }
+    else {
+        // return {
+        //     responseCode: 400,
+        //     message: 'Запрос на несущетвующий ресурс'
+        // }
     }
 }
 
@@ -41,22 +45,21 @@ const execute = (url, data, res) => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const insert = (data, res) => {
-
+const insert = (data) => {
     /*
     * Перед вставкой новой темы в БД, проверяем не будет ли в БД дубликатов тем
     * */
-    ThemeModel.findOne({value: data.value})
-        .then(doc => {
-            if (doc !== null) {
-                console.log('Объект дублирует уже существующий')
-                res.json({
-                    responseCode: 400,
-                    message: 'Объект дублирует уже существующий'
-                })
-            } else {
-                new Promise((resolve, reject) => {
-
+    return new Promise((resolve, reject) => {
+        ThemeModel.findOne({value: data.value})
+            .then(doc => {
+                if (doc !== null) {
+                    console.log('Объект дублирует уже существующий')
+                    reject({
+                        responseCode: 400,
+                        message: 'Объект дублирует уже существующий'
+                    })
+                }
+                else {
                     const category = new ThemeModel({
                         _id: uuid(),
                         value: data.value
@@ -64,51 +67,8 @@ const insert = (data, res) => {
                     category.save()
                         .then(value => resolve(value))
                         .catch(err => reject(err))
-                })
-                    .then(data => {
-                        console.log('Объект успешно добавлен')
-                        console.log(data)
-                        res.json({
-                            responseCode: 200,
-                            message: 'Объект добавлен'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log('Объект не добавлен')
-                        res.json({
-                            responseCode: 400,
-                            message: 'Объект не добавлен',
-                            err: err
-                        })
-                    })
-            }
-        })
-}
-
-/**
- * @param data {json|Object}
- * @param res {Response}
- * */
-const remove = (data, res) => {
-    console.log('remove')
-    console.log(data)
-    new Promise((resolve, reject) => {
-        ThemeModel.findByIdAndDelete(data._id)
-            .then(value => resolve(value))
-            .catch(err => reject(err))
-    }).then(data => {
-        console.log('Объект успешно обновлён')
-        console.log(data)
-        res.json({
-            responseCode: 200,
-            message: 'Объект удалён'
-        })
-    }).catch(data => {
-        console.log('Объект не обновлён')
-        res.json({
-            responseCode: 400,
-            message: 'Объект не обновлён'
-        })
+                }
+            })
     })
 }
 
@@ -116,66 +76,51 @@ const remove = (data, res) => {
  * @param data {json|Object}
  * @param res {Response}
  * */
-const update = (data, res) => {
-    console.log('update')
+const remove = (data) => {
+    console.log('remove')
     console.log(data)
-
-
-    ThemeModel.findOne({value: data.value})
-        .then(doc => {
-            if (doc !== null) {
-                console.log('Объект дублирует уже существующий')
-                res.json({
-                    responseCode: 400,
-                    message: 'Объект дублирует уже существующий'
-                })
-            } else {
-                new Promise((resolve, reject) => {
-                    ThemeModel.findByIdAndUpdate(data._id, data)
-                        .then(value => resolve(value))
-                        .catch(err => reject(err))
-                })
-                    .then(value => {
-                        console.log('Объект успешно обновлён')
-                        console.log(value)
-                        res.json({
-                            responseCode: 200,
-                            message: 'Объект обновлён'
-                        })
-                    })
-                    .catch(err => {
-                        console.log('Объект не обновлён')
-                        console.log(err)
-                        res.json({
-                            responseCode: 400,
-                            message: 'Объект не обновлён'
-                        })
-                    })
-            }
-        })
+    return new Promise((resolve, reject) => {
+        ThemeModel.findByIdAndDelete(data._id)
+            .then(value => resolve(value))
+            .catch(err => reject(err))
+    })
 }
 
 /**
  * @param data {json|Object}
  * @param res {Response}
  * */
-const select = (data, res) => {
-    new Promise((resolve, reject) => {
+const update = (data) => {
+    console.log('update')
+    console.log(data)
+    return new Promise((resolve, reject) => {
+        ThemeModel.findOne({value: data.value})
+            .then(doc => {
+                if (doc !== null) {
+                    console.log('Объект дублирует уже существующий')
+                    reject({
+                        responseCode: 400,
+                        message: 'Объект дублирует уже существующий'
+                    })
+                }
+                else {
+                    ThemeModel.findByIdAndUpdate(data._id, data)
+                        .then(value => resolve(value))
+                        .catch(err => reject(err))
+                }
+            })
+    })
+}
+
+/**
+ * @param data {json|Object}
+ * */
+const select = (data) => {
+    return new Promise((resolve, reject) => {
         ThemeModel.find({})
             .then(data => resolve(data))
             .catch(err => reject(err))
     })
-        .then(data => {
-            res.json(data)
-        })
-        .catch(err => {
-            console.log('Выборка не удалась')
-            res.json({
-                responseCode: 400,
-                message: 'Выборка не удалась',
-                err: err
-            })
-        })
 }
 
 module.exports = {

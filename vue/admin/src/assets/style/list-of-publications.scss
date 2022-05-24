@@ -1,10 +1,10 @@
 .cab{
-  --h:78.6vh;
+  //--h:78.6vh;
   --w: min-content;
 }
 
 .lst{
-  --h:85vh;
+  //--h:85vh;
   --w:790px;
 }
 
@@ -28,8 +28,8 @@
   .list {
     padding: 5px;
     display: grid;
-    max-height: var(--h);
-    overflow: auto;
+    //max-height: var(--h);
+    //overflow: auto;
     width: var(--w);
   }
 }

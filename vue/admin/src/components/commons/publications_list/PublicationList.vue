@@ -1,5 +1,5 @@
 <template>
-    <div>
+<!--    <div>-->
         <div
                 class="list"
                 :class="{'gap':hasRowGap}"
@@ -22,7 +22,7 @@
         <div v-else>
             Загрузка...
         </div>
-    </div>
+<!--    </div>-->
 </template>
 
 <script>

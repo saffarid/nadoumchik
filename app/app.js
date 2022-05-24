@@ -1,4 +1,4 @@
-// const api = require('api/api_desc')
+const api = require('./api/api_desc')
 const fs = require("fs")
 const path = require('path')
 const express = require("express")
@@ -6,6 +6,8 @@ const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
 const article = require('./js/article_actions')
+const database = require('./js/database/database')
+const system = require('./js/system')
 const themesOfPublications = require('./js/themes_of_publication_actions')
 const typeOfUser = require('./js/type_of_user_actions')
 const user = require('./js/user_actions')
@@ -25,6 +27,8 @@ const urlAdmin = path.join(path.resolve(''), '..\\www\\admin.html')
 * Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
 * */
 mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, err => {
+    //Нужна инициализация БД
+    database.init()
     if (err) return console.error(err)
     app.listen(APP_PORT, APP_IP, () => {
         console.log(`Wait connection to ${APP_IP}:${APP_PORT}`)
@@ -38,7 +42,8 @@ app
             if (err) {
                 res.writeHead(400, {'Content-Type': 'text/plain'});
                 res.write('index.html not found');
-            } else {
+            }
+            else {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 res.write(data);
             }
@@ -50,7 +55,8 @@ app
             if (err) {
                 res.writeHead(400, {'Content-Type': 'text/plain'});
                 res.write('index.html not found');
-            } else {
+            }
+            else {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 res.write(data);
             }
@@ -59,11 +65,78 @@ app
     })
     .post(/\/article(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        article.execute(req.url, req.body, res)
+        article.execute(req.url, req.body)
+            .then(data => {
+                console.log('Операция успешно выполнена')
+                if (req.url.includes(api.ACTS.select)) {
+                    res.json(data)
+                }
+                else {
+                    res.json({
+                        responseCode: 200,
+                        message: 'Операция успешно выполнена'
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log('Операция не удалась')
+                console.error(err)
+                res.json({
+                    responseCode: 400,
+                    message: 'Операция не удалась',
+                    err: err
+                })
+            })
+    })
+    .post(/\/system(\/.+)?/, jsonParser, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        system.execute(req.url, req.body)
+            .then(data => {
+                console.log('Операция успешно выполнена')
+                if (req.url.includes(api.ACTS.select)) {
+                    res.json(data)
+                }
+                else {
+                    res.json({
+                        responseCode: 200,
+                        message: 'Операция успешно выполнена'
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log('Операция не удалась')
+                console.error(err)
+                res.json({
+                    responseCode: 400,
+                    message: 'Операция не удалась',
+                    err: err
+                })
+            })
     })
     .post(/\/themesOfPublication(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        themesOfPublications.execute(req.url, req.body, res)
+        themesOfPublications.execute(req.url, req.body)
+            .then(data => {
+                console.log('Операция успешно выполнена')
+                if (req.url.includes(api.ACTS.select)) {
+                    res.json(data)
+                }
+                else {
+                    res.json({
+                        responseCode: 200,
+                        message: 'Операция успешно выполнена'
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log('Операция не удалась')
+                console.error(err)
+                res.json({
+                    responseCode: 400,
+                    message: 'Операция не удалась',
+                    err: err
+                })
+            })
     })
     .post(/\/typeOfUser(\/.+)?/, jsonParser, (req, res) => {
         if (!req.body) res.sendStatus(400)

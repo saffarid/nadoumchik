@@ -18,6 +18,7 @@
                         @edit="updatePublication"
                         @remove="removePublication"
                         ref="publicationsList"
+                        style="max-height: 76.8vh; overflow-y: auto"
                 />
             </template>
             <template v-slot:bottom>

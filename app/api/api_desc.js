@@ -29,7 +29,7 @@ module.exports = {
         /**
          * Наименование БД
          * */
-        name: 'nadoumchik_db',
+        name: 'nadoumchik',
         /**
          * Коллеции БД
          * */
@@ -60,17 +60,27 @@ module.exports = {
      * Модель запросов
      * */
     MODEL_REQUESTS: {
-        'article.insert': {
-            setUrl: `/article/insert`
+        'publications.insert': {
+            setUrl: `/publications/insert`
         },
-        'article.remove': {
-            setUrl: `/article/remove`
+        'publications.remove': {
+            setUrl: `/publications/remove`
         },
-        'article.select': {
-            getUrl: `/article/select`
+        'publications.select': {
+            getUrl: `/publications/select`
         },
-        'article.update': {
-            setUrl: `/article/update`
+        'publications.update': {
+            setUrl: `/publications/update`
+        },
+
+        'system.insert': {
+            setUrl: `/system/insert`
+        },
+        'system.select': {
+            getUrl: `/system/select`
+        },
+        'system.update': {
+            setUrl: `/system/update`
         },
 
         'themesOfPublication.insert': {
@@ -110,19 +120,6 @@ module.exports = {
         },
         'user.update': {
             setUrl: `/user/update`
-        },
-
-        'viewArticle.insert': {
-            setUrl: `/viewArticle/insert`
-        },
-        'viewArticle.remove': {
-            setUrl: `/viewArticle/remove`
-        },
-        'viewArticle.select': {
-            getUrl: `/viewArticle/select`
-        },
-        'viewArticle.update': {
-            setUrl: `/viewArticle/update`
         },
     }
 
