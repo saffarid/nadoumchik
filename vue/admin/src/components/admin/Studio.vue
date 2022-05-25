@@ -19,11 +19,8 @@
 </template>
 
 <script>
-
     import {
-        provide,
         reactive,
-        ref,
     } from 'vue'
 
     import {
@@ -35,7 +32,7 @@
     import Main                 from "@/components/admin/pages/Main";
     import Publications         from "@/components/admin/pages/publications/Publications";
     import ThemesOfPublications from "@/components/admin/pages/themes/ThemesOfPublications";
-    import {asyncRequest}       from "@/js/web";
+    // import {asyncRequest}       from "@/js/web";
 
     // function debug() {    }
     function debug(val) {
@@ -53,8 +50,6 @@
             Header
         },
         setup() {
-            const systemData = ref(null)
-            provide('system', reactive(systemData))
             const pages = reactive({
                 Main: {
                     title: 'Главная',
@@ -79,13 +74,6 @@
                 }
             })
 
-
-            const systemSelect = () => asyncRequest('/system/select', JSON.stringify({}))
-                .then(data => {
-                    systemData.value = data
-                })
-                .catch(err => console.log(err))
-            provide('systemSelect', systemSelect())
             let activePage = ''
 
             function setActivePage(page) {
@@ -103,11 +91,9 @@
             }
 
             setActivePage('Main')
-            systemSelect()
             return {
                 pages,
                 setActivePage,
-                systemData
             }
         }
 

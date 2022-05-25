@@ -12,8 +12,9 @@
       fill: var(--action_component_content_hover);
     }
   }
-  &:disabled{
+  &[disabled = true]{
     background-color: var(--action_component_disable);
+    opacity: 0.5;
   }
 }
 
@@ -26,7 +27,8 @@
     background-color: var(--action_component);
     color: var(--action_component_content_hover);
   }
-  &:disabled{
+  &[disabled = true]{
     background-color: var(--action_component_disable);
+    opacity: 0.5;
   }
 }

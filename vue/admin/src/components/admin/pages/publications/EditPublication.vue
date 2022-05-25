@@ -8,6 +8,7 @@
                         :height="20" :width="20"/>
             </Button>
             <Button
+                    :disabled="!canSendPublication"
                     class="text-button publish"
                     :text="localPublication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
                     @click="$emit('publish')"/>
@@ -316,7 +317,17 @@
                 reader.readAsDataURL(file)
             }
 
+            const canSendPublication = computed(() => {
+                const hasPreviewImage = localPublication.preview.image.localeCompare('') !== 0
+                const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
+                const hasContent = localPublication.content.content.localeCompare('') !== 0
+                const hasViewImage = localPublication.view.title.image.localeCompare('') !== 0
+
+                return hasPreviewImage && hasContentTitle && hasContent && hasViewImage
+            })
+
             return {
+                canSendPublication,
                 font,
                 fontIndex,
                 localPublication,
