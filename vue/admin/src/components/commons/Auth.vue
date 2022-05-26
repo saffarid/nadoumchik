@@ -37,11 +37,13 @@
         Button,
         TextField,
         TextLabel
-    }           from 'saffarid-ui-kit'
-    import Logo from "@/assets/img/logo";
+    }                     from 'saffarid-ui-kit'
+    import Logo           from "@/assets/img/logo";
     import {
+        inject,
         reactive
-    }           from 'vue'
+    }                     from 'vue'
+    import {asyncRequest} from "@/js/web";
 
     export default {
         name: "Auth",
@@ -51,14 +53,17 @@
             TextField,
             TextLabel
         },
-        setup() {
+        setup(props, context) {
+            const $api = inject('$api')
             const user = reactive({
                 name: '',
                 pass: ''
             })
 
             const auth = () => {
-
+                console.log($api.MODEL_REQUESTS.auth)
+                asyncRequest($api.MODEL_REQUESTS.auth, JSON.stringify(user))
+                .then()
             }
 
             const clear = () => {

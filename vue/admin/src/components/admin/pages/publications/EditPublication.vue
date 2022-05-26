@@ -240,11 +240,10 @@
         ref,
         reactive,
         computed
-    } from 'vue'
-    import {Tabs, Tab} from 'vue3-tabs-component'
-    import editor from '@tinymce/tinymce-vue'
-    import {fonts} from "@/js/fonts";
-
+    }                      from 'vue'
+    import {Tabs, Tab}     from 'vue3-tabs-component'
+    import editor          from '@tinymce/tinymce-vue'
+    import {fonts}         from "@/js/fonts";
     import {
         ComboBox,
         Button,
@@ -253,12 +252,12 @@
         Toggle,
         TextLabel,
         Slider
-    } from 'saffarid-ui-kit'
-    import Eye from "@/assets/img/eye";
+    }                      from 'saffarid-ui-kit'
+    import Eye             from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
-    import Title from "@/components/commons/publications/Title";
-    import Row from "@/components/commons/Row";
+    import Title           from "@/components/commons/publications/Title";
+    import Row             from "@/components/commons/Row";
 
     export default {
         name: "EditPublication",
@@ -295,11 +294,9 @@
                 console.log(value)
                 localPublication.view.title.text.fontFamily = value
             }
-
             const fontIndex = computed(() => {
                 return font[localPublication.view.title.text.fontFamily]
             })
-
             const loadImage = (event, key) => {
                 const file = event.target.files[0];
                 const reader = new FileReader()

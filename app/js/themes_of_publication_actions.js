@@ -13,7 +13,7 @@ const themeSchema = new Schema({
         required: true
     }
 })
-const ThemeModel = mongoose.model("themesOfPublication", themeSchema)
+const ThemeModel = mongoose.model(api.DATABASE.collections.themesOfPublication, themeSchema)
 
 /**
  * @param url {String}

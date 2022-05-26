@@ -35,31 +35,66 @@ module.exports = {
          * */
         collections: {
             /**
-             * Статьи
+             * Публикации
              * */
-            articles: 'articles',
+            publications: 'publications',
+            /**
+             * Системные параметры
+             * */
+            system: 'system',
             /**
              * Категории статей
              * */
-            typeOfArticle: 'typeOfArticle',
+            themesOfPublication: 'themesOfPublication',
             /**
              * Категории пользователей
              * */
-            typeOfUser: 'typeOfUser',
+            roleOfUser: 'roleOfUser',
             /**
              * Пользователи
              * */
-            users: 'users',
-            /**
-             * Описание правил отображения статей в списке
-             * */
-            viewArticle: 'viewArticle'
+            users: 'users'
         },
     },
     /**
      * Модель запросов
      * */
     MODEL_REQUESTS: {
+        auth:'/auth',
+
+        // publication:{
+        //     insert:`/${super.DATABASE.collections.publications}/${super.ACTS.insert}`,
+        //     remove:`/${super.DATABASE.collections.publications}/${super.ACTS.remove}`,
+        //     select:`/${super.DATABASE.collections.publications}/${super.ACTS.select}`,
+        //     update:`/${super.DATABASE.collections.publications}/${super.ACTS.update}`,
+        // },
+        //
+        // system:{
+        //     insert:`/${super.DATABASE.collections.system}/${super.ACTS.insert}`,
+        //     select:`/${super.DATABASE.collections.system}/${super.ACTS.select}`,
+        //     update:`/${super.DATABASE.collections.system}/${super.ACTS.update}`,
+        // },
+        //
+        // themesOfPublication:{
+        //     insert:`/${super.DATABASE.collections.themesOfPublication}/${super.ACTS.insert}`,
+        //     remove:`/${super.DATABASE.collections.themesOfPublication}/${super.ACTS.remove}`,
+        //     select:`/${super.DATABASE.collections.themesOfPublication}/${super.ACTS.select}`,
+        //     update:`/${super.DATABASE.collections.themesOfPublication}/${super.ACTS.update}`,
+        // },
+        //
+        // roleOfUser:{
+        //     insert:`/${super.DATABASE.collections.roleOfUser}/${super.ACTS.insert}`,
+        //     remove:`/${super.DATABASE.collections.roleOfUser}/${super.ACTS.remove}`,
+        //     select:`/${super.DATABASE.collections.roleOfUser}/${super.ACTS.select}`,
+        //     update:`/${super.DATABASE.collections.roleOfUser}/${super.ACTS.update}`,
+        // },
+        //
+        // user:{
+        //     insert:`/${super.DATABASE.collections.user}/${super.ACTS.insert}`,
+        //     remove:`/${super.DATABASE.collections.user}/${super.ACTS.remove}`,
+        //     select:`/${super.DATABASE.collections.user}/${super.ACTS.select}`,
+        //     update:`/${super.DATABASE.collections.user}/${super.ACTS.update}`,
+        // },
         'publications.insert': {
             setUrl: `/publications/insert`
         },

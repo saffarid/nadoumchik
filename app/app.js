@@ -6,10 +6,11 @@ const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
 const article = require('./js/article_actions')
+const auth = require('./js/check_auth')
 const database = require('./js/database/database')
 const system = require('./js/system')
 const themesOfPublications = require('./js/themes_of_publication_actions')
-const typeOfUser = require('./js/type_of_user_actions')
+const roleOfUser = require('./js/role_of_user_actions')
 const user = require('./js/user_actions')
 
 /**
@@ -63,6 +64,16 @@ app
             res.end();
         })
     })
+    .post(/\/auth(\/.+)?/, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        auth.checkAuth(req.body)
+            .then(data => {
+                res.json(data)
+            })
+            .catch((err) => {
+                res.json(err)
+            })
+    })
     .post(/\/article(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         article.execute(req.url, req.body)
@@ -88,7 +99,7 @@ app
                 })
             })
     })
-    .post(/\/system(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/system(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         system.execute(req.url, req.body)
             .then(data => {
@@ -113,7 +124,7 @@ app
                 })
             })
     })
-    .post(/\/themesOfPublication(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/themesOfPublication(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         themesOfPublications.execute(req.url, req.body)
             .then(data => {
@@ -138,11 +149,11 @@ app
                 })
             })
     })
-    .post(/\/typeOfUser(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/roleOfUser(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        typeOfUser.execute(req.url, req.body)
+        roleOfUser.execute(req.url, req.body)
     })
-    .post(/\/user(\/.+)?/, jsonParser, (req, res) => {
+    .post(/\/user(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         user.execute(req.url, req.body)
     })

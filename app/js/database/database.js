@@ -1,4 +1,4 @@
-const systemDefault = require('./systemDefault.js')
+const initDataDB = require('./default.js')
 const api = require('./../../api/api_desc')
 
 const system = require('../system.js')
@@ -22,9 +22,9 @@ const init = () => {
     system.execute(api.ACTS.select, {})
         .then(data => {
             if (data === null){
-                system.execute(api.ACTS.insert, systemDefault)
+                system.execute(api.ACTS.insert, initDataDB.system)
             } else {
-                runOnObject(systemDefault, data._doc)
+                runOnObject(initDataDB.system, data._doc)
                 system.execute(api.ACTS.update, data._doc)
                     .then(value => console.log(`Успешно обновлено ${value}`))
                     .catch(err => console.error(err))

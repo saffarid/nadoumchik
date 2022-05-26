@@ -161,12 +161,11 @@ const publicationSchema = new Schema({
         },
     }
 })
-const PublicationModel = mongoose.model("Article", publicationSchema)
+const PublicationModel = mongoose.model(api.DATABASE.collections.publications, publicationSchema)
 
 /**
  * @param url {String}
  * @param data {json|Object}
- * @param res {Response}
  * */
 const execute = (url, data) => {
     if (url.includes(api.ACTS.insert)) {
