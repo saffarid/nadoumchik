@@ -44,6 +44,7 @@
         reactive
     }                     from 'vue'
     import {asyncRequest} from "@/js/web";
+    const hash = require('jshashes')
 
     export default {
         name: "Auth",
@@ -53,6 +54,7 @@
             TextField,
             TextLabel
         },
+        emit:['successful'],
         setup(props, context) {
             const $api = inject('$api')
             const user = reactive({
@@ -62,8 +64,15 @@
 
             const auth = () => {
                 console.log($api.MODEL_REQUESTS.auth)
-                asyncRequest($api.MODEL_REQUESTS.auth, JSON.stringify(user))
-                .then()
+                asyncRequest($api.MODEL_REQUESTS.auth, JSON.stringify({
+                    name: user.name,
+                    pass: new hash.SHA1().b64(user.pass)
+                }))
+                .then(value => {
+                    if(value.responseCode === 200){
+                        context.emit('successful', value.data)
+                    }
+                })
             }
 
             const clear = () => {

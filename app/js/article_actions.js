@@ -254,13 +254,13 @@ const select = (data) => {
                     const range = data.shift + data.count
                     if (range < docs.length) {
                         resolve({
-                            articles: docs.slice(data.shift, range),
+                            publications: docs.slice(data.shift, range),
                             thereIsMore: true
                         })
                     }
                     else {
                         resolve({
-                            articles: docs.slice(data.shift, docs.length),
+                            publications: docs.slice(data.shift, docs.length),
                             thereIsMore: false
                         })
                     }

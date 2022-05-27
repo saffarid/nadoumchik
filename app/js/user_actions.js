@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {v4:uuid} = require('uuid')
+const {v4: uuid} = require('uuid')
 const api = require('../api/api_desc')
 
 const Schema = mongoose.Schema
@@ -18,7 +18,7 @@ const userSchema = new Schema({
             type: String,
             required: true
         },
-        role: {
+        role_id: {
             type: String,
             required: true
         }
@@ -57,7 +57,7 @@ const insert = (data) => {
     return new Promise((resolve, reject) => {
         const newUser = new UserModel({
             _id: uuid(),
-            user: data.user
+            user: data
         })
         newUser.save()
             .then(value => resolve(value))
@@ -83,11 +83,10 @@ const update = (data) => {
 
 const select = (data) => {
     return new Promise((resolve, reject) => {
-        UserModel.findOne({
-            user:{
-                name: data.name
-            }
+        console.log({
+            user: data
         })
+        UserModel.findOne(data)
             .then(value => resolve(value))
             .catch(err => reject(err))
     })

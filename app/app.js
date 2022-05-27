@@ -68,7 +68,10 @@ app
         if (!req.body) res.sendStatus(400)
         auth.checkAuth(req.body)
             .then(data => {
-                res.json(data)
+                res.json({
+                    responseCode: 200,
+                    data: data
+                })
             })
             .catch((err) => {
                 res.json(err)
