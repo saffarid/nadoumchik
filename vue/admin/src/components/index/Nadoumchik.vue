@@ -5,7 +5,8 @@
                 <Header/>
             </template>
             <template v-slot:center>
-                <div class="ads-left" v-if="systemData.ads.isShowingAds">
+<!--                <div class="ads-left" v-if="systemData.ads.isShowingAds">-->
+                <div class="ads-left" v-if="false">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
@@ -18,7 +19,8 @@
                                 @read="showPublication"/>
                     </div>
                 </div>
-                <div class="ads-right" v-if="systemData.ads.isShowingAds">
+                <div class="ads-right" v-if="false">
+<!--                <div class="ads-right" v-if="systemData.ads.isShowingAds">-->
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
@@ -38,7 +40,8 @@
     import {
         reactive,
         provide,
-        ref
+        ref,
+        inject
     }                      from "vue";
     import {
         BorderPane
@@ -55,6 +58,7 @@
             Header,
         },
         setup() {
+            const api = inject('$api')
             const publicationIsShow = ref(false)
             const showedPublication = reactive({
                 _id: undefined,
@@ -72,7 +76,7 @@
             })
             const systemData = ref(null)
 
-            asyncRequest('/system/select', JSON.stringify({}))
+            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
                 .then(data => {
                     systemData.value = data
                     provide('system', systemData)

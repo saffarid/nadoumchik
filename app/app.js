@@ -64,6 +64,19 @@ app
             res.end();
         })
     })
+    .post(/\/db(\/.+)?/, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        database.execute(req.url, req.body)
+            .then(data => {
+                res.json({
+                    responseCode: 200,
+                    data: data
+                })
+            })
+            .catch((err) => {
+                res.json(err)
+            })
+    })
     .post(/\/auth(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         auth.checkAuth(req.body)
@@ -77,7 +90,7 @@ app
                 res.json(err)
             })
     })
-    .post(/\/article(\/.+)?/, (req, res) => {
+    .post(/\/publications(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         publication.execute(req.url, req.body)
             .then(data => {

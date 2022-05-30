@@ -44,8 +44,9 @@
     import {
         reactive,
         ref,
-        toRaw
-    } from 'vue'
+        toRaw,
+        inject
+    }                     from 'vue'
     import {asyncRequest} from "@/js/web";
 
     import {
@@ -53,10 +54,10 @@
         BorderPane,
         TextLabel,
         Popup,
-    } from 'saffarid-ui-kit'
-    import Plus from "@/assets/img/plus";
+    }                      from 'saffarid-ui-kit'
+    import Plus            from "@/assets/img/plus";
     import EditPublication from "@/components/admin/pages/publications/EditPublication";
-    import ResponseBar from "@/components/admin/pages/publications/ResponseBar";
+    import ResponseBar     from "@/components/admin/pages/publications/ResponseBar";
     import PublicationList from "@/components/commons/publications_list/PublicationList";
 
     export default {
@@ -72,11 +73,12 @@
             Popup,
         },
         setup() {
+            const api = inject('$api')
             const publicationsList = ref(null)
             const editPublicationShow = ref(false)
             const isReady = ref(false)
             const articles = ref([])
-            let countLoadPublications = ref(10)
+            const countLoadPublications = ref(10)
 
             const response = reactive({
                 code: -1,
@@ -105,7 +107,7 @@
                         useImage: false,
                         height: 150,
                         image: '#724242',
-                        text:{
+                        text: {
                             textColor: '#2b2b2b',
                             fontFamily: 'YST',
                             fontWeight: 400,
@@ -145,7 +147,7 @@
                         useImage: false,
                         height: 150,
                         image: '#724242',
-                        text:{
+                        text: {
                             textColor: '#2b2b2b',
                             fontFamily: 'YST',
                             fontWeight: 400,
@@ -187,7 +189,7 @@
                         useImage: publ.view.title.useImage,
                         height: publ.view.title.height,
                         image: publ.view.title.image,
-                        text:{
+                        text: {
                             textColor: publ.view.title.text.textColor,
                             fontFamily: publ.view.title.text.fontFamily,
                             fontWeight: publ.view.title.text.fontWeight,
@@ -211,7 +213,7 @@
              * Функция отправляет запрос на удаление публикации
              * */
             const removePublication = (removedPublication) => {
-                asyncRequest('/articles/remove', JSON.stringify({_id: removedPublication._id}))
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove), JSON.stringify({_id: removedPublication._id}))
                     .then(data => {
                         response.code = data.responseCode
                         response.message = data.message
@@ -230,7 +232,7 @@
             const publish = () => {
                 if (publication._id) {
                     console.log(publication)
-                    asyncRequest('/articles/update', JSON.stringify(publication))
+                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.update), JSON.stringify(publication))
                         .then(data => {
                             console.log(data)
                             editPublicationShow.value = false
@@ -243,8 +245,9 @@
                         .catch(err => {
                             console.log(err)
                         })
-                } else {
-                    asyncRequest('/articles/insert', JSON.stringify(publication))
+                }
+                else {
+                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.insert), JSON.stringify(publication))
                         .then(data => {
                             console.log(data)
                             editPublicationShow.value = false

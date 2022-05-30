@@ -4,22 +4,25 @@ module.exports = {
             isShowingAds: false,
         },
     },
-    roleOfUser: {
-        guest: {
+    roleOfUser: [
+        {
+            name: 'guest',
             accessRights: {}
         },
-        user: {
+        {
+            name: 'user',
             accessRights: {}
         },
-        admin: {
+        {
+            name: 'admin',
             accessRights: {}
         },
-    },
+    ],
     users: [
         {
             name: "admin",
             pass: 'not admin',
-            role: 'admin'
+            role_id: '123'
         }
     ]
 

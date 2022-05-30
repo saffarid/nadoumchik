@@ -40,15 +40,16 @@
         BorderPane,
         Button,
         TextField,
-    } from 'saffarid-ui-kit'
+    }                     from 'saffarid-ui-kit'
     import {
         // onMounted,
+        inject,
         ref,
         reactive,
-    } from 'vue'
-    import ThemeItem from "@/components/admin/pages/themes/ThemeItem";
-    import Checkmark from "@/assets/img/checkmark";
-    import Cancel from "@/assets/img/cancel";
+    }                     from 'vue'
+    import ThemeItem      from "@/components/admin/pages/themes/ThemeItem";
+    import Checkmark      from "@/assets/img/checkmark";
+    import Cancel         from "@/assets/img/cancel";
 
     export default {
         name: "ThemesOfPublications",
@@ -62,6 +63,7 @@
         },
 
         setup() {
+            const api = inject('$api')
             const isReady = ref(false)
             const themesList = ref(null)
             const themes = reactive([])
@@ -75,11 +77,15 @@
 
             const setResponseMessage = (message) => {
                 response.value = message
-                if (message != '') setTimeout(() => {response.value = ''}, 3000)
+                if (message != '') {
+                    setTimeout(() => {
+                        response.value = ''
+                    }, 3000)
+                }
             }
 
             const loadThemes = () => {
-                asyncRequest('/themesOfPublication/select', JSON.stringify({}))
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify({}))
                     .then(data => {
                         themes.length = 0
                         data.forEach((category) => {
@@ -100,7 +106,7 @@
                 localTheme._id = undefined
                 localTheme.value = ''
 
-                if(editedItem.value !== null){
+                if (editedItem.value !== null) {
                     editedItem.value.classList.remove('edit')
                     editedItem.value = null
                 }
@@ -108,26 +114,29 @@
 
             const sendTheme = () => {
                 if (localTheme.value.localeCompare('') === 0) return
-                if (localTheme._id){
-                    asyncRequest('/themesOfPublication/update', JSON.stringify(localTheme))
+                if (localTheme._id) {
+                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.update), JSON.stringify(localTheme))
                         .then((data) => {
-                            if(data.responseCode === 200) {
+                            if (data.responseCode === 200) {
                                 clearLocalTheme()
                                 loadThemes()
-                            } else {
+                            }
+                            else {
                                 setResponseMessage(data.message)
                             }
                         })
                         .catch(err => {
                             console.log(err)
                         })
-                } else {
-                    asyncRequest('/themesOfPublication/insert', JSON.stringify(localTheme))
+                }
+                else {
+                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.insert), JSON.stringify(localTheme))
                         .then((data) => {
-                            if(data.responseCode === 200) {
+                            if (data.responseCode === 200) {
                                 clearLocalTheme()
                                 loadThemes()
-                            } else {
+                            }
+                            else {
                                 setResponseMessage(data.message)
                             }
                         })
@@ -141,12 +150,12 @@
                 clearLocalTheme()
                 localTheme._id = theme._id
                 localTheme.value = theme.value
-                editedItem.value = themesList.value.childNodes[index+1]
+                editedItem.value = themesList.value.childNodes[index + 1]
                 editedItem.value.classList.add('edit')
             }
 
             const removeTheme = (theme) => {
-                asyncRequest('/themesOfPublication/remove', JSON.stringify(theme))
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.remove), JSON.stringify(theme))
                     .then(() => loadThemes())
                     .catch(err => {
                         console.log(err)
@@ -172,7 +181,7 @@
 
 <style lang="scss" scoped>
 
-    .themes-of-publications{
+    .themes-of-publications {
         .top {
             .edit-category {
                 align-content: center;
@@ -214,7 +223,7 @@
             }
         }
 
-        .left, .right{
+        .left, .right {
             width: 0;
             max-width: 0;
         }

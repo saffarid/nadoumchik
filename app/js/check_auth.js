@@ -1,10 +1,9 @@
-const userDb = require('./user_actions.js')
-const roleOfUser = require('./role_of_user_actions.js')
+const database = require('./database/database')
 const api = require('./../api/api_desc')
 
 const checkAuth = (user) => {
     return new Promise((resolve, reject) => {
-        userDb.execute(api.ACTS.select, user)
+        database.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), user)
             .then(user => {
                 console.log(user)
                 if(user === null){
@@ -12,18 +11,12 @@ const checkAuth = (user) => {
                         message: 'Неверно введёно имя пользователя или пароль.'
                     })
                 } else {
-                    roleOfUser.execute(api.ACTS.select, {_id: user.user.role_id})
+                    database.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.roleOfUser.name, api.ACTS.select), {_id: user.role_id})
                         .then(role =>
-                            resolve(role[0])
+                            resolve(role)
                         )
                 }
             })
-    })
-}
-
-const findById = () => {
-    return new Promise((resolve, reject) => {
-
     })
 }
 

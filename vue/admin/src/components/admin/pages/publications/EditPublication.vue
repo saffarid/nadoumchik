@@ -239,7 +239,7 @@
     import {
         ref,
         reactive,
-        computed
+        computed,
     }                      from 'vue'
     import {Tabs, Tab}     from 'vue3-tabs-component'
     import editor          from '@tinymce/tinymce-vue'

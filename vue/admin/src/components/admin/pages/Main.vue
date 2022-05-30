@@ -26,6 +26,7 @@
     import Row            from "@/components/commons/Row";
     import {
         ref,
+        inject
     }                     from 'vue'
     import {asyncRequest} from "@/js/web";
 
@@ -39,10 +40,11 @@
             Toggle
         },
         setup() {
+            const api = inject('$api')
             const systemData = ref(null)
             const isLoading = ref(false)
 
-            const systemSelect = () => asyncRequest('/system/select', JSON.stringify({}))
+            const systemSelect = () => asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
                 .then(data => {
                     systemData.value = data
                 })
@@ -50,7 +52,7 @@
 
             const showAds = (value) => {
                 systemData.value.ads.isShowingAds = value
-                asyncRequest('/system/update', JSON.stringify(systemData.value))
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.update), JSON.stringify(systemData.value))
                     .then(() => systemSelect())
                     .catch(err => {
                         console.error(err)

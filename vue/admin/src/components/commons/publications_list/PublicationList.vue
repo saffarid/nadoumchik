@@ -27,6 +27,7 @@
 
 <script>
     import {
+        inject,
         reactive,
         ref,
         // watch
@@ -64,6 +65,7 @@
             }
         },
         setup() {
+            const api = inject('$api')
             const editPublicationShow = ref(false)
             /**
              * Флаг готовности отображать считанные публикации
@@ -100,9 +102,9 @@
                     resolve = data => {
                         setTimeout(() => {
                             if(shift === 0){
-                                articles.value = data.articles
+                                articles.value = data.data.findings
                             } else {
-                                articles.value = articles.value.concat(data.articles)
+                                articles.value = articles.value.concat(data.data.findings)
                             }
                             thereIsMore.value = data.thereIsMore
                             isReady.value = true
@@ -111,7 +113,7 @@
                     }
                 }
                 isLoading.value = true
-                asyncRequest('/articles/select', JSON.stringify({
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select), JSON.stringify({
                         shift: shift,
                         count: count
                     })
