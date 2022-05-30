@@ -5,7 +5,7 @@ const express = require("express")
 const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
-const article = require('./js/article_actions')
+const publication = require('./js/publication_actions')
 const auth = require('./js/check_auth')
 const database = require('./js/database/database')
 const system = require('./js/system')
@@ -79,7 +79,7 @@ app
     })
     .post(/\/article(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        article.execute(req.url, req.body)
+        publication.execute(req.url, req.body)
             .then(data => {
                 console.log('Операция успешно выполнена')
                 if (req.url.includes(api.ACTS.select)) {

@@ -4,19 +4,7 @@ const {v4: uuid} = require('uuid')
 
 const Schema = mongoose.Schema
 
-const roleOfUserSchema = new Schema({
-    _id: {
-        type: String,
-        required: true
-    },
-    role:{
-        name:{
-            type: String,
-            required: true
-        }
-    }
-
-})
+const roleOfUserSchema = new Schema(api.SCHEMAS_OBJECT.roleOfUser)
 const RoleModel = mongoose.model(api.DATABASE.collections.roleOfUser, roleOfUserSchema)
 
 const execute = (url, data) => {

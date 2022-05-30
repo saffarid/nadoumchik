@@ -3,16 +3,7 @@ const {v4: uuid} = require('uuid')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const themeSchema = new Schema({
-    _id: {
-        type: String,
-        required: true
-    },
-    value: {
-        type: String,
-        required: true
-    }
-})
+const themeSchema = new Schema(api.SCHEMAS_OBJECT.themesOfPublication)
 const ThemeModel = mongoose.model(api.DATABASE.collections.themesOfPublication, themeSchema)
 
 /**

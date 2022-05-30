@@ -4,27 +4,7 @@ const api = require('../api/api_desc')
 
 const Schema = mongoose.Schema
 
-const userSchema = new Schema({
-    _id: {
-        type: String,
-        required: true
-    },
-    user: {
-        name: {
-            type: String,
-            required: true
-        },
-        pass: {
-            type: String,
-            required: true
-        },
-        role_id: {
-            type: String,
-            required: true
-        }
-    }
-
-})
+const userSchema = new Schema(api.SCHEMAS_OBJECT.users)
 const UserModel = mongoose.model(api.DATABASE.collections.users, userSchema)
 
 
