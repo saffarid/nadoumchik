@@ -1,3 +1,5 @@
+const hash = require('jshashes')
+
 module.exports = {
     system: {
         ads: {
@@ -21,8 +23,8 @@ module.exports = {
     users: [
         {
             name: "admin",
-            pass: 'not admin',
-            role_id: '123'
+            pass: new hash.SHA1().b64('not admin'),
+            role: '123'
         }
     ]
 

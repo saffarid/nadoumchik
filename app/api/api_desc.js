@@ -1,5 +1,3 @@
-// const Schema = require('mongoose').Schema
-
 module.exports = {
     /**
      * Основные действия
@@ -21,6 +19,15 @@ module.exports = {
          * Действие обновления в БД
          * */
         update: 'update'
+    },
+    /**
+     * Заготовки тел заросов
+     * */
+    BODY_REQUEST:{
+      termsSampling:{
+          shift:0,
+          count:0
+      }
     },
     /**
      * Объект описание БД
@@ -363,7 +370,8 @@ module.exports = {
                      * */
                     role_id: {
                         type: String,
-                        required: true
+                        ref:'roleOfUser',
+                        required: false
                     }
                 }
             }

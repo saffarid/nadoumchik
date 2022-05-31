@@ -5,13 +5,9 @@ const express = require("express")
 const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
-const publication = require('./js/publication_actions')
+
 const auth = require('./js/check_auth')
 const database = require('./js/database/database')
-const system = require('./js/system')
-const themesOfPublications = require('./js/themes_of_publication_actions')
-const roleOfUser = require('./js/role_of_user_actions')
-const user = require('./js/user_actions')
 
 /**
  * Парсер json-в запросах
@@ -89,87 +85,4 @@ app
             .catch((err) => {
                 res.json(err)
             })
-    })
-    .post(/\/publications(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        publication.execute(req.url, req.body)
-            .then(data => {
-                console.log('Операция успешно выполнена')
-                if (req.url.includes(api.ACTS.select)) {
-                    res.json(data)
-                }
-                else {
-                    res.json({
-                        responseCode: 200,
-                        message: 'Операция успешно выполнена'
-                    })
-                }
-            })
-            .catch((err) => {
-                console.log('Операция не удалась')
-                console.error(err)
-                res.json({
-                    responseCode: 400,
-                    message: 'Операция не удалась',
-                    err: err
-                })
-            })
-    })
-    .post(/\/system(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        system.execute(req.url, req.body)
-            .then(data => {
-                console.log('Операция успешно выполнена')
-                if (req.url.includes(api.ACTS.select)) {
-                    res.json(data)
-                }
-                else {
-                    res.json({
-                        responseCode: 200,
-                        message: 'Операция успешно выполнена'
-                    })
-                }
-            })
-            .catch((err) => {
-                console.log('Операция не удалась')
-                console.error(err)
-                res.json({
-                    responseCode: 400,
-                    message: 'Операция не удалась',
-                    err: err
-                })
-            })
-    })
-    .post(/\/themesOfPublication(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        themesOfPublications.execute(req.url, req.body)
-            .then(data => {
-                console.log('Операция успешно выполнена')
-                if (req.url.includes(api.ACTS.select)) {
-                    res.json(data)
-                }
-                else {
-                    res.json({
-                        responseCode: 200,
-                        message: 'Операция успешно выполнена'
-                    })
-                }
-            })
-            .catch((err) => {
-                console.log('Операция не удалась')
-                console.error(err)
-                res.json({
-                    responseCode: 400,
-                    message: 'Операция не удалась',
-                    err: err
-                })
-            })
-    })
-    .post(/\/roleOfUser(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        roleOfUser.execute(req.url, req.body)
-    })
-    .post(/\/user(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        user.execute(req.url, req.body)
     })

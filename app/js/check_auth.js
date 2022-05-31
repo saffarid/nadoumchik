@@ -11,10 +11,11 @@ const checkAuth = (user) => {
                         message: 'Неверно введёно имя пользователя или пароль.'
                     })
                 } else {
-                    database.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.roleOfUser.name, api.ACTS.select), {_id: user.role_id})
-                        .then(role =>
-                            resolve(role)
-                        )
+                    // database.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.roleOfUser.name, api.ACTS.select), {_id: user.role_id})
+                    //     .then(role =>
+                    //         resolve(role)
+                    //     )
+                    console.log(user)
                 }
             })
     })

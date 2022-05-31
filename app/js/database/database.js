@@ -1,13 +1,9 @@
 const mongoose = require('mongoose')
-const hash = require('jshashes')
 const {v4: uuid} = require('uuid')
 
 const initDataDB = require('./default.js')
 const api = require('./../../api/api_desc')
 
-const system = require('../system.js')
-const roleOfUser = require('../role_of_user_actions.js')
-const user = require('../user_actions.js')
 
 const Schema = mongoose.Schema
 
@@ -33,55 +29,15 @@ const init = () => {
     Object.values(api.DATABASE.collections).forEach(value =>
         models[value.name] = mongoose.model(value.name, value.schema)
     )
-    // find(api.DATABASE.collections.system.name, {shift:0, count: 0})
-    //     .then(findings => {
-    //         if (findings === null) {
-    //             insert(api.DATABASE.collections.system.name, initDataDB.system)
-    //         }
-    //         else {
-    //             runOnObject(initDataDB.system, findings._doc)
-    //             update(api.DATABASE.collections.system.name, findings._doc)
-    //                 .then(value => console.log(`Успешно обновлено ${value}`))
-    //                 .catch(err => console.error(err))
-    //         }
-    //     })
-    //     .catch(err => {
-    //         console.error(err)
-    //     })
-    //
-    //
-    // Object.keys(initDataDB.roleOfUser).forEach(key => {
-    //     find(api.DATABASE.collections.roleOfUser.name, {role:{name: key}})
-    //         .then(findings => {
-    //             if (findings.length === 0) {
-    //                 insert(api.DATABASE.collections.roleOfUser.name, {name: key})
-    //             }
-    //             else {
-    //                 //Оформить обновление информации
-    //             }
-    //         })
-    // })
-    //
-    // initDataDB.users.forEach(value => {
-    //     find(api.DATABASE.collections.users.name, {name: value.name})
-    //         .then(findings => {
-    //             console.log(findings)
-    //             if (findings === null) {
-    //                 find(api.DATABASE.collections.roleOfUser.name, {role: {name: value.role}})
-    //                     .then(role => {
-    //                         insert(api.DATABASE.collections.users.name, {
-    //                             name: value.name,
-    //                             pass: new hash.SHA1().b64(value.pass),
-    //                             role_id: role._id
-    //                         })
-    //                     })
-    //             }
-    //         })
-    // })
 
-    // Object.keys(initDataDB).forEach(key => {
-    //     insert(key, initDataDB[key])
-    // })
+    Object.keys(initDataDB).forEach(key => {
+        find(key, api.BODY_REQUEST.termsSampling)
+            .then(dataFindings => {
+              if(dataFindings.findings.length === 0){
+                  insert(key, initDataDB[key])
+              }
+            })
+    })
 
 }
 
@@ -210,6 +166,7 @@ const insert = (collection, data) => {
 const insertOne = (collection, data) => {
     return new Promise((resolve, reject) => {
         data['_id'] = uuid()
+        const schema = api.DATABASE.collections[collection].schema
         models[collection].create(data)
                           .then(value => resolve(value))
                           .catch(err => reject(err))

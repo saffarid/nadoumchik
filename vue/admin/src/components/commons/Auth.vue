@@ -66,8 +66,8 @@
                 console.log(api.MODEL_REQUESTS.auth)
                 asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify({
                     name: user.name,
-                    // pass: new hash.SHA1().b64(user.pass)
-                    pass: user.pass
+                    pass: new hash.SHA1().b64(user.pass)
+                    // pass: user.pass
                 }))
                 .then(value => {
                     if(value.responseCode === 200){
