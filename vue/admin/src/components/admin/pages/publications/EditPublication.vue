@@ -223,7 +223,12 @@
                     </div>
                 </Tab>
                 <Tab :name="'ПРОЧИЕ АТРИБУТЫ'">
-
+                    <Row>
+                        <TextLabel label="Тема публикации"/>
+                        <ComboBox :options="themes"
+                                  v-model = localPublication.theme
+                                  />
+                    </Row>
                 </Tab>
             </Tabs>
         </template>
@@ -238,6 +243,7 @@
 <script>
     import {
         ref,
+        inject,
         reactive,
         computed,
     }                      from 'vue'
@@ -258,6 +264,7 @@
     import PublicationView from "@/components/commons/publications/PublicationView";
     import Title           from "@/components/commons/publications/Title";
     import Row             from "@/components/commons/Row";
+    import {asyncRequest}  from "@/js/web";
 
     export default {
         name: "EditPublication",
@@ -285,10 +292,16 @@
             }
         },
         setup(props) {
+            const api = inject('$api')
             const popupIsShow = ref(false)
             const font = fonts
-
+            const themes = ref([])
             const localPublication = reactive(props.publication)
+
+            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+            .then(gettingData => {
+                themes.value = gettingData.datas.findings
+            })
 
             const setFont = (value) => {
                 console.log(value)
@@ -330,6 +343,7 @@
                 localPublication,
                 popupIsShow,
                 setFont,
+                themes,
                 loadImage
             }
         }

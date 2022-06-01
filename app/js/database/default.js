@@ -24,7 +24,9 @@ module.exports = {
         {
             name: "admin",
             pass: new hash.SHA1().b64('not admin'),
-            role: '123'
+            role: {
+                name: 'admin',
+            }
         }
     ]
 

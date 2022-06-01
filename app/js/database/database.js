@@ -17,7 +17,7 @@ const runOnObject = (sysDef, sysDb) => {
         }
         else {
             //Если запись определена и...
-            if (sysDb[key] === Object(sysDb[key])) {
+            if (isObject(sysDb[key])) {
                 // и является объектом
                 runOnObject(sysDef[key], sysDb[key])
             }
@@ -30,13 +30,12 @@ const init = () => {
         models[value.name] = mongoose.model(value.name, value.schema)
     )
 
-    Object.keys(initDataDB).forEach(key => {
-        find(key, api.BODY_REQUEST.termsSampling)
-            .then(dataFindings => {
-              if(dataFindings.findings.length === 0){
-                  insert(key, initDataDB[key])
-              }
-            })
+    Object.keys(initDataDB).forEach(async key => {
+
+        const dataFindings = await find(key, api.BODY_REQUEST.termsSampling)
+        if (dataFindings.findings.length === 0) {
+            insert(key, initDataDB[key])
+        }
     })
 
 }
@@ -53,6 +52,88 @@ const isById = (data) => {
 const isSampling = (data) => {
     return ((data['shift'] !== undefined) && (data['count'] !== undefined))
 }
+/**
+ * Функция проверяет является аргумент объектом
+ * */
+const isObject = (arg) => {
+    return arg === Object(arg)
+}
+
+/**
+ * Функция конвертирует объект с ссылками в "чистый" объект
+ * @param obj {Object} конвертируемый объект
+ * @param schema {Object} Часть схемы коллекцииконвертируемого объекта
+ * */
+const convertRefsToClearObj = (schema, obj) => {
+    return new Promise(async (resolve, reject) => {
+        for (const key of Object.keys(schema)) {
+            if (key === '_id') continue
+
+            //Получаем объект-описание поля документа коллекции
+            const desc = schema[key]
+
+            //Определяем содержит описание тип объектаили нет
+            if ('type' in desc) {
+                if (!('ref' in desc)) {
+                    continue
+                }
+                /*
+                * Тот объект, который получим из obj по ключу key, является условием выборки.
+                * Проверим его на наличие поля _id.
+                * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
+                * */
+                const term = {
+                    _id: obj[key]
+                }
+                obj[key] = await find(schema[key].ref, term)
+
+            }
+            else {
+                obj[key] = await convertClearToRefsObj(schema[key], obj[key])
+            }
+        }
+        resolve(obj)
+    })
+}
+
+/**
+ * Функция конвертирует "чистый" объект в объект с ссылками
+ * @param obj {Object} конвертируемый объект
+ * @param schema {Object} Часть схемы коллекцииконвертируемого объекта
+ * */
+const convertClearToRefsObj = (schema, obj) => {
+    return new Promise(async (resolve, reject) => {
+        //key - наименование поля в БД
+        for (const key of Object.keys(schema)) {
+            if (key === '_id') continue
+            //Получаем объект-описание поля документа коллекции
+            const desc = schema[key]
+
+            //Определяем содержит описание тип объектаили нет
+            if ('type' in desc) {
+                if (!('ref' in desc)) {
+                    continue
+                }
+                /*
+                * Тот объект, который получим из obj по ключу key, является условием выборки.
+                * Проверим его на наличие поля _id.
+                * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
+                * */
+                if ('_id' in obj[key]) {
+                    obj[key] = obj[key]['_id']
+                }
+                else {
+                    obj[key] = await find(schema[key].ref, obj[key])
+                }
+            }
+            else {
+                obj[key] = await convertClearToRefsObj(schema[key], obj[key])
+            }
+        }
+        resolve(obj)
+    })
+
+}
 
 /* --- Функции выборки --- */
 
@@ -66,7 +147,6 @@ const isSampling = (data) => {
  * если необходимо получить все возможные объекты, достаточно передать нули {shift: 0, count: 0}.
  */
 const find = (collection, terms) => {
-
     if (isById(terms)) {
         return findById(collection, terms)
     }
@@ -76,7 +156,6 @@ const find = (collection, terms) => {
     else {
         return findByCustomKeys(collection, terms)
     }
-
 }
 
 /**
@@ -85,7 +164,7 @@ const find = (collection, terms) => {
 const findByCustomKeys = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findOne(terms)
-                          .then(finding => resolve(finding))
+                          .then(async finding => resolve(await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)))
                           .catch(err => reject(err))
     })
 }
@@ -96,7 +175,7 @@ const findByCustomKeys = (collection, terms) => {
 const findById = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findById(terms._id)
-                          .then(finding => resolve(finding))
+                          .then(async finding => resolve(await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)))
                           .catch(err => reject(err))
     })
 }
@@ -107,11 +186,14 @@ const findById = (collection, terms) => {
 const findBySampling = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].find()
-                          .then(findings => {
+                          .then(async findings => {
                               try {
                                   if (terms.shift > findings.length) throw new Error('Nothing return')
 
                                   if (collection === api.DATABASE.collections.publications.name) findings = findings.reverse()
+
+                                  findings = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings)
+
                                   if (terms.shift === 0 && terms.count === 0) {
                                       resolve({
                                           findings: findings,
@@ -164,9 +246,9 @@ const insert = (collection, data) => {
  * @param data {Object}
  * */
 const insertOne = (collection, data) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         data['_id'] = uuid()
-        const schema = api.DATABASE.collections[collection].schema
+        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].create(data)
                           .then(value => resolve(value))
                           .catch(err => reject(err))
@@ -178,10 +260,12 @@ const insertOne = (collection, data) => {
  * @param data {Array}
  * */
 const insertMany = (collection, data) => {
-    return new Promise((resolve, reject) => {
-        data.forEach(value => {
-            value['_id'] = uuid()
-        })
+    return new Promise(async (resolve, reject) => {
+        const schema = api.DATABASE.collections[collection].schema
+        for (let i = 0; i < data.length; i++) {
+            data[i]['_id'] = uuid()
+            data[i] = await convertClearToRefsObj(schema, data[i])
+        }
         models[collection].insertMany(data)
                           .then(value => resolve(value))
                           .catch(err => reject(err))
@@ -252,7 +336,8 @@ const update = (collection, data) => {
  * @param data {Object} удаляемые данные.
  * */
 const updateById = (collection, data) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].findByIdAndUpdate(data._id)
                           .then(updated => resolve(updated))
                           .catch(err => reject(err))
@@ -262,10 +347,11 @@ const updateById = (collection, data) => {
 /**
  * Обновление по произвольному набору ключей.
  * @param collection {String} Наименование коллекции
- * @param data {Object} удаляемые данные.
+ * @param data {Object} обновляемые данные.
  * */
 const updateByCustomKeys = (collection, data) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].findOneAndUpdate(data)
                           .then(updated => resolve(updated))
                           .catch(err => reject(err))

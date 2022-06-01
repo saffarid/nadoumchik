@@ -1,5 +1,5 @@
 <template>
-    <Studio v-if="role !== null"
+    <Studio v-if="user !== null"
             class="light dimension site"/>
     <Auth v-else
           @successful="login"
@@ -22,16 +22,16 @@
             Studio
         },
         setup() {
-            const role = ref(null)
+            const user = ref(null)
 
             const login = value => {
                 console.log(value)
-                role.value = value
+                user.value = value
             }
 
             return {
                 login,
-                role
+                user
             }
         }
     }

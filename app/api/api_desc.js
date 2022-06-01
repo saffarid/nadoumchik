@@ -30,6 +30,32 @@ module.exports = {
       }
     },
     /**
+     * Тело ответа
+     * */
+    BODY_RESPONSE:{
+        /**
+         * Код ответа
+         * */
+        responseCode:-1,
+        /**
+         * Сообщение
+         * */
+        message: '',
+        /**
+         * Передаваемые данные
+         * */
+        datas:{
+            /**
+             * Найденные, по запросу, документы
+             * */
+            findings: {},
+            /**
+             * Флаг наличия ещё не прочитанных документов
+             * */
+            thereIsMore: false
+        }
+    },
+    /**
      * Объект описание БД
      * */
     DATABASE: {
@@ -87,6 +113,14 @@ module.exports = {
                     views: {
                         type: Number,
                         required: false
+                    },
+                    /**
+                     * Тема публикации
+                     * */
+                    theme:{
+                      type: String,
+                      ref: 'themesOfPublication',
+                      required: true
                     },
                     /**
                      * Содержимое публикации
@@ -349,6 +383,7 @@ module.exports = {
                 /**
                  * Схема пользователя
                  * */
+
                 schema: {
                     /**
                      * uuid пользователя
@@ -368,9 +403,9 @@ module.exports = {
                     /**
                      * Идентификатор роли пользователя
                      * */
-                    role_id: {
+                    role: {
                         type: String,
-                        ref:'roleOfUser',
+                        ref: 'roleOfUser',
                         required: false
                     }
                 }

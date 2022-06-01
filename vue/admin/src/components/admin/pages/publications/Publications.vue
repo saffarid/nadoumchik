@@ -92,6 +92,7 @@
             const publication = reactive({
                 _id: undefined,
                 dateStamp: new Date(),
+                theme:'',
                 content: {
                     title: 'Your title is here',
                     content: 'Your publication`s content is here'
@@ -132,6 +133,7 @@
             const newPublication = () => {
                 publication._id = undefined
                 publication.dateStamp = new Date()
+                publication.dateStamp = ''
                 publication.content = {
                     title: 'Your title is here',
                     content: 'Your publication`s content is here'
@@ -174,6 +176,7 @@
                 const publ = toRaw(editPublication)
                 publication._id = publ._id
                 publication.dateStamp = publ.dateStamp
+                publication.dateStamp = publ.theme
                 publication.content = {
                     title: publ.content.title,
                     content: publ.content.content

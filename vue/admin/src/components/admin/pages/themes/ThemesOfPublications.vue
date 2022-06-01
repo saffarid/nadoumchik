@@ -85,10 +85,10 @@
             }
 
             const loadThemes = () => {
-                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify({}))
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
                     .then(data => {
                         themes.length = 0
-                        data.forEach((category) => {
+                        data.datas.findings.forEach((category) => {
                             themes.push(category)
                         })
                         themes.sort((theme1, theme2) => {

@@ -102,9 +102,9 @@
                     resolve = data => {
                         setTimeout(() => {
                             if(shift === 0){
-                                articles.value = data.data.findings
+                                articles.value = data.datas.findings
                             } else {
-                                articles.value = articles.value.concat(data.data.findings)
+                                articles.value = articles.value.concat(data.datas.findings)
                             }
                             thereIsMore.value = data.thereIsMore
                             isReady.value = true

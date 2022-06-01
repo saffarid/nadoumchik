@@ -66,7 +66,8 @@ app
             .then(data => {
                 res.json({
                     responseCode: 200,
-                    data: data
+                    message: 'Операция успешно проведена',
+                    datas: data
                 })
             })
             .catch((err) => {
