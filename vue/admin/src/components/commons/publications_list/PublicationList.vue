@@ -1,28 +1,30 @@
 <template>
-<!--    <div>-->
-        <div
-                class="list"
-                :class="{'gap':hasRowGap}"
-                v-if="isReady">
-            <PublicationItem v-for="(publication, index) in articles"
-                             :key="index" :publication="publication"
-                             :class="{'item-on-left':(publication.preview.imgOnLeft || !figure), 'item-on-right':(!publication.preview.imgOnLeft && figure)}"
-                             @edit="$emit('edit', publication)"
-                             @remove="$emit('remove', publication)"
-                             @click="$emit('read', publication )"
-                             :can-edit="canEditPublications"
-            />
-            <PageLoading v-if="isLoading"/>
-            <Button
-                    v-if="!isLoading && thereIsMore"
-                    class="text-button"
-                    text="Загрузить ещё"
-                    @click="loadPublications(articles.length, countLoadPublications)"/>
+    <!--    <div>-->
+    <div
+            class="list"
+            :class="{'gap':hasRowGap}"
+            v-if="isReady">
+        <PublicationItem v-for="(publication, index) in articles"
+                         :key="index" :publication="publication"
+                         :class="{'item-on-left':(publication.preview.imgOnLeft || !figure), 'item-on-right':(!publication.preview.imgOnLeft && figure)}"
+                         @edit="$emit('edit', publication)"
+                         @remove="$emit('remove', publication)"
+                         @click="$emit('read', publication )"
+                         :can-edit="canEditPublications"
+        />
+        <PageLoading v-if="isLoading"/>
+        <div class="nothing_show" v-if="articles.length === 0 && !thereIsMore">
+            <CryingEmoji :height="250" :width="250"/>
+            Нет публикаций для отображения
         </div>
-        <div v-else>
-            Загрузка...
-        </div>
-<!--    </div>-->
+        <Button
+                v-if="!isLoading && thereIsMore"
+                class="text-button"
+                text="Загрузить ещё"
+                @click="loadPublications(articles.length, countLoadPublications)"/>
+    </div>
+    <PageLoading v-else/>
+    <!--    </div>-->
 </template>
 
 <script>
@@ -31,18 +33,20 @@
         reactive,
         ref,
         // watch
-    } from 'vue'
+    }                     from 'vue'
     import {asyncRequest} from "@/js/web";
 
     import {
         Button,
         PageLoading
-    } from 'saffarid-ui-kit'
+    }                      from 'saffarid-ui-kit'
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
+    import CryingEmoji     from "@/assets/img/CryingEmoji";
 
     export default {
         name: "PublicationList",
         components: {
+            CryingEmoji,
             Button,
             PublicationItem,
             PageLoading
@@ -53,12 +57,12 @@
                 required: false,
                 default: false
             },
-            hasRowGap:{
+            hasRowGap: {
                 type: Boolean,
                 required: false,
                 default: false
             },
-            figure:{
+            figure: {
                 type: Boolean,
                 required: false,
                 default: false
@@ -101,9 +105,10 @@
                 if (resolve === undefined) {
                     resolve = data => {
                         setTimeout(() => {
-                            if(shift === 0){
+                            if (shift === 0) {
                                 articles.value = data.datas.findings
-                            } else {
+                            }
+                            else {
                                 articles.value = articles.value.concat(data.datas.findings)
                             }
                             thereIsMore.value = data.thereIsMore
@@ -145,3 +150,11 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .nothing_show{
+        display: grid;
+        margin: 25px;
+        justify-content: center;
+    }
+</style>

@@ -78,7 +78,7 @@
 
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
                 .then(data => {
-                    systemData.value = data.datas
+                    systemData.value = data.datas.findings[0]
                     provide('system', systemData)
                 })
                 .catch(err => console.log(err))

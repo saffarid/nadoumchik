@@ -164,7 +164,12 @@ const find = (collection, terms) => {
 const findByCustomKeys = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findOne(terms)
-                          .then(async finding => resolve(await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)))
+                          .then(async finding => {
+                              resolve({
+                                  findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
+                                  thereIsMore: true
+                              })
+                          })
                           .catch(err => reject(err))
     })
 }
@@ -175,7 +180,12 @@ const findByCustomKeys = (collection, terms) => {
 const findById = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findById(terms._id)
-                          .then(async finding => resolve(await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)))
+                          .then(async finding => {
+                              resolve({
+                                  findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
+                                  thereIsMore: true
+                              })
+                          })
                           .catch(err => reject(err))
     })
 }
@@ -192,6 +202,14 @@ const findBySampling = (collection, terms) => {
 
                                   if (collection === api.DATABASE.collections.publications.name) findings = findings.reverse()
 
+                                  if (findings.length === 0) {
+                                      resolve({
+                                          findings: [],
+                                          thereIsMore: false
+                                      })
+                                      return
+                                  }
+
                                   findings = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings)
 
                                   if (terms.shift === 0 && terms.count === 0) {
@@ -199,6 +217,7 @@ const findBySampling = (collection, terms) => {
                                           findings: findings,
                                           thereIsMore: false
                                       })
+                                      return
                                   }
 
                                   const range = terms.shift + terms.count
@@ -207,12 +226,14 @@ const findBySampling = (collection, terms) => {
                                           findings: findings.slice(terms.shift, range),
                                           thereIsMore: true
                                       })
+                                      return
                                   }
                                   else {
                                       resolve({
                                           findings: findings.slice(terms.shift, terms.count),
                                           thereIsMore: false
                                       })
+                                      return
                                   }
                               }
                               catch (e) {

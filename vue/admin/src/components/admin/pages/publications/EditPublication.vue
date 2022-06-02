@@ -143,11 +143,6 @@
                                        @change="loadImage($event,'title')">
 
                             </Row>
-                            <!--                            <Row>-->
-                            <!--                                <TextLabel :label="`Размер размытого изображения`"/>-->
-                            <!--                                <input :disabled="!localPublication.view.title.useImage" type="number"-->
-                            <!--                                       v-model="localPublication.view.title.blur.size">-->
-                            <!--                            </Row>-->
                             <Row>
                                 <TextLabel :label="`Положение размытого изображения`"/>
                                 <div>
@@ -225,8 +220,9 @@
                 <Tab :name="'ПРОЧИЕ АТРИБУТЫ'">
                     <Row>
                         <TextLabel label="Тема публикации"/>
-                        <ComboBox :options="themes"
-                                  v-model = localPublication.theme
+                        <ComboBox :options="themesOptions"
+                                  :modelValue = localPublication.theme._id
+                                  @update:modelValue="setTheme"
                                   />
                     </Row>
                 </Tab>
@@ -295,16 +291,38 @@
             const api = inject('$api')
             const popupIsShow = ref(false)
             const font = fonts
+            const themesOptions = ref({})
             const themes = ref([])
             const localPublication = reactive(props.publication)
 
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
             .then(gettingData => {
+                const res = {}
+
                 themes.value = gettingData.datas.findings
+
+                for(let i = 0; i < themes.value.length; i++){
+                    res[themes.value[i]._id] = themes.value[i].value
+                }
+
+                themesOptions.value = res
             })
 
+            const setTheme = (newTheme) => {
+                console.log(newTheme)
+
+                themes.value.forEach(theme => {
+                    if(theme._id === newTheme){
+                        localPublication.theme = theme
+                        console.log(localPublication)
+                        return
+                    }
+                })
+
+            }
             const setFont = (value) => {
                 console.log(value)
+                console.log(localPublication)
                 localPublication.view.title.text.fontFamily = value
             }
             const fontIndex = computed(() => {
@@ -332,8 +350,9 @@
                 const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
                 const hasContent = localPublication.content.content.localeCompare('') !== 0
                 const hasViewImage = localPublication.view.title.image.localeCompare('') !== 0
+                const hasTheme = localPublication.theme !== null && localPublication.theme !== undefined
 
-                return hasPreviewImage && hasContentTitle && hasContent && hasViewImage
+                return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })
 
             return {
@@ -343,7 +362,8 @@
                 localPublication,
                 popupIsShow,
                 setFont,
-                themes,
+                setTheme,
+                themesOptions,
                 loadImage
             }
         }
