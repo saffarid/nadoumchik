@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const {v4: uuid} = require('uuid')
 
 const initDataDB = require('./default.js')
-const api = require('./../../api/api_desc')
+const api = require('../api/api_desc')
 
 
 const Schema = mongoose.Schema

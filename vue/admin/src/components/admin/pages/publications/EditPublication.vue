@@ -295,6 +295,10 @@
             const themes = ref([])
             const localPublication = reactive(props.publication)
 
+            console.log(new Date())
+            console.log(props.publication)
+            console.log(localPublication)
+
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
             .then(gettingData => {
                 const res = {}

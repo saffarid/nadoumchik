@@ -89,83 +89,51 @@
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
              * Используется для создания новых публикаций или редактирования уже существующих
              * */
-            const publication = reactive({
-                _id: undefined,
-                dateStamp: new Date(),
-                theme:'',
-                content: {
-                    title: 'Your title is here',
-                    content: 'Your publication`s content is here'
-                },
-                preview: {
-                    imgOnLeft: true,
-                    backgroundColor: '#B7AEAE',
-                    textColor: '#ff5d5d',
-                    image: ''
-                },
-                view: {
-                    title: {
-                        useImage: false,
-                        height: 150,
-                        image: '#724242',
-                        text: {
-                            textColor: '#2b2b2b',
-                            fontFamily: 'YST',
-                            fontWeight: 400,
-                            fontStyle: 'normal'
-                        },
-                        blur: {
-                            size: 100,
-                            blur: 10,
-                            position_y: 50
-                        },
-                        clear: {
-                            size: 50,
-                            position_y: 50
-                        }
-                    },
-                }
-            })
+            const publication = reactive(api.DATABASE.collections.publications.newObject)
 
             /**
              * Функция запускает этап создания новой публикации
              * */
             const newPublication = () => {
-                publication._id = undefined
-                publication.dateStamp = new Date()
-                publication.dateStamp = ''
-                publication.content = {
-                    title: 'Your title is here',
-                    content: 'Your publication`s content is here'
-                }
-                publication.preview = {
-                    imgOnLeft: true,
-                    backgroundColor: '#640707',
-                    textColor: '#e77b7b',
-                    image: ''
-                }
-                publication.view = {
-                    title: {
-                        useImage: false,
-                        height: 150,
-                        image: '#724242',
-                        text: {
-                            textColor: '#2b2b2b',
-                            fontFamily: 'YST',
-                            fontWeight: 400,
-                            fontStyle: 'normal'
-                        },
-                        blur: {
-                            size: 100,
-                            blur: 10,
-                            position_y: 50
-                        },
-                        clear: {
-                            size: 50,
-                            position_y: 50
-                        }
-                    },
-                }
+
+                api.object.objectCopy(api.DATABASE.collections.publications.newObject, publication)
+
+
+                // publication._id = undefined
+                // publication.dateStamp = new Date()
+                // publication.dateStamp = ''
+                // publication.content = {
+                //     title: 'Your title is here',
+                //     content: 'Your publication`s content is here'
+                // }
+                // publication.preview = {
+                //     imgOnLeft: true,
+                //     backgroundColor: '#640707',
+                //     textColor: '#e77b7b',
+                //     image: ''
+                // }
+                // publication.view = {
+                //     title: {
+                //         useImage: false,
+                //         height: 150,
+                //         image: '#724242',
+                //         text: {
+                //             textColor: '#2b2b2b',
+                //             fontFamily: 'YST',
+                //             fontWeight: 400,
+                //             fontStyle: 'normal'
+                //         },
+                //         blur: {
+                //             size: 100,
+                //             blur: 10,
+                //             position_y: 50
+                //         },
+                //         clear: {
+                //             size: 50,
+                //             position_y: 50
+                //         }
+                //     },
+                // }
                 editPublicationShow.value = true
             }
 

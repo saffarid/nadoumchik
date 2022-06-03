@@ -70,8 +70,8 @@
         },
         setup(props) {
             const isAnimFrom = ref(null)
-
-            let date = new Date(props.publication.dateStamp);
+            console.log(props.publication.dateStamp)
+            let date = new Date(props.publication.dateStamp)
 
             return {
                 date,

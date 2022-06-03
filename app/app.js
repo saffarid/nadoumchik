@@ -7,7 +7,7 @@ const bodyParser = require("body-parser")
 
 
 const auth = require('./js/check_auth')
-const database = require('./js/database/database')
+const database = require('./js/database')
 
 /**
  * Парсер json-в запросах

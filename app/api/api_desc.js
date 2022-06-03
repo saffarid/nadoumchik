@@ -1,4 +1,8 @@
+// import work_object from "../js/work_object";
+const work_object = require('../js/work_object')
+
 module.exports = {
+    work_object,
     /**
      * Основные действия
      * */
@@ -290,6 +294,44 @@ module.exports = {
                         },
                     }
                 },
+                /**
+                 * Заготовка для создания новых объектов
+                 * */
+                newObject: {
+                    dateStamp: new Date(),
+                    theme: null,
+                    content: {
+                        title: 'Your title is here',
+                        content: 'Your publication`s content is here'
+                    },
+                    preview: {
+                        imgOnLeft: true,
+                        backgroundColor: '#B7AEAE',
+                        textColor: '#ff5d5d',
+                        image: ''
+                    },
+                    view: {
+                        title: {
+                            useImage: false,
+                            height: 150,
+                            image: '#724242',
+                            text: {
+                                textColor: '#2b2b2b',
+                                fontFamily: 'YST',
+                                fontWeight: 400,
+                                fontStyle: 'normal'
+                            },
+                            blur: {
+                                size: 100,
+                                blur: 10,
+                                position_y: 50
+                            },
+                            clear: {
+                                size: 50,
+                                position_y: 50
+                            }
+                        },
+                }
             },
             /**
              * Системные параметры
@@ -345,6 +387,20 @@ module.exports = {
                         required: true
                     }
                 },
+                /**
+                 * Заготовка для создания новых объектов
+                 * */
+                newObject:{
+                    /**
+                     * uuid темы публикации
+                     * */
+                    _id: undefined,
+                    /**
+                     * Значение темы публикации
+                     * */
+                    value: ''
+                }
+            }
             },
             /**
              * Категории пользователей

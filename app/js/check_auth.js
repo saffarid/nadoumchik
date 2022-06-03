@@ -1,4 +1,4 @@
-const database = require('./database/database')
+const database = require('./database')
 const api = require('./../api/api_desc')
 
 const checkAuth = (user) => {
