@@ -12,6 +12,7 @@ const objectCopy = (copied, target) => {
 
     Object.keys(copied).forEach(key => {
         if (isObject(copied[key])){
+            target[key] = {}
             objectCopy(copied[key], target[key])
         } else {
             target[key] = copied[key]

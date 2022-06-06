@@ -74,6 +74,7 @@
         },
         setup() {
             const api = inject('$api')
+            const workObject = inject('workObject')
             const publicationsList = ref(null)
             const editPublicationShow = ref(false)
             const isReady = ref(false)
@@ -85,55 +86,19 @@
                 message: 'empty'
             })
 
+            const emptyPublication = api.DATABASE.collections.publications.newObject;
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
              * Используется для создания новых публикаций или редактирования уже существующих
              * */
-            const publication = reactive(api.DATABASE.collections.publications.newObject)
+            const publication = reactive({})
 
             /**
              * Функция запускает этап создания новой публикации
              * */
             const newPublication = () => {
-
-                api.object.objectCopy(api.DATABASE.collections.publications.newObject, publication)
-
-
-                // publication._id = undefined
-                // publication.dateStamp = new Date()
-                // publication.dateStamp = ''
-                // publication.content = {
-                //     title: 'Your title is here',
-                //     content: 'Your publication`s content is here'
-                // }
-                // publication.preview = {
-                //     imgOnLeft: true,
-                //     backgroundColor: '#640707',
-                //     textColor: '#e77b7b',
-                //     image: ''
-                // }
-                // publication.view = {
-                //     title: {
-                //         useImage: false,
-                //         height: 150,
-                //         image: '#724242',
-                //         text: {
-                //             textColor: '#2b2b2b',
-                //             fontFamily: 'YST',
-                //             fontWeight: 400,
-                //             fontStyle: 'normal'
-                //         },
-                //         blur: {
-                //             size: 100,
-                //             blur: 10,
-                //             position_y: 50
-                //         },
-                //         clear: {
-                //             size: 50,
-                //             position_y: 50
-                //         }
-                //     },
-                // }
+                workObject.objectCopy(emptyPublication, publication)
+                publication.dateStamp = new Date()
                 editPublicationShow.value = true
             }
 
@@ -141,42 +106,7 @@
              * Функция запускает этап редактирования существующей публикации
              * */
             const updatePublication = (editPublication) => {
-                const publ = toRaw(editPublication)
-                publication._id = publ._id
-                publication.dateStamp = publ.dateStamp
-                publication.dateStamp = publ.theme
-                publication.content = {
-                    title: publ.content.title,
-                    content: publ.content.content
-                }
-                publication.preview = {
-                    imgOnLeft: publ.preview.imgOnLeft,
-                    backgroundColor: publ.preview.backgroundColor,
-                    textColor: publ.preview.textColor,
-                    image: publ.preview.image
-                }
-                publication.view = {
-                    title: {
-                        useImage: publ.view.title.useImage,
-                        height: publ.view.title.height,
-                        image: publ.view.title.image,
-                        text: {
-                            textColor: publ.view.title.text.textColor,
-                            fontFamily: publ.view.title.text.fontFamily,
-                            fontWeight: publ.view.title.text.fontWeight,
-                            fontStyle: publ.view.title.text.fontStyle
-                        },
-                        blur: {
-                            size: publ.view.title.blur.size,
-                            blur: publ.view.title.blur.blur,
-                            position_y: publ.view.title.blur.position_y
-                        },
-                        clear: {
-                            size: publ.view.title.clear.size,
-                            position_y: publ.view.title.clear.position_y
-                        }
-                    }
-                }
+                workObject.objectCopy(editPublication, publication)
                 editPublicationShow.value = true
             }
 

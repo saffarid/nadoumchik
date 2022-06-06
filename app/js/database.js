@@ -31,10 +31,9 @@ const init = () => {
     )
 
     Object.keys(initDataDB).forEach(async key => {
-
         const dataFindings = await find(key, api.BODY_REQUEST.termsSampling)
         if (dataFindings.findings.length === 0) {
-            insert(key, initDataDB[key])
+            await insert(key, initDataDB[key])
         }
     })
 
@@ -85,7 +84,7 @@ const convertRefsToClearObj = (schema, obj) => {
                 const term = {
                     _id: obj[key]
                 }
-                obj[key] = await find(schema[key].ref, term)
+                obj[key] = (await find(schema[key].ref, term)).findings[0]
 
             }
             else {
@@ -123,7 +122,7 @@ const convertClearToRefsObj = (schema, obj) => {
                     obj[key] = obj[key]['_id']
                 }
                 else {
-                    obj[key] = await find(schema[key].ref, obj[key])
+                    obj[key] = (await find(schema[key].ref, obj[key])).findings[0]
                 }
             }
             else {
@@ -210,7 +209,9 @@ const findBySampling = (collection, terms) => {
                                       return
                                   }
 
-                                  findings = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings)
+                                  for(let i = 0; i < findings.length; i++){
+                                      findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
+                                  }
 
                                   if (terms.shift === 0 && terms.count === 0) {
                                       resolve({
@@ -359,7 +360,7 @@ const update = (collection, data) => {
 const updateById = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findByIdAndUpdate(data._id)
+        models[collection].findByIdAndUpdate(data._id, data)
                           .then(updated => resolve(updated))
                           .catch(err => reject(err))
     })
@@ -373,7 +374,7 @@ const updateById = (collection, data) => {
 const updateByCustomKeys = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findOneAndUpdate(data)
+        models[collection].findOneAndUpdate(data, data)
                           .then(updated => resolve(updated))
                           .catch(err => reject(err))
     })

@@ -18,7 +18,7 @@
                     :label="publication.content.title.toUpperCase()" :style="`color: ${publication.preview.textColor}`"
                     style="position: relative; top: 10px"
             />
-            <TextLabel :label="`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`" :style="`color: ${publication.preview.textColor}`"/>
+            <TextLabel :label="`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`" :style="`color: ${publication.preview.textColor}`"/>
         </div>
         <div
                 class="buttons"
@@ -70,7 +70,7 @@
         },
         setup(props) {
             const isAnimFrom = ref(null)
-            console.log(props.publication.dateStamp)
+            console.log(props.publication)
             let date = new Date(props.publication.dateStamp)
 
             return {

@@ -1,8 +1,5 @@
-// import work_object from "../js/work_object";
-const work_object = require('../js/work_object')
 
 module.exports = {
-    work_object,
     /**
      * Основные действия
      * */
@@ -122,9 +119,9 @@ module.exports = {
                      * Тема публикации
                      * */
                     theme:{
-                      type: String,
-                      ref: 'themesOfPublication',
-                      required: true
+                        type: String,
+                        ref: 'themesOfPublication',
+                        required: true
                     },
                     /**
                      * Содержимое публикации
@@ -298,8 +295,11 @@ module.exports = {
                  * Заготовка для создания новых объектов
                  * */
                 newObject: {
+                    _id: undefined,
                     dateStamp: new Date(),
-                    theme: null,
+                    theme: {
+                        _id: '-1'
+                    },
                     content: {
                         title: 'Your title is here',
                         content: 'Your publication`s content is here'
@@ -331,6 +331,75 @@ module.exports = {
                                 position_y: 50
                             }
                         },
+                    }
+                },
+                /**
+                 * Системные параметры
+                 * */
+                system: {
+                    name: 'system',
+                    schema: {
+                        /**
+                         * uuid статьи
+                         * */
+                        _id: {
+                            type: String,
+                            required: true
+                        },
+                        /**
+                         * Рекламный блок
+                         * */
+                        ads: {
+                            /**
+                             * Флаг отображения рекламы
+                             * */
+                            isShowingAds: {
+                                type: Boolean,
+                                required: true
+                            }
+                        }
+                    }
+                },
+                /**
+                 * Категории статей
+                 * */
+                themesOfPublication: {
+                    /**
+                     * Наименование
+                     * */
+                    name: 'themesOfPublication',
+                    /**
+                     * Схема тем публикаций
+                     * */
+                    schema: {
+                        /**
+                         * uuid темы публикации
+                         * */
+                        _id: {
+                            type: String,
+                            required: true
+                        },
+                        /**
+                         * Значение темы публикации
+                         * */
+                        value: {
+                            type: String,
+                            required: true
+                        }
+                    },
+                    /**
+                     * Заготовка для создания новых объектов
+                     * */
+                    newObject:{
+                        /**
+                         * uuid темы публикации
+                         * */
+                        _id: undefined,
+                        /**
+                         * Значение темы публикации
+                         * */
+                        value: ''
+                    }
                 }
             },
             /**
@@ -387,20 +456,6 @@ module.exports = {
                         required: true
                     }
                 },
-                /**
-                 * Заготовка для создания новых объектов
-                 * */
-                newObject:{
-                    /**
-                     * uuid темы публикации
-                     * */
-                    _id: undefined,
-                    /**
-                     * Значение темы публикации
-                     * */
-                    value: ''
-                }
-            }
             },
             /**
              * Категории пользователей

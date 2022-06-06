@@ -295,31 +295,23 @@
             const themes = ref([])
             const localPublication = reactive(props.publication)
 
-            console.log(new Date())
-            console.log(props.publication)
-            console.log(localPublication)
-
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
             .then(gettingData => {
                 const res = {}
 
                 themes.value = gettingData.datas.findings
-
+                res['-1'] = 'Выберите тему'
                 for(let i = 0; i < themes.value.length; i++){
                     res[themes.value[i]._id] = themes.value[i].value
                 }
-
                 themesOptions.value = res
             })
 
             const setTheme = (newTheme) => {
-                console.log(newTheme)
-
                 themes.value.forEach(theme => {
                     if(theme._id === newTheme){
                         localPublication.theme = theme
-                        console.log(localPublication)
-                        return
+
                     }
                 })
 
@@ -354,7 +346,7 @@
                 const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
                 const hasContent = localPublication.content.content.localeCompare('') !== 0
                 const hasViewImage = localPublication.view.title.image.localeCompare('') !== 0
-                const hasTheme = localPublication.theme !== null && localPublication.theme !== undefined
+                const hasTheme = localPublication.theme !== null && localPublication.theme !== undefined && localPublication.theme._id !== '-1'
 
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })
