@@ -1,9 +1,19 @@
 <template>
-    <!--    <div>-->
+
     <div
             class="list"
             :class="{'gap':hasRowGap}"
             v-if="isReady">
+
+        <div class="tool-bar">
+            <Row>
+                <TextLabel label="Загружать по"/>
+                <ComboBox
+                        :options="uploadBy"
+                        v-model="countLoadPublications"/>
+            </Row>
+        </div>
+
         <PublicationItem v-for="(publication, index) in articles"
                          :key="index" :publication="publication"
                          :class="{'item-on-left':(publication.preview.imgOnLeft || !figure), 'item-on-right':(!publication.preview.imgOnLeft && figure)}"
@@ -13,10 +23,7 @@
                          :can-edit="canEditPublications"
         />
         <PageLoading v-if="isLoading"/>
-        <div class="nothing_show" v-if="articles.length === 0 && !thereIsMore">
-            <CryingEmoji :height="250" :width="250"/>
-            Нет публикаций для отображения
-        </div>
+        <NotFound class="nothing_show" v-if="articles.length === 0 && !thereIsMore"/>
         <Button
                 v-if="!isLoading && thereIsMore"
                 class="text-button"
@@ -24,7 +31,7 @@
                 @click="loadPublications(articles.length, countLoadPublications)"/>
     </div>
     <PageLoading v-else/>
-    <!--    </div>-->
+
 </template>
 
 <script>
@@ -32,24 +39,29 @@
         inject,
         reactive,
         ref,
-        // watch
     }                     from 'vue'
     import {asyncRequest} from "@/js/web";
 
     import {
         Button,
+        ComboBox,
+        TextLabel,
         PageLoading
     }                      from 'saffarid-ui-kit'
     import PublicationItem from "@/components/commons/publications_list/PublicationItem";
-    import CryingEmoji     from "@/assets/img/CryingEmoji";
+    import NotFound        from "@/components/commons/NotFound";
+    import Row             from "@/components/commons/Row";
 
     export default {
         name: "PublicationList",
         components: {
-            CryingEmoji,
+            NotFound,
             Button,
+            ComboBox,
+            TextLabel,
             PublicationItem,
-            PageLoading
+            PageLoading,
+            Row
         },
         props: {
             canEditPublications: {
@@ -91,6 +103,12 @@
              * Кол-во загружаемых публикаций
              * */
             const countLoadPublications = ref(10)
+            const uploadBy = {
+                10: 10,
+                20: 20,
+                30: 30,
+                40: 40
+            }
 
             const response = reactive({
                 code: -1,
@@ -145,14 +163,15 @@
                 loadPublications,
                 countLoadPublications,
                 editPublicationShow,
-                refreshList
+                refreshList,
+                uploadBy
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .nothing_show{
+    .nothing_show {
         display: grid;
         margin: 25px;
         justify-content: center;

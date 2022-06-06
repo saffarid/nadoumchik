@@ -1,11 +1,32 @@
 /**
+ * Доступные хранилища
+ * */
+const storages = {
+    local: localStorage,
+    session: sessionStorage
+}
+
+const KEY_USER = 'user'
+
+const getUser = (storage) => {
+    return storage.getItem(KEY_USER)
+}
+
+/**
+ * Функция сохраняет параметры пользователя в хранилище
+ * */
+const setUser = (storage, user) => {
+    storage.setItem(KEY_USER, user)
+}
+
+/**
  * Функция отправляет запрос на {url} и возвращает Promise.
  * @param {String} url
  * @param {String | Object} body
  * @param {Function} onprogress
  * @returns {Promise<any>}
  */
-export function asyncRequest(url, body, onprogress = null) {
+const asyncRequest = (url, body, onprogress = null) => {
     const xhr = new XMLHttpRequest()
 
     return new Promise((resolve, reject) => {
@@ -44,4 +65,11 @@ export function asyncRequest(url, body, onprogress = null) {
         xhr.send(body)
     })
 
+}
+
+export {
+    asyncRequest,
+    getUser,
+    setUser,
+    storages
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="auth-screen">
+    <div class="auth-screen" @keyup.enter="auth">
         <div class="auth-form">
             <div class="header-auth">
                 <Logo :x="0" :y="0" :height="50" :width="50"/>
@@ -7,12 +7,12 @@
             </div>
             <div class="form">
                 <TextField
-                        v-model="user.name"
+                        v-model.trim="user.name"
                         :type="'text'"
                         :placeholder="'Имя пользователя'"
                 />
                 <TextField
-                        v-model="user.pass"
+                        v-model.trim="user.pass"
                         :type="'password'"
                         :placeholder="'Пароль'"
                 />
@@ -43,7 +43,12 @@
         inject,
         reactive
     }                     from 'vue'
-    import {asyncRequest} from "@/js/web";
+    import {
+        asyncRequest,
+        getUser,
+        setUser,
+        storages
+    } from "@/js/web";
 
     const hash = require('jshashes')
 
@@ -58,19 +63,44 @@
         emit: ['successful'],
         setup(props, context) {
             const api = inject('$api')
+            const workObject = inject('workObject')
+            let userFromStorage = false
             const user = reactive({
                 name: '',
                 pass: ''
             })
 
+            const checkUser = () => {
+                const gettingUser = JSON.parse(getUser(storages.session))
+                console.log(gettingUser)
+                if(gettingUser == null) {
+                    const localUser = JSON.parse(getUser(storages.local))
+                    console.log(localUser)
+                    if (localUser == null) return
+                    workObject.objectCopy(localUser, user)
+                    userFromStorage = true
+                } else {
+                    context.emit('successful', gettingUser)
+                }
+            }
+
             const auth = () => {
-                console.log(api.MODEL_REQUESTS.auth)
-                asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify({
-                    name: user.name,
-                    pass: new hash.SHA1().b64(user.pass)
-                }))
+                if(user.name.localeCompare('') === 0 && user.pass.localeCompare('') === 0) return
+
+                if(!userFromStorage){
+                    user.pass = new hash.SHA1().b64(user.pass)
+                }
+
+                asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify(user))
                     .then(value => {
                         if (value.responseCode === 200) {
+                            const user = value.data.findings[0]
+                            setUser(storages.session, JSON.stringify(user))
+                            const u = user
+                            delete u.role
+                            console.log(u)
+                            setUser(storages.local, JSON.stringify(u))
+
                             context.emit('successful', value.data)
                         }
                     })
@@ -80,6 +110,8 @@
                 user.name = ''
                 user.pass = ''
             }
+
+            checkUser()
 
             return {
                 auth,

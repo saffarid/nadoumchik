@@ -1,5 +1,5 @@
 <template>
-    <BorderPane class="new-publication">
+    <BorderPane class="new-publication" @keyup.enter="publish">
         <template v-slot:top>
             <Button
                     class="image-button preview"
@@ -11,7 +11,7 @@
                     :disabled="!canSendPublication"
                     class="text-button publish"
                     :text="localPublication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
-                    @click="$emit('publish')"/>
+                    @click="publish"/>
         </template>
         <template v-slot:center>
             <Tabs :options="{ useUrlFragment: false }">
@@ -287,7 +287,7 @@
                 required: true
             }
         },
-        setup(props) {
+        setup(props, context) {
             const api = inject('$api')
             const popupIsShow = ref(false)
             const font = fonts
@@ -341,6 +341,11 @@
                 reader.readAsDataURL(file)
             }
 
+            const publish = () => {
+                if(canSendPublication.value)
+                    context.emit('publish')
+            }
+
             const canSendPublication = computed(() => {
                 const hasPreviewImage = localPublication.preview.image.localeCompare('') !== 0
                 const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
@@ -360,7 +365,8 @@
                 setFont,
                 setTheme,
                 themesOptions,
-                loadImage
+                loadImage,
+                publish
             }
         }
     }

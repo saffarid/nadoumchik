@@ -25,7 +25,6 @@
             const user = ref(null)
 
             const login = value => {
-                console.log(value)
                 user.value = value
             }
 
