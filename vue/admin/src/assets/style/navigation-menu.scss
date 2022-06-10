@@ -1,12 +1,23 @@
 .navigation-menu {
     border-right: grey 1px solid;
-    grid-template-rows: repeat(auto-fit, 34px );
+    padding: 5px;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    max-width: max-content;
     height: 100%;
-    width: var(--navigate_menu_width);
     align-items: stretch;
+
     .button {
         justify-content: start;
         height: var(--navigate_button_height);
         padding: var(--button_padding);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: var(--text_color);
+        background-color: grey;
+        border-radius: 5px;
+        cursor: pointer;
     }
 }

@@ -10,9 +10,9 @@
         </template>
         <template v-slot:center>
             <div class="workspace">
-                <Main v-if="pages.Main.vIf" v-show="pages.Main.active"/>
-                <Publications v-if="pages.Publications.vIf" v-show="pages.Publications.active"/>
-                <ThemesOfPublications v-if="pages.ThemesOfPublications.vIf" v-show="pages.ThemesOfPublications.active"/>
+                <keep-alive>
+                    <component :is="showingPage"/>
+                </keep-alive>
             </div>
         </template>
     </BorderPane>
@@ -21,6 +21,8 @@
 <script>
     import {
         reactive,
+        ref,
+        defineAsyncComponent
     } from 'vue'
 
     import {
@@ -29,70 +31,51 @@
     } from 'saffarid-ui-kit'
 
     import Header               from "@/components/commons/Header";
-    import Main                 from "@/components/admin/pages/Main";
-    import Publications         from "@/components/admin/pages/publications/Publications";
-    import ThemesOfPublications from "@/components/admin/pages/themes/ThemesOfPublications";
-    // import {asyncRequest}       from "@/js/web";
-
-    // function debug() {    }
-    function debug(val) {
-        console.debug(val)
-    }
 
     export default {
         name: "Studio",
         components: {
-            ThemesOfPublications,
-            Publications,
             BorderPane,
             NavigationMenu,
-            Main,
             Header
         },
         setup() {
             const pages = reactive({
                 Main: {
                     title: 'Главная',
-                    img: 'dashboard',
+                    img: defineAsyncComponent(() => import('@/assets/img/dashboard')),
+                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/Main.vue')),
                     changed: false,
                     active: true,
                     vIf: true,
                 },
                 Publications: {
                     title: 'Публикации',
-                    img: 'net',
+                    img: defineAsyncComponent(() => import('@/assets/img/ArticleLogo')),
+                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/publications/Publications.vue')),
                     changed: false,
                     active: false,
                     vIf: false,
                 },
                 ThemesOfPublications: {
                     title: 'Темы публикаций',
-                    img: 'net',
+                    img: defineAsyncComponent(() => import('@/assets/img/empty')),
+                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/themes/ThemesOfPublications.vue')),
                     changed: false,
                     active: false,
                     vIf: false,
                 }
             })
-
-            let activePage = ''
+            const showingPage = ref('')
 
             function setActivePage(page) {
-                debug(['setActivePage', page])
-                if (activePage === page) return
-
-                if (activePage != '') pages[activePage].active = false
-
-                if (page !== '') {
-                    pages[page].vIf |= true // если хоть раз открыли, то кешируем true, чтобы страница не грохнулась при переключении на другую
-                    pages[page].active = true
-                    debug('setActivePage ok')
-                }
-                activePage = page
+                showingPage.value = pages[page].workspace
             }
 
             setActivePage('Main')
             return {
                 pages,
+                showingPage,
                 setActivePage,
             }
         }
