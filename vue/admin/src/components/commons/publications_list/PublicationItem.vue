@@ -4,7 +4,7 @@
          @mouseleave="isAnimFrom = false"
          :class="{'image-left':(publication.preview.imgOnLeft || canEdit), 'image-right':(!publication.preview.imgOnLeft && !canEdit)}"
          class="publication-item"
-         :style="`background-color:${publication.preview.backgroundColor}`">
+         :style="styleVars">
         <div
                 :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null && !canEdit, 'mouse-leave':!isAnimFrom && isAnimFrom !== null && !canEdit}"
                 class="image">
@@ -15,19 +15,19 @@
                 class="text">
             <TextLabel
                     :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null && !canEdit, 'mouse-leave':!isAnimFrom && isAnimFrom !== null && !canEdit}"
-                    :label="publication.content.title.toUpperCase()" :style="`color: ${publication.preview.textColor}`"
+                    :label="publication.content.title.toUpperCase()"
                     style="position: relative; top: 10px"
             />
-            <TextLabel :label="`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`" :style="`color: ${publication.preview.textColor}`"/>
+            <TextLabel :label="`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`" />
         </div>
         <div
                 class="buttons"
                 v-if="canEdit">
             <Button class="image-button" @click="$emit('remove')">
-                <trash :height="20" :width="20"/>
+                <trash :height="20" :width="20" />
             </Button>
             <Button class="image-button" @click="$emit('edit')">
-                <edit :height="20" :width="20"/>
+                <edit :height="20" :width="20" />
             </Button>
         </div>
     </div>
@@ -35,7 +35,11 @@
 
 <script>
     import {
-        ref
+        ref,
+        reactive,
+        // watch,
+        computed,
+        onMounted
     } from 'vue'
     import {
         Button,
@@ -70,12 +74,25 @@
         },
         setup(props) {
             const isAnimFrom = ref(null)
-            console.log(props.publication)
             let date = new Date(props.publication.dateStamp)
 
+            const styleVars = reactive({
+                '--background' : props.publication.preview.backgroundColor,
+                '--color' : props.publication.preview.textColor
+            })
+
+            const refreshContentView = () => {
+                styleVars['--background'] = props.publication.preview.backgroundColor
+                styleVars['--color'] = props.publication.preview.textColor
+            }
+
+            onMounted(refreshContentView)
+            // watch(props.publication, refreshContentView)
+            computed(refreshContentView)
             return {
                 date,
-                isAnimFrom
+                isAnimFrom,
+                styleVars
             }
         }
     }

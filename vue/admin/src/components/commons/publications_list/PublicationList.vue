@@ -124,11 +124,14 @@
                     resolve = data => {
                         setTimeout(() => {
                             if (shift === 0) {
-                                articles.value = data.datas.findings
+                                // articles.value = data.datas.findings
+                                articles.value.length = 0
+                                articles.value = articles.value.concat(data.datas.findings)
                             }
                             else {
                                 articles.value = articles.value.concat(data.datas.findings)
                             }
+
                             thereIsMore.value = data.thereIsMore
                             isReady.value = true
                             isLoading.value = false

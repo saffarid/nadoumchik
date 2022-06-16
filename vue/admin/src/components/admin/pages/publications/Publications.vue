@@ -21,10 +21,6 @@
                         style="max-height: 76.8vh; overflow-y: auto"
                 />
             </template>
-            <template v-slot:bottom>
-                <!-- Строка состояния ответа -->
-                <ResponseBar :response="response"/>
-            </template>
         </BorderPane>
         <Popup
                 class="new-publication-popup"
@@ -44,11 +40,9 @@
     import {
         reactive,
         ref,
-        toRaw,
         inject
-    }                     from 'vue'
-    import {asyncRequest} from "@/js/web";
-
+    }                      from 'vue'
+    import {asyncRequest}  from "@/js/web";
     import {
         Button,
         BorderPane,
@@ -57,14 +51,12 @@
     }                      from 'saffarid-ui-kit'
     import Plus            from "@/assets/img/plus";
     import EditPublication from "@/components/admin/pages/publications/EditPublication";
-    import ResponseBar     from "@/components/admin/pages/publications/ResponseBar";
     import PublicationList from "@/components/commons/publications_list/PublicationList";
 
     export default {
         name: "Publications",
         components: {
             PublicationList,
-            ResponseBar,
             EditPublication,
             Button,
             Plus,
@@ -80,11 +72,6 @@
             const isReady = ref(false)
             const articles = ref([])
             const countLoadPublications = ref(10)
-
-            const response = reactive({
-                code: -1,
-                message: 'empty'
-            })
 
             const emptyPublication = api.DATABASE.collections.publications.newObject;
             /**
@@ -116,10 +103,9 @@
             const removePublication = (removedPublication) => {
                 asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove), JSON.stringify({_id: removedPublication._id}))
                     .then(data => {
-                        response.code = data.responseCode
-                        response.message = data.message
-
-                        publicationsList.value.refreshList(-1)
+                        if (data.responseCode === 200) {
+                            publicationsList.value.refreshList(-1)
+                        }
                     })
                     .catch(err => {
                         console.log('Объект успешно не удалён')
@@ -132,16 +118,12 @@
              * */
             const publish = () => {
                 if (publication._id) {
-                    console.log(publication)
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.update), JSON.stringify(publication))
                         .then(data => {
-                            console.log(data)
                             editPublicationShow.value = false
-
-                            response.code = data.responseCode
-                            response.message = data.message
-
-                            publicationsList.value.refreshList(0)
+                            if (data.responseCode === 200) {
+                                publicationsList.value.refreshList(0)
+                            }
                         })
                         .catch(err => {
                             console.log(err)
@@ -150,13 +132,10 @@
                 else {
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.insert), JSON.stringify(publication))
                         .then(data => {
-                            console.log(data)
                             editPublicationShow.value = false
-
-                            response.code = data.responseCode
-                            response.message = data.message
-
-                            publicationsList.value.refreshList(1)
+                            if (data.responseCode === 200) {
+                                publicationsList.value.refreshList(1)
+                            }
                         })
                         .catch(err => {
                             console.log(err)
@@ -165,7 +144,6 @@
             }
 
             return {
-                response,
                 publish,
                 articles,
                 isReady,

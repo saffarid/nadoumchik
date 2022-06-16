@@ -311,7 +311,6 @@
                 themes.value.forEach(theme => {
                     if(theme._id === newTheme){
                         localPublication.theme = theme
-
                     }
                 })
 
