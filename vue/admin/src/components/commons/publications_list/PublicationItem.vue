@@ -37,8 +37,8 @@
     import {
         ref,
         reactive,
-        // watch,
-        computed,
+        watch,
+        // computed,
         onMounted
     } from 'vue'
     import {
@@ -87,8 +87,8 @@
             }
 
             onMounted(refreshContentView)
-            // watch(props.publication, refreshContentView)
-            computed(refreshContentView)
+            watch(props, refreshContentView)
+            // computed(refreshContentView)
             return {
                 date,
                 isAnimFrom,

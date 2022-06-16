@@ -72,7 +72,6 @@
 
             const checkUser = () => {
                 const gettingUser = JSON.parse(getUser(storages.session))
-                console.log(gettingUser)
                 if(gettingUser == null) {
                     const localUser = JSON.parse(getUser(storages.local))
                     console.log(localUser)

@@ -61,7 +61,7 @@
             };
 
             onMounted(refreshContentView)
-            watch(props.publication, refreshContentView)
+            watch(props, refreshContentView)
 
             return {
                 styleTitleVar
