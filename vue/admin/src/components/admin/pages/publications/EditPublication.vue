@@ -313,16 +313,16 @@
                         localPublication.theme = theme
                     }
                 })
-
             }
+
             const setFont = (value) => {
-                console.log(value)
-                console.log(localPublication)
                 localPublication.view.title.text.fontFamily = value
             }
+
             const fontIndex = computed(() => {
                 return font[localPublication.view.title.text.fontFamily]
             })
+
             const loadImage = (event, key) => {
                 const file = event.target.files[0];
                 const reader = new FileReader()
@@ -340,11 +340,17 @@
                 reader.readAsDataURL(file)
             }
 
+            /**
+             * Функция эмитит событие публикации
+             * */
             const publish = () => {
                 if(canSendPublication.value)
                     context.emit('publish')
             }
 
+            /**
+             * Функция отслеживает заполнение всех необходимых полей
+             * */
             const canSendPublication = computed(() => {
                 const hasPreviewImage = localPublication.preview.image.localeCompare('') !== 0
                 const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
