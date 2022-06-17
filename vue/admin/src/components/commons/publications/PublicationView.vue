@@ -2,6 +2,7 @@
     <Popup
             class="publication"
             @close="$emit('close')"
+            @keyup.esc="$emit('close')"
     >
         <template v-slot:header>
             <Title :publication="publication"/>
@@ -16,15 +17,12 @@
 <script>
     import {
         onMounted,
-        reactive,
         ref,
         watch
-    } from "vue";
-
+    }            from "vue";
     import {
         Popup,
-        // TextLabel
-    } from 'saffarid-ui-kit'
+    }            from 'saffarid-ui-kit'
     import Title from "@/components/commons/publications/Title";
 
     export default {
@@ -32,7 +30,6 @@
         components: {
             Title,
             Popup,
-            // TextLabel
         },
         props: {
             publication: {
@@ -42,23 +39,18 @@
         },
         setup(props) {
             const articleView = ref(null)
-            const localPublication = reactive(props.publication)
 
             const refreshContentView = () => {
                 if (articleView.value !== null) {
-                    articleView.value.innerHTML = localPublication.content.content
+                    articleView.value.innerHTML = props.publication.content.content
                 }
             };
 
             onMounted(refreshContentView)
-            watch(localPublication, refreshContentView)
-
-            // watch(localPublication, () => {
-            // })
+            watch(props, refreshContentView)
 
             return {
                 articleView,
-                localPublication,
             }
         }
     }

@@ -10,7 +10,7 @@
             <Button
                     :disabled="!canSendPublication"
                     class="text-button publish"
-                    :text="localPublication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
+                    :text="publication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
                     @click="publish"/>
         </template>
         <template v-slot:center>
@@ -18,29 +18,29 @@
                 <Tab :name="'ОТОБРАЖЕНИЕ В СПИСКЕ'">
                     <div class="new-publication-item-view">
                         <PublicationItem
-                                :publication="localPublication"
+                                :publication="publication"
                         />
                         <Row>
                             <TextLabel
-                                    :label="`Положение изображения: ${localPublication.preview.imgOnLeft?'Да':'Нет'}`"/>
+                                    :label="`Положение изображения: ${publication.preview.imgOnLeft?'Да':'Нет'}`"/>
                             <Toggle
                                     id="imgOnLeft"
-                                    v-model="localPublication.preview.imgOnLeft"
+                                    v-model="publication.preview.imgOnLeft"
                                     :true-value="true"
                                     :false-value="false"
                             />
                         </Row>
                         <Row>
                             <TextLabel label="Цвет текста"/>
-                            <input type="color" v-model="localPublication.preview.textColor">
+                            <input type="color" v-model="publication.preview.textColor">
                         </Row>
                         <Row>
                             <TextLabel label="Цвет фона"/>
-                            <input type="color" v-model="localPublication.preview.backgroundColor">
+                            <input type="color" v-model="publication.preview.backgroundColor">
                         </Row>
                         <Row>
                             <TextLabel label="Изображение"/>
-                            <input type="file" @change="loadImage($event,'preview')">
+                            <input type="file" @change="loadImage($event,imageKeys.preview)">
                         </Row>
                     </div>
                 </Tab>
@@ -52,7 +52,7 @@
                                     <TextField
                                             class="title"
                                             type="text"
-                                            v-model="localPublication.content.title"
+                                            v-model="publication.content.title"
                                     />
                                     <editor
                                             ref="edit"
@@ -61,7 +61,7 @@
                                 plugins: 'lists link image table code help wordcount preview media save visualblocks emoticons'
                             }"
                                             initial-value="publication.content"
-                                            v-model="localPublication.content.content"
+                                            v-model="publication.content.content"
 
                                     />
                                 </div>
@@ -73,30 +73,29 @@
                     </div>
                 </Tab>
                 <Tab :name="'ЗАГОЛОВОК'">
-                    <Title :publication="localPublication"/>
+                    <Title :publication="publication"/>
                     <div class="new-publication-item-view">
                         <Row>
                             <TextLabel :label="`Цвет текста`"/>
-                            <input type="color" v-model="localPublication.view.title.text.textColor"/>
+                            <input type="color" v-model="publication.view.title.text.textColor"/>
                         </Row>
                         <Row>
                             <TextLabel label="Шрифт"/>
                             <ComboBox
                                     :options="font"
-                                    :modelValue="localPublication.view.title.text.fontFamily"
-                                    @update:modelValue="setFont"
+                                    v-model="publication.view.title.text.fontFamily"
                             />
                         </Row>
                         <Row>
                             <TextLabel label="Насыщеность шрифта"/>
                             <div>
                                 <input type="number" min="100" max="900" step="100"
-                                       v-model="localPublication.view.title.text.fontWeight">
+                                       v-model="publication.view.title.text.fontWeight">
                                 <div style="width: 250px">
                                     <Slider
                                             :range="{min:100, max: 900}"
                                             :step="100"
-                                            v-model="localPublication.view.title.text.fontWeight"
+                                            v-model="publication.view.title.text.fontWeight"
                                             :tooltips="false"
                                     />
                                 </div>
@@ -106,7 +105,7 @@
                             <TextLabel label="Наклонный текст"/>
                             <Toggle
                                     id="fontStyle"
-                                    v-model="localPublication.view.title.text.fontStyle"
+                                    v-model="publication.view.title.text.fontStyle"
                                     :true-value="'oblique'"
                                     :false-value="'normal'"
                             />
@@ -115,12 +114,12 @@
                             <TextLabel label="Высота заголовка"/>
                             <div>
                                 <input type="number" min="50" max="300" step="1"
-                                       v-model="localPublication.view.title.height">
+                                       v-model="publication.view.title.height">
                                 <div style="width: 250px">
                                     <Slider
                                             :range="{min:50, max: 300}"
                                             :step="1"
-                                            v-model="localPublication.view.title.height"
+                                            v-model="publication.view.title.height"
                                             :tooltips="false"
                                     />
                                 </div>
@@ -128,32 +127,32 @@
                         </Row>
                         <Row>
                             <TextLabel
-                                    :label="`Использовать фоновое изображение: ${localPublication.view.title.useImage?'Да':'Нет'}`"/>
+                                    :label="`Использовать фоновое изображение: ${publication.view.title.useImage?'Да':'Нет'}`"/>
                             <Toggle
                                     id="useImage"
-                                    v-model="localPublication.view.title.useImage"
+                                    v-model="publication.view.title.useImage"
                                     :true-value="true"
                                     :false-value="false"
                             />
                         </Row>
-                        <template v-if="localPublication.view.title.useImage">
+                        <template v-if="publication.view.title.useImage">
                             <Row>
                                 <TextLabel :label="`Фоновое изображение`"/>
-                                <input :disabled="!localPublication.view.title.useImage" type="file"
-                                       @change="loadImage($event,'title')">
+                                <input :disabled="!publication.view.title.useImage" type="file"
+                                       @change="loadImage($event,imageKeys.title)">
 
                             </Row>
                             <Row>
                                 <TextLabel :label="`Положение размытого изображения`"/>
                                 <div>
-                                    <input :disabled="!localPublication.view.title.useImage"
+                                    <input :disabled="!publication.view.title.useImage"
                                            type="number" min="0" max="100" step="0.1"
-                                           v-model="localPublication.view.title.blur.position_y">
+                                           v-model="publication.view.title.blur.position_y">
                                     <div style="width: 250px">
                                         <Slider
                                                 :range="{min:0, max: 100}"
                                                 :step="0.1"
-                                                v-model="localPublication.view.title.blur.position_y"
+                                                v-model="publication.view.title.blur.position_y"
                                                 :tooltips="false"
                                         />
                                     </div>
@@ -162,14 +161,14 @@
                             <Row>
                                 <TextLabel :label="`Размытие изображения`"/>
                                 <div>
-                                    <input :disabled="!localPublication.view.title.useImage"
+                                    <input :disabled="!publication.view.title.useImage"
                                            type="number" min="0" max="10" step="0.1"
-                                           v-model="localPublication.view.title.blur.blur">
+                                           v-model="publication.view.title.blur.blur">
                                     <div style="width: 250px">
                                         <Slider
                                                 :range="{min:0, max: 10}"
                                                 :step="0.1"
-                                                v-model="localPublication.view.title.blur.blur"
+                                                v-model="publication.view.title.blur.blur"
                                                 :tooltips="false"
                                         />
                                     </div>
@@ -178,14 +177,14 @@
                             <Row>
                                 <TextLabel :label="`Размер изображения`"/>
                                 <div>
-                                    <input :disabled="!localPublication.view.title.useImage"
+                                    <input :disabled="!publication.view.title.useImage"
                                            type="number" min="0" max="100" step="0.1"
-                                           v-model="localPublication.view.title.clear.size">
+                                           v-model="publication.view.title.clear.size">
                                     <div style="width: 250px">
                                         <Slider
                                                 :range="{min:0, max: 100}"
                                                 :step="0.1"
-                                                v-model="localPublication.view.title.clear.size"
+                                                v-model="publication.view.title.clear.size"
                                                 :tooltips="false"
                                         />
                                     </div>
@@ -194,14 +193,14 @@
                             <Row>
                                 <TextLabel :label="`Положение изображения`"/>
                                 <div>
-                                    <input :disabled="!localPublication.view.title.useImage"
+                                    <input :disabled="!publication.view.title.useImage"
                                            type="number" min="0" max="100" step="0.1"
-                                           v-model="localPublication.view.title.clear.position_y">
+                                           v-model="publication.view.title.clear.position_y">
                                     <div style="width: 250px">
                                         <Slider
                                                 :range="{min:0, max: 100}"
                                                 :step="0.1"
-                                                v-model="localPublication.view.title.clear.position_y"
+                                                v-model="publication.view.title.clear.position_y"
                                                 :tooltips="false"
                                         />
                                     </div>
@@ -211,8 +210,8 @@
                         <template v-else>
                             <Row>
                                 <TextLabel :label="`Фоновое зображение`"/>
-                                <input :disabled="localPublication.view.title.useImage" type="color"
-                                       v-model="localPublication.view.title.image">
+                                <input :disabled="publication.view.title.useImage" type="color"
+                                       v-model="publication.view.title.image">
                             </Row>
                         </template>
                     </div>
@@ -221,9 +220,9 @@
                     <Row>
                         <TextLabel label="Тема публикации"/>
                         <ComboBox :options="themesOptions"
-                                  :modelValue = localPublication.theme._id
+                                  :modelValue=publication.theme._id
                                   @update:modelValue="setTheme"
-                                  />
+                        />
                     </Row>
                 </Tab>
             </Tabs>
@@ -231,7 +230,7 @@
     </BorderPane>
     <PublicationView
             v-if="popupIsShow"
-            :publication="localPublication"
+            :publication="publication"
             @close="popupIsShow = false"
     />
 </template>
@@ -240,7 +239,6 @@
     import {
         ref,
         inject,
-        reactive,
         computed,
     }                      from 'vue'
     import {Tabs, Tab}     from 'vue3-tabs-component'
@@ -293,48 +291,56 @@
             const font = fonts
             const themesOptions = ref({})
             const themes = ref([])
-            const localPublication = reactive(props.publication)
+            const imageKeys = {
+                preview: 0,
+                title: 1
+            }
 
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
-            .then(gettingData => {
-                const res = {}
+                .then(gettingData => {
+                    const res = {}
 
-                themes.value = gettingData.datas.findings
-                res['-1'] = 'Выберите тему'
-                for(let i = 0; i < themes.value.length; i++){
-                    res[themes.value[i]._id] = themes.value[i].value
-                }
-                themesOptions.value = res
-            })
+                    themes.value = gettingData.datas.findings
+                    res['-1'] = 'Выберите тему'
+                    for (let i = 0; i < themes.value.length; i++) {
+                        res[themes.value[i]._id] = themes.value[i].value
+                    }
+                    themesOptions.value = res
+                })
 
             const setTheme = (newTheme) => {
                 themes.value.forEach(theme => {
-                    if(theme._id === newTheme){
-                        localPublication.theme = theme
+                    if (theme._id === newTheme) {
+                        props.publication.theme = theme
                     }
                 })
             }
 
             const setFont = (value) => {
-                localPublication.view.title.text.fontFamily = value
+                props.publication.view.title.text.fontFamily = value
             }
 
             const fontIndex = computed(() => {
-                return font[localPublication.view.title.text.fontFamily]
+                return font[props.publication.view.title.text.fontFamily]
             })
 
+            /**
+             * Загрузка изображения
+             * @param event Объект события, используется для получения загруженных файлов
+             * @param key {Number} ключ ячейки для загрузки изображения
+             * */
             const loadImage = (event, key) => {
                 const file = event.target.files[0];
                 const reader = new FileReader()
 
-                if (!key.localeCompare('preview')) {
+                if (key === imageKeys.preview) {
                     reader.onload = ev => {
-                        localPublication.preview.image = ev.target.result
+                        props.publication.preview.image = ev.target.result
                     }
                 }
-                if (!key.localeCompare('title')) {
+                if (key === imageKeys.title) {
                     reader.onload = ev => {
-                        localPublication.view.title.image = ev.target.result
+                        props.publication.view.title.image = ev.target.result
                     }
                 }
                 reader.readAsDataURL(file)
@@ -344,19 +350,20 @@
              * Функция эмитит событие публикации
              * */
             const publish = () => {
-                if(canSendPublication.value)
+                if (canSendPublication.value) {
                     context.emit('publish')
+                }
             }
 
             /**
              * Функция отслеживает заполнение всех необходимых полей
              * */
             const canSendPublication = computed(() => {
-                const hasPreviewImage = localPublication.preview.image.localeCompare('') !== 0
-                const hasContentTitle = localPublication.content.title.localeCompare('') !== 0
-                const hasContent = localPublication.content.content.localeCompare('') !== 0
-                const hasViewImage = localPublication.view.title.image.localeCompare('') !== 0
-                const hasTheme = localPublication.theme !== null && localPublication.theme !== undefined && localPublication.theme._id !== '-1'
+                const hasPreviewImage = props.publication.preview.image.localeCompare('') !== 0
+                const hasContentTitle = props.publication.content.title.localeCompare('') !== 0
+                const hasContent = props.publication.content.content.localeCompare('') !== 0
+                const hasViewImage = props.publication.view.title.image.localeCompare('') !== 0
+                const hasTheme = props.publication.theme !== null && props.publication.theme !== undefined && props.publication.theme._id !== '-1'
 
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })
@@ -365,13 +372,13 @@
                 canSendPublication,
                 font,
                 fontIndex,
-                localPublication,
                 popupIsShow,
                 setFont,
                 setTheme,
                 themesOptions,
                 loadImage,
-                publish
+                publish,
+                imageKeys
             }
         }
     }
