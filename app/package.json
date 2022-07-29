@@ -11,7 +11,8 @@
     "express": "4.17.3",
     "mongodb": "4.1.0",
     "uuid": "8.3.2",
-    "jshashes": "1.0.8"
+    "jshashes": "1.0.8",
+    "mariadb": "3.0.0"
   },
   "devDependencies": {
     "mongoose": "^6.3.0",

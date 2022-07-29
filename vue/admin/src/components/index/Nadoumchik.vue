@@ -5,7 +5,7 @@
                 <Header/>
             </template>
             <template v-slot:center>
-<!--                <div class="ads-left" v-if="systemData.ads.isShowingAds">-->
+                <!--                <div class="ads-left" v-if="systemData.ads.isShowingAds">-->
                 <div class="ads-left" v-if="false">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
@@ -20,16 +20,16 @@
                     </div>
                 </div>
                 <div class="ads-right" v-if="false">
-<!--                <div class="ads-right" v-if="systemData.ads.isShowingAds">-->
+                    <!--                <div class="ads-right" v-if="systemData.ads.isShowingAds">-->
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
             </template>
         </BorderPane>
         <PublicationView
-                v-if="showedPublication._id"
+                v-if="showedPublication != null"
                 :publication="showedPublication"
-                @close="closePublication"
+                @close="showedPublication = null"
         />
     </div>
 </template>
@@ -38,7 +38,6 @@
     import Header          from "@/components/commons/Header";
     import PublicationList from "@/components/commons/publications_list/PublicationList";
     import {
-        reactive,
         provide,
         ref,
         inject
@@ -59,21 +58,7 @@
         },
         setup() {
             const api = inject('$api')
-            const publicationIsShow = ref(false)
-            const showedPublication = reactive({
-                _id: undefined,
-                dateStamp: undefined,
-                content: {
-                    title: 'Your title is here',
-                    content: 'Your publication`s content is here'
-                },
-                preview: {
-                    imgOnLeft: true,
-                    backgroundColor: '#640707',
-                    textIsDark: true,
-                    image: ''
-                }
-            })
+            const showedPublication = ref(null)
             const systemData = ref(null)
 
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
@@ -84,25 +69,12 @@
                 .catch(err => console.log(err))
 
             const showPublication = (publication) => {
-                showedPublication._id = publication._id
-                showedPublication.dateStamp = publication.dateStamp
-                showedPublication.content = publication.content
-                showedPublication.preview = publication.preview
-                showedPublication.view = publication.view
-            }
-            const closePublication = () => {
-                showedPublication._id = undefined
-                showedPublication.dateStamp = undefined
-                showedPublication.content = undefined
-                showedPublication.preview = undefined
-                showedPublication.view = undefined
+                showedPublication.value = publication
             }
 
             return {
                 showPublication,
                 showedPublication,
-                publicationIsShow,
-                closePublication,
                 systemData
             }
         }

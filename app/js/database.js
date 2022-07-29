@@ -164,6 +164,13 @@ const findByCustomKeys = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findOne(terms)
                           .then(async finding => {
+                              if (finding == null) {
+                                  resolve({
+                                      findings: [],
+                                      thereIsMore: true
+                                  })
+                                  return
+                              }
                               resolve({
                                   findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
                                   thereIsMore: true
@@ -180,10 +187,18 @@ const findById = (collection, terms) => {
     return new Promise((resolve, reject) => {
         models[collection].findById(terms._id)
                           .then(async finding => {
+                              if (finding == null) {
+                                  resolve({
+                                      findings: [],
+                                      thereIsMore: true
+                                  })
+                                  return
+                              }
                               resolve({
                                   findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
                                   thereIsMore: true
                               })
+
                           })
                           .catch(err => reject(err))
     })
@@ -209,7 +224,7 @@ const findBySampling = (collection, terms) => {
                                       return
                                   }
 
-                                  for(let i = 0; i < findings.length; i++){
+                                  for (let i = 0; i < findings.length; i++) {
                                       findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
                                   }
 

@@ -44,12 +44,13 @@
             const systemData = ref(null)
             const isLoading = ref(false)
 
-            const systemSelect = () => asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
-                .then(data => {
-                    systemData.value = data.datas.findings[0]
-                    isLoading.value = true
-                })
-                .catch(err => console.log(err))
+            const systemSelect = () =>
+                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
+                    .then(data => {
+                        systemData.value = data.datas.findings[0]
+                        isLoading.value = true
+                    })
+                    .catch(err => console.log(err))
 
             const showAds = (value) => {
                 systemData.value.ads.isShowingAds = value

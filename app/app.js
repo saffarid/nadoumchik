@@ -5,7 +5,6 @@ const express = require("express")
 const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
-
 const auth = require('./js/check_auth')
 const database = require('./js/database')
 

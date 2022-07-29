@@ -5,7 +5,7 @@
         </template>
         <template v-slot:left>
             <NavigationMenu
-                    :buttons="pages" @navigate="setActivePage"
+                    :buttons="_pages" @navigate="setActivePage"
             />
         </template>
         <template v-slot:center>
@@ -19,18 +19,13 @@
 </template>
 
 <script>
-    import {
-        reactive,
-        ref,
-        defineAsyncComponent
-    } from 'vue'
-
+    import {ref}   from 'vue'
+    import {pages} from './pages/pages.js'
     import {
         BorderPane,
         NavigationMenu
-    } from 'saffarid-ui-kit'
-
-    import Header               from "@/components/commons/Header";
+    }              from 'saffarid-ui-kit'
+    import Header  from "@/components/commons/Header";
 
     export default {
         name: "Studio",
@@ -40,41 +35,15 @@
             Header
         },
         setup() {
-            const pages = reactive({
-                Main: {
-                    title: 'Главная',
-                    img: defineAsyncComponent(() => import('@/assets/img/dashboard')),
-                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/Main.vue')),
-                    changed: false,
-                    active: true,
-                    vIf: true,
-                },
-                Publications: {
-                    title: 'Публикации',
-                    img: defineAsyncComponent(() => import('@/assets/img/ArticleLogo')),
-                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/publications/Publications.vue')),
-                    changed: false,
-                    active: false,
-                    vIf: false,
-                },
-                ThemesOfPublications: {
-                    title: 'Темы публикаций',
-                    img: defineAsyncComponent(() => import('@/assets/img/empty')),
-                    workspace: defineAsyncComponent(() => import('@/components/admin/pages/themes/ThemesOfPublications.vue')),
-                    changed: false,
-                    active: false,
-                    vIf: false,
-                }
-            })
-            const showingPage = ref('')
+            const _pages = pages
+            const showingPage = ref(_pages.Main)
 
-            function setActivePage(page) {
-                showingPage.value = pages[page].workspace
+            const setActivePage = (page) => {
+                showingPage.value = _pages[page].workspace
             }
 
-            setActivePage('Main')
             return {
-                pages,
+                _pages,
                 showingPage,
                 setActivePage,
             }
