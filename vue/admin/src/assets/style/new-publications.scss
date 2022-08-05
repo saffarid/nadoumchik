@@ -1,40 +1,15 @@
-.new-publication-popup{
+.new-publication-popup {
     .popup {
         grid-template-rows: 0 auto 0;
     }
 }
 
-.row>div{
+.row > div {
     display: grid;
     grid-template-columns: 50px auto;
     align-items: center;
     justify-items: stretch;
     column-gap: 5px;
-}
-
-.new-publication {
-    .top {
-        display: grid;
-        justify-content: stretch;
-        grid-template-columns: repeat(auto-fit, minmax(50px, min-content));
-        column-gap: 5px;
-        padding: 5px;
-        .preview{
-            justify-self: start;
-            svg {
-                fill: none;
-                stroke: var(--action_component_content)
-            }
-            &:hover{
-                svg {
-                    stroke: var(--action_component_content_hover);
-                }
-            }
-        }
-        .button{
-            justify-self: end;
-        }
-    }
 }
 
 .new-publication .new-publication-item-view {
@@ -44,28 +19,26 @@
 }
 
 .new-publication-content {
-    row-gap: 5px;
+    padding: 2px;
+    row-gap: 2px;
     @import "toolbar";
 
-    .editor {
-        display: grid;
-        row-gap: 5px;
 
-        .tox{
-            min-height: 250px;
-            max-height: 600px;
-        }
+    .tox {
+        min-height: 250px;
+        max-height: 600px;
+    }
 
-        .title {
-            height: 40px;
-            border: #eeeeee 2px solid;
-            border-radius: 10px;
-            font-size: 30px;
-            padding-left: 10px;
+    .title {
+        height: 40px;
+        border: #eeeeee 2px solid;
+        border-radius: 10px;
+        font-size: 30px;
+        padding-left: 10px;
 
-            &:focus-visible{
-                outline: 0;
-            }
+        &:focus-visible {
+            outline: 0;
         }
     }
+
 }

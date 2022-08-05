@@ -93,11 +93,10 @@
                 asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify(user))
                     .then(value => {
                         if (value.responseCode === 200) {
-                            const user = value.data.findings[0]
+                            const user = value.data
                             setUser(storages.session, JSON.stringify(user))
                             const u = user
                             delete u.role
-                            console.log(u)
                             setUser(storages.local, JSON.stringify(u))
 
                             context.emit('successful', value.data)

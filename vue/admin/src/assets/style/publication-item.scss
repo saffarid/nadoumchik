@@ -1,11 +1,11 @@
 .image-left {
   grid-template-areas: "image text buttons";
-  grid-template-columns: 140px auto min-content;
+  grid-template-columns: var(--publication_item_h) auto min-content;
 }
 
 .image-right {
   grid-template-areas: "buttons text image";
-  grid-template-columns: min-content auto 140px;
+  grid-template-columns: min-content auto var(--publication_item_h);
 }
 
 @keyframes transform-scale-to {
@@ -42,15 +42,15 @@
   margin: 0;
   align-content: center;
   align-items: center;
-  height: 140px;
+  height: var(--publication_item_h);
   width: 650px;
   background-color: var(--background);
 
   .image {
     display: grid;
     grid-area: image;
-    width: 140px;
-    height: 140px;
+    width: var(--publication_item_h);
+    height: var(--publication_item_h);
     align-content: center;
     justify-content: center;
   }

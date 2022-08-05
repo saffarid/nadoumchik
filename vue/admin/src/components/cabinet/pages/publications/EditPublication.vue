@@ -1,17 +1,22 @@
 <template>
     <BorderPane class="new-publication" @keyup.enter="publish">
         <template v-slot:top>
-            <Button
-                    class="image-button preview"
-                    @click="popupIsShow = true">
-                <eye
-                        :height="20" :width="20"/>
-            </Button>
-            <Button
-                    :disabled="!canSendPublication"
-                    class="text-button publish"
-                    :text="publication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
-                    @click="publish"/>
+            <div class="tool-bar" style="padding-left:2px">
+                <Button
+                        class="text-button preview"
+                        @click="popupIsShow = true"
+                        text="ПРЕДПРОСМОТР"
+                />
+                <Button
+                        :disabled="!canSendPublication"
+                        class="text-button publish"
+                        :text="publication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
+                        @click="publish"/>
+                <Button
+                        class="text-button publish"
+                        text="Напечатать"
+                        @click="print"/>
+            </div>
         </template>
         <template v-slot:center>
             <Tabs :options="{ useUrlFragment: false }">
@@ -45,32 +50,27 @@
                     </div>
                 </Tab>
                 <Tab :name="'СОДЕРЖИМОЕ'">
-                    <div>
-                        <BorderPane class="new-publication-content">
-                            <template v-slot:center>
-                                <div class="editor">
-                                    <TextField
-                                            class="title"
-                                            type="text"
-                                            v-model="publication.content.title"
-                                    />
-                                    <editor
-                                            ref="edit"
-                                            api-key="no-api-key"
-                                            :init="{
+                    <BorderPane class="new-publication-content">
+                        <template v-slot:top>
+                            <TextField
+                                    class="title"
+                                    type="text"
+                                    v-model="publication.content.title"
+                            />
+                        </template>
+                        <template v-slot:center>
+                            <editor
+                                    ref="edit"
+                                    api-key="no-api-key"
+                                    :init="{
                                 plugins: 'lists link image table code help wordcount preview media save visualblocks emoticons'
                             }"
-                                            initial-value="publication.content"
-                                            v-model="publication.content.content"
+                                    initial-value="publication.content"
+                                    v-model="publication.content.content"
 
-                                    />
-                                </div>
-                                <div ref="result">
-                                </div>
-                            </template>
-                        </BorderPane>
-
-                    </div>
+                            />
+                        </template>
+                    </BorderPane>
                 </Tab>
                 <Tab :name="'ЗАГОЛОВОК'">
                     <Title :publication="publication"/>
@@ -288,7 +288,8 @@
         setup(props, context) {
             const api = inject('$api')
             const popupIsShow = ref(false)
-            const font = fonts
+            // const _fonts = fonts
+            const font = {}
             const themesOptions = ref({})
             const themes = ref([])
             const imageKeys = {
@@ -301,16 +302,28 @@
                     const res = {}
 
                     themes.value = gettingData.datas.findings
-                    res['-1'] = 'Выберите тему'
+                    res['-1'] = {
+                        disabled: true,
+                        value: 'Выберите тему',
+                        selected: true,
+                        label: 'Выберите тему'
+                    }
                     for (let i = 0; i < themes.value.length; i++) {
-                        res[themes.value[i]._id] = themes.value[i].value
+                        res[themes.value[i]._id] = {
+                            disabled: false,
+                            value: themes.value[i].value,
+                            selected: false,
+                            label: themes.value[i].value
+                        }
+
                     }
                     themesOptions.value = res
                 })
 
             const setTheme = (newTheme) => {
+                console.log(newTheme)
                 themes.value.forEach(theme => {
-                    if (theme._id === newTheme) {
+                    if (theme.value === newTheme) {
                         props.publication.theme = theme
                     }
                 })
@@ -368,6 +381,27 @@
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })
 
+            const print = () => {
+                console.log(props.publication)
+            }
+
+            const convertFonts = () => {
+                font["-1"] = {
+                    disabled: true,
+                    value: 'Выберите шрифт',
+                    selected: true,
+                    label: 'Выберите шрифт'
+                }
+                for (const k of Object.keys(fonts)) {
+                    font[k] = {
+                        disabled: false,
+                        value: k,
+                        selected: false,
+                        label: fonts[k]
+                    }
+                }
+            }
+            convertFonts()
             return {
                 canSendPublication,
                 font,
@@ -378,7 +412,8 @@
                 themesOptions,
                 loadImage,
                 publish,
-                imageKeys
+                imageKeys,
+                print
             }
         }
     }

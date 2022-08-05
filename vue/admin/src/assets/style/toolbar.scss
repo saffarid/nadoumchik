@@ -2,12 +2,11 @@
     border-bottom: 1px grey solid;
     padding-top: 2px;
     padding-bottom: 2px;
-    display: flex;
-    align-items: center;
+    display: grid;
     align-content: center;
-    justify-content: space-between;
-    .left, .center, .right{
-        align-self: center;
-        justify-self: center;
-    }
+    justify-content: center;
+    align-self: stretch;
+    justify-self: stretch;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    column-gap: 5px;
 }

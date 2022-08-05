@@ -1,42 +1,46 @@
 <template>
-    <BorderPane class="themes-of-publications">
-        <template v-slot:top>
-            <div class="edit-category">
-                <TextField v-model="localTheme.value"/>
-                <Button
-                        :disabled="localTheme.value.localeCompare('') === 0"
-                        class="image-button" @click="sendTheme">
-                    <checkmark :height="20" :width="20"/>
-                </Button>
-                <Button class="image-button" @click="clearLocalTheme">
-                    <cancel :height="20" :width="20"/>
-                </Button>
-                <div class="response">
-                    {{response.toUpperCase()}}
+
+    <Card title="ТЕМЫ ПУБЛИКАЦИЙ" style="height: 100%">
+        <BorderPane class="themes-of-publications">
+            <template v-slot:top>
+                <div class="edit-category">
+                    <TextField v-model="localTheme.value"/>
+                    <Button
+                            :disabled="localTheme.value.localeCompare('') == 0"
+                            class="image-button" @click="sendTheme">
+                        <checkmark :height="20" :width="20"/>
+                    </Button>
+                    <Button class="image-button" @click="clearLocalTheme">
+                        <cancel :height="20" :width="20"/>
+                    </Button>
+                    <div class="response">
+                        {{response.toUpperCase()}}
+                    </div>
                 </div>
-            </div>
-        </template>
-        <template v-slot:center>
-            <div v-if="isReady">
-                <div class="theme-of-publications" ref="themesList">
-                    <ThemeItem
-                            v-for="(theme, index) in themes" :key="index"
-                            :theme="theme"
-                            @edit="updateTheme(theme, index)"
-                            @remove="removeTheme(theme)"
-                    />
+            </template>
+            <template v-slot:center>
+                <div v-if="isReady">
+                    <div class="theme-of-publications" ref="themesList">
+                        <ThemeItem
+                                v-for="(theme, index) in themes" :key="index"
+                                :theme="theme"
+                                @edit="updateTheme(theme, index)"
+                                @remove="removeTheme(theme)"
+                        />
+                    </div>
                 </div>
-            </div>
-            <div v-else>
-                Загрузка...
-            </div>
-        </template>
-    </BorderPane>
+                <div v-else>
+                    Загрузка...
+                </div>
+            </template>
+        </BorderPane>
+    </Card>
 </template>
 
 <script>
     import {asyncRequest} from "@/js/web";
     import {
+        Card,
         BorderPane,
         Button,
         TextField,
@@ -47,13 +51,14 @@
         ref,
         reactive,
     }                     from 'vue'
-    import ThemeItem      from "@/components/admin/pages/themes/ThemeItem";
+    import ThemeItem      from "@/components/cabinet/pages/themes/ThemeItem";
     import Checkmark      from "@/assets/img/checkmark";
     import Cancel         from "@/assets/img/cancel";
 
     export default {
         name: "ThemesOfPublications",
         components: {
+            Card,
             Cancel,
             Checkmark,
             ThemeItem,
@@ -117,7 +122,7 @@
                 if (localTheme._id) {
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.update), JSON.stringify(localTheme))
                         .then((data) => {
-                            if (data.responseCode === 200) {
+                            if (data.responseCode === api.CODES_RESPONSE.updated.responseCode) {
                                 clearLocalTheme()
                                 loadThemes()
                             }
@@ -132,7 +137,7 @@
                 else {
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.insert), JSON.stringify(localTheme))
                         .then((data) => {
-                            if (data.responseCode === 200) {
+                            if (data.responseCode === api.CODES_RESPONSE.created.responseCode) {
                                 clearLocalTheme()
                                 loadThemes()
                             }
@@ -182,50 +187,41 @@
 <style lang="scss" scoped>
 
     .themes-of-publications {
-        .top {
-            .edit-category {
-                align-content: center;
-                align-items: center;
+        .edit-category {
+            align-content: center;
+            align-items: center;
+            border-bottom: #888888 1px solid;
+            display: grid;
+            grid-template-columns: 300px min-content min-content auto;
+            padding: 5px;
+            /*width: fit-content;*/
+            column-gap: 5px;
+
+            input {
+                height: 100%;
+                border: 0;
                 border-bottom: #888888 1px solid;
+
+                &:focus-visible {
+                    outline: 0;
+                }
+            }
+
+            .response {
                 display: grid;
-                grid-template-columns: 300px min-content min-content auto;
-                padding: 5px;
-                /*width: fit-content;*/
-                column-gap: 5px;
-
-                input {
-                    height: 100%;
-                    border: 0;
-                    border-bottom: #888888 1px solid;
-
-                    &:focus-visible {
-                        outline: 0;
-                    }
-                }
-
-                .response {
-                    display: grid;
-                    align-content: center;
-                    justify-content: left;
-                }
+                align-content: center;
+                justify-content: left;
             }
         }
 
-        .center {
-            .theme-of-publications {
-                display: grid;
-                row-gap: 2px;
-                margin-top: 2px;
+        .theme-of-publications {
+            display: grid;
+            row-gap: 2px;
+            margin-top: 2px;
 
-                .edit {
-                    background-color: #888888;
-                }
+            .edit {
+                background-color: #888888;
             }
-        }
-
-        .left, .right {
-            width: 0;
-            max-width: 0;
         }
     }
 

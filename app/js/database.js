@@ -4,7 +4,6 @@ const {v4: uuid} = require('uuid')
 const initDataDB = require('./default.js')
 const api = require('../api/api_desc')
 
-
 const Schema = mongoose.Schema
 
 const models = {}
@@ -25,18 +24,17 @@ const runOnObject = (sysDef, sysDb) => {
     }))
 }
 
-const init = () => {
-    Object.values(api.DATABASE.collections).forEach(value =>
-        models[value.name] = mongoose.model(value.name, value.schema)
-    )
+const init = async () => {
+    for (const value of Object.values(api.DATABASE.collections)) {
+        models[value.name] = mongoose.model(value.name, value.schema);
+    }
 
-    Object.keys(initDataDB).forEach(async key => {
+    for (const key of Object.keys(initDataDB)) {
         const dataFindings = await find(key, api.BODY_REQUEST.termsSampling)
-        if (dataFindings.findings.length === 0) {
+        if (dataFindings.datas.findings.length === 0) {
             await insert(key, initDataDB[key])
         }
-    })
-
+    }
 }
 
 /**
@@ -84,11 +82,11 @@ const convertRefsToClearObj = (schema, obj) => {
                 const term = {
                     _id: obj[key]
                 }
-                obj[key] = (await find(schema[key].ref, term)).findings[0]
+                obj[key] = (await find(schema[key].ref, term)).datas.findings[0]
 
             }
             else {
-                obj[key] = await convertClearToRefsObj(schema[key], obj[key])
+                obj[key] = await convertRefsToClearObj(schema[key], obj[key])
             }
         }
         resolve(obj)
@@ -122,7 +120,7 @@ const convertClearToRefsObj = (schema, obj) => {
                     obj[key] = obj[key]['_id']
                 }
                 else {
-                    obj[key] = (await find(schema[key].ref, obj[key])).findings[0]
+                    obj[key] = (await find(schema[key].ref, obj[key])).datas.findings[0]
                 }
             }
             else {
@@ -132,6 +130,34 @@ const convertClearToRefsObj = (schema, obj) => {
         resolve(obj)
     })
 
+}
+
+/**
+ * Функция проверяет поля на уникальность данных
+ * */
+const hasUnique = (collections, schema, obj) => {
+    return new Promise(async (resolve, reject) => {
+        let res = false
+        //key - наименование поля в БД
+        for (const key of Object.keys(schema)) {
+            if (key === '_id') continue
+            //Получаем объект-описание поля документа коллекции
+            const desc = schema[key]
+
+            if ('type' in desc) {
+                if ('unique' in desc && desc['unique']) {
+                    //Проводим выборку по этому ключу
+                    const term = {}
+                    term[key] = obj[key]
+                    res |= ((await find(collections, term)).datas.findings.length != 0)
+                }
+            }
+            else {
+                res |= ((await hasUnique(collections, desc[key], obj[key])).datas.findings.length != 0)
+            }
+        }
+        resolve(res)
+    })
 }
 
 /* --- Функции выборки --- */
@@ -166,14 +192,20 @@ const findByCustomKeys = (collection, terms) => {
                           .then(async finding => {
                               if (finding == null) {
                                   resolve({
-                                      findings: [],
-                                      thereIsMore: true
+                                      ...api.CODES_RESPONSE.noContent,
+                                      datas: {
+                                          findings: [],
+                                          thereIsMore: true
+                                      }
                                   })
                                   return
                               }
                               resolve({
-                                  findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
-                                  thereIsMore: true
+                                  ...api.CODES_RESPONSE.ok,
+                                  datas: {
+                                      findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
+                                      thereIsMore: true
+                                  }
                               })
                           })
                           .catch(err => reject(err))
@@ -189,16 +221,21 @@ const findById = (collection, terms) => {
                           .then(async finding => {
                               if (finding == null) {
                                   resolve({
-                                      findings: [],
-                                      thereIsMore: true
+                                      ...api.CODES_RESPONSE.noContent,
+                                      datas: {
+                                          findings: [],
+                                          thereIsMore: true
+                                      }
                                   })
                                   return
                               }
                               resolve({
-                                  findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
-                                  thereIsMore: true
+                                  ...api.CODES_RESPONSE.ok,
+                                  datas: {
+                                      findings: [await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)],
+                                      thereIsMore: true
+                                  }
                               })
-
                           })
                           .catch(err => reject(err))
     })
@@ -218,8 +255,11 @@ const findBySampling = (collection, terms) => {
 
                                   if (findings.length === 0) {
                                       resolve({
-                                          findings: [],
-                                          thereIsMore: false
+                                          ...api.CODES_RESPONSE.noContent,
+                                          datas: {
+                                              findings: [],
+                                              thereIsMore: false
+                                          }
                                       })
                                       return
                                   }
@@ -230,8 +270,11 @@ const findBySampling = (collection, terms) => {
 
                                   if (terms.shift === 0 && terms.count === 0) {
                                       resolve({
-                                          findings: findings,
-                                          thereIsMore: false
+                                          ...api.CODES_RESPONSE.ok,
+                                          datas: {
+                                              findings: findings,
+                                              thereIsMore: false
+                                          }
                                       })
                                       return
                                   }
@@ -239,15 +282,21 @@ const findBySampling = (collection, terms) => {
                                   const range = terms.shift + terms.count
                                   if (range < findings.length) {
                                       resolve({
-                                          findings: findings.slice(terms.shift, range),
-                                          thereIsMore: true
+                                          ...api.CODES_RESPONSE.ok,
+                                          datas: {
+                                              findings: findings.slice(terms.shift, range),
+                                              thereIsMore: true
+                                          }
                                       })
                                       return
                                   }
                                   else {
                                       resolve({
-                                          findings: findings.slice(terms.shift, terms.count),
-                                          thereIsMore: false
+                                          ...api.CODES_RESPONSE.ok,
+                                          datas: {
+                                              findings: findings.slice(terms.shift, terms.count),
+                                              thereIsMore: false
+                                          }
                                       })
                                       return
                                   }
@@ -286,9 +335,20 @@ const insertOne = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data['_id'] = uuid()
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].create(data)
-                          .then(value => resolve(value))
-                          .catch(err => reject(err))
+        if ((await hasUnique(collection, api.DATABASE.collections[collection].schema, data))) {
+            resolve({
+                ...api.CODES_RESPONSE.alreadyReported,
+                datas: null
+            })
+        }
+        else {
+            models[collection].create(data)
+                              .then(value => resolve({
+                                  ...api.CODES_RESPONSE.created,
+                                  datas: value
+                              }))
+                              .catch(err => reject(err))
+        }
     })
 }
 
@@ -302,9 +362,18 @@ const insertMany = (collection, data) => {
         for (let i = 0; i < data.length; i++) {
             data[i]['_id'] = uuid()
             data[i] = await convertClearToRefsObj(schema, data[i])
+            if ((await hasUnique(collection, api.DATABASE.collections[collection].schema, data[i]))) {
+                resolve({
+                    ...api.CODES_RESPONSE.alreadyReported,
+                    datas: null
+                })
+            }
         }
         models[collection].insertMany(data)
-                          .then(value => resolve(value))
+                          .then(value => resolve({
+                              ...api.CODES_RESPONSE.created,
+                              datas: value
+                          }))
                           .catch(err => reject(err))
     })
 }
@@ -333,7 +402,10 @@ const remove = (collection, data) => {
 const removeById = (collection, data) => {
     return new Promise((resolve, reject) => {
         models[collection].findByIdAndDelete(data._id)
-                          .then(removed => resolve(removed))
+                          .then(removed => resolve({
+                              ...api.CODES_RESPONSE.removed,
+                              datas: removed
+                          }))
                           .catch(err => reject(err))
     })
 }
@@ -346,7 +418,10 @@ const removeById = (collection, data) => {
 const removeByCustomKeys = (collection, data) => {
     return new Promise((resolve, reject) => {
         models[collection].findOneAndDelete(data)
-                          .then(removed => resolve(removed))
+                          .then(removed => resolve({
+                              ...api.CODES_RESPONSE.removed,
+                              datas: removed
+                          }))
                           .catch(err => reject(err))
     })
 }
@@ -375,9 +450,20 @@ const update = (collection, data) => {
 const updateById = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findByIdAndUpdate(data._id, data)
-                          .then(updated => resolve(updated))
-                          .catch(err => reject(err))
+        if ((await hasUnique(collection, api.DATABASE.collections[collection].schema, data))) {
+            resolve({
+                ...api.CODES_RESPONSE.alreadyReported,
+                datas: null
+            })
+        }
+        else {
+            models[collection].findByIdAndUpdate(data._id, data)
+                              .then(updated => resolve({
+                                  ...api.CODES_RESPONSE.updated,
+                                  datas: updated
+                              }))
+                              .catch(err => reject(err))
+        }
     })
 }
 
@@ -389,9 +475,20 @@ const updateById = (collection, data) => {
 const updateByCustomKeys = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findOneAndUpdate(data, data)
-                          .then(updated => resolve(updated))
-                          .catch(err => reject(err))
+        if ((await hasUnique(collection, api.DATABASE.collections[collection].schema, data))) {
+            resolve({
+                ...api.CODES_RESPONSE.alreadyReported,
+                datas: null
+            })
+        }
+        else {
+            models[collection].findOneAndUpdate(data, data)
+                              .then(updated => resolve({
+                                  ...api.CODES_RESPONSE.updated,
+                                  datas: updated
+                              }))
+                              .catch(err => reject(err))
+        }
     })
 }
 

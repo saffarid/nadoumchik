@@ -1,8 +1,8 @@
 <template>
     <Popup
             class="publication"
-            @close="$emit('close')"
-            @keyup.esc="$emit('close')"
+            @close="close"
+            @keypress.esc="close"
     >
         <template v-slot:header>
             <Title :publication="publication"/>
@@ -37,7 +37,7 @@
                 required: true
             }
         },
-        setup(props) {
+        setup(props, context) {
             const articleView = ref(null)
 
             const refreshContentView = () => {
@@ -49,8 +49,13 @@
             onMounted(refreshContentView)
             watch(props, refreshContentView)
 
+            const close = () => {
+                context.emit('close')
+            }
+
             return {
                 articleView,
+                close
             }
         }
     }

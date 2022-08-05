@@ -16,15 +16,15 @@ const jsonParser = express.json();
 const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING} = process.env;
 const app = express()
 
-const urlIndex = path.join(path.resolve(''), '..\\www\\index.html')
-const urlAdmin = path.join(path.resolve(''), '..\\www\\admin.html')
+const urlIndex = path.join(path.resolve(''), './../www/index.html')
+const urlAdmin = path.join(path.resolve(''), './../www/cabinet.html')
 
 /*
 * Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
 * */
-mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, err => {
+mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, async err => {
     //Нужна инициализация БД
-    database.init()
+    await database.init()
     if (err) return console.error(err)
     app.listen(APP_PORT, APP_IP, () => {
         console.log(`Wait connection to ${APP_IP}:${APP_PORT}`)
@@ -32,7 +32,7 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
 })
 app
     .use(bodyParser.json({limit: '50mb'}))
-    .use(express.static(__dirname + '\\..\\www'))
+    .use(express.static(__dirname + './../www'))
     .get('/', (req, res) => {
         fs.readFile(urlIndex, (err, data) => {
             if (err) {
@@ -46,7 +46,7 @@ app
             res.end();
         })
     })
-    .get('/admin', (req, res) => {
+    .get('/cabinet', (req, res) => {
         fs.readFile(urlAdmin, (err, data) => {
             if (err) {
                 res.writeHead(400, {'Content-Type': 'text/plain'});
@@ -63,11 +63,7 @@ app
         if (!req.body) res.sendStatus(400)
         database.execute(req.url, req.body)
             .then(data => {
-                res.json({
-                    responseCode: 200,
-                    message: 'Операция успешно проведена',
-                    datas: data
-                })
+                res.json(data)
             })
             .catch((err) => {
                 res.json(err)

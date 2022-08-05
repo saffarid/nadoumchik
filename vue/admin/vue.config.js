@@ -1,30 +1,33 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 const webpack = require('webpack')
 const os = require('os')
-const path = require('path')
+const p = require('path')
 
 const HappyPack = require('happypack');
-const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
 
 module.exports = {
 
-    outputDir: path.resolve(__dirname, './../../www'),
-    // publicPath: '',
+    outputDir: p.resolve(__dirname, './../../www'),
+    // publicPath: '\./',
 
     pages: {
         index: {
-            entry: 'src/index/main.js',
-            template: 'public/index.html',
+            entry: './src/index/main.js',
+            template: './public/index.html',
             filename: 'index.html',
             title: 'Index',
+            // chunks: ["index", "chunk-vendors", "chunk-common", ],
         },
-        admin: {
-            entry: 'src/admin/main.js',
-            template: 'public/index.html',
-            filename: 'admin.html',
-            title: 'Admin',
+        cabinet: {
+            entry: './src/cabinet/main.js',
+            template: './public/index.html',
+            filename: 'cabinet.html',
+            title: 'Cabinet',
+            // chunks: ["cabinet"],
         },
     },
 
@@ -39,69 +42,62 @@ module.exports = {
     configureWebpack: {
 
         plugins: [
-            new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно меняться
+            // new BundleAnalyzerPlugin(),
+            // new HtmlWebpackPlugin(),
+            // new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно меняться
             // new SpeedMeasurePlugin(),
-            new HappyPack({
-                id: 'vue',
-                loaders: [
-                    'sass-loader',
-                    'vue-loader',
-                    "css-loader"
-                ],
-                threadPool: happyThreadPool,
-                cache: true,
-                verbose: true
-            })
+            // new HappyPack({
+            //     id: 'vue',
+            //     loaders: [
+            //         'sass-loader',
+            //         'vue-loader',
+            //         "css-loader"
+            //     ],
+            //     threadPool: happyThreadPool,
+            //     cache: true,
+            //     verbose: true
+            // })
         ],
-        cache: {
-            type: 'memory',
-            // memoryCacheUnaffected: true,
-            cacheUnaffected: true,
-            // idleTimeout: 60000,
-            // idleTimeoutAfterLargeChanges: 1000,
-            // idleTimeoutForInitialStore: 0,
-        },
-        // module:{
-        //    rules: [{
-        //       test: /\.vue$/,
-        //       use: [
-        //          'cache-loader',
-        //          'vue-loader'
-        //       ]
-        //    }],
+        // cache: {
+        //     type: 'memory',
+        //     cacheUnaffected: true,
         // },
         optimization: {
-            runtimeChunk: 'single',
+            // runtimeChunk: 'single',
             splitChunks: {
-                chunks: 'all',
-                minSize: 20000,
-                maxSize: 100000,
-                maxAsyncRequests: 2,
-                maxInitialRequests: 2,
                 cacheGroups: {
-                    vendor: {
-                        chunks: 'all',
+                    vendors: {
+                        name: 'chunk-vendors',
+                        priority: -10,
+                        chunks: 'initial',
+                        // minSize: 20000,
+                        // maxSize: 40000,
+                        minChunks: 1,
                         test: /[\\/]node_modules[\\/]/,
+                        enforce: true,
+                        // name(module) {
+                        //     // получает имя, то есть node_modules/packageName/not/this/part.js
+                        //     // или node_modules/packageName
+                        //     const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
+                        //
+                        //     // имена npm-пакетов можно, не опасаясь проблем, использовать
+                        //     // в URL, но некоторые серверы не любят символы наподобие @
+                        //     return `npm.${packageName.replace('@', '')}`
+                    },
+                    common: {
+                        name: 'chunk-common',
+                        priority: -20,
+                        chunks: 'initial',
+                        // minSize: 2000,
+                        // maxSize: 4000,
+                        minChunks: 1,
                         reuseExistingChunk: true,
                         enforce: true,
-                        name(module) {
-                            // получает имя, то есть node_modules/packageName/not/this/part.js
-                            // или node_modules/packageName
-                            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
-
-                            // имена npm-пакетов можно, не опасаясь проблем, использовать
-                            // в URL, но некоторые серверы не любят символы наподобие @
-                            return `npm.${packageName.replace('@', '')}`
-                        },
                     },
                 },
             },
         },
-        //plugins: [ new BundleAnalyzerPlugin() ],
-        /*resolve: {
-          alias: {
-            dgram: "dgram-browserify"
-          }
-        },*/
     },
+
 }
+

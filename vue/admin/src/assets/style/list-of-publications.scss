@@ -1,6 +1,6 @@
 .cab{
   //--h:78.6vh;
-  --w: min-content;
+  --w: 100%;
 }
 
 .lst{
@@ -24,12 +24,17 @@
   row-gap: 0px;
   @import "toolbar";
 
-
   .list {
-    padding: 5px;
+    //padding: 5px;
     display: grid;
+    grid-template-rows: min-content auto;
     //max-height: var(--h);
     //overflow: auto;
     width: var(--w);
+
+    .lst{
+      display: grid;
+      grid-template-rows: repeat(auto-fit, var(--publication_item_h));
+    }
   }
 }

@@ -1,26 +1,26 @@
 <template>
     <div>
-        <BorderPane>
+        <BorderPane class="n">
             <template v-slot:top>
                 <Header/>
             </template>
-            <template v-slot:center>
-                <!--                <div class="ads-left" v-if="systemData.ads.isShowingAds">-->
-                <div class="ads-left" v-if="false">
+            <template v-slot:left>
+                <div class="ads" v-if="true">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
-                <div class="list-with-ads">
-                    <div class="list-of-publications"
-                         style="display:grid; justify-self: center; justify-items: center; height: 100%;">
-                        <PublicationList
-                                class="lst"
-                                :figure="true"
-                                @read="showPublication"/>
-                    </div>
+            </template>
+            <template v-slot:center>
+                <div class="list-of-publications"
+                     style="display:grid; justify-self: center; justify-items: center; height: 100%;">
+                    <PublicationList
+                            class="lst"
+                            :figure="true"
+                            @read="showPublication"/>
                 </div>
-                <div class="ads-right" v-if="false">
-                    <!--                <div class="ads-right" v-if="systemData.ads.isShowingAds">-->
+            </template>
+            <template v-slot:right>
+                <div class="ads" v-if="true">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
@@ -82,37 +82,29 @@
 </script>
 
 <style lang="scss" scoped>
-    .ads-left {
-        grid-area: ads-left;
-        position: fixed;
-        right: calc(50% + (790px / 2) + 5px);
+
+    .ads{
+        padding-top: 10px;
     }
 
-    .ads-right {
-        grid-area: ads-right;
-        position: fixed;
-        top: 112px;
-        left: calc(50% + (790px / 2) + 5px);
-    }
+    .list-of-publications {
 
-    .list-with-ads {
-        display: grid;
-        /*grid-template-columns: repeat(3, 1fr);*/
-        /*grid-template-areas: "ads-left list ads-right";*/
         justify-self: center;
         justify-content: center;
         max-height: 85vh;
         overflow-y: auto;
 
-        .list-of-publications {
-            grid-area: list;
+        padding-left: 10px;
+        padding-right: 10px;
 
-            .lst {
-                .list {
-                    overflow-y: hidden;
-                    max-height: max-content;
-                }
-            }
+
+        .list {
+            overflow-y: hidden;
+            max-height: max-content;
+            row-gap: 10px;
         }
+
     }
+
+
 </style>

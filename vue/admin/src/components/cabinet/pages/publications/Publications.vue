@@ -1,13 +1,11 @@
 <template>
-    <div style="height: 100%">
+    <Card title="ПУБЛИКАЦИИ" style="height: 100%">
+
+<!--    <div style="height: 100%">-->
         <BorderPane class="list-of-publications">
             <template v-slot:top>
                 <div class="tool-bar">
-                    <TextLabel label="ПУБЛИКАЦИИ"/>
-
-                    <Button class="image-button" @click="newPublication">
-                        <plus height="16" width="16"/>
-                    </Button>
+                    <Button class="text-button" @click="newPublication" text="Создать"/>
                 </div>
             </template>
             <template v-slot:center>
@@ -33,7 +31,8 @@
                 />
             </template>
         </Popup>
-    </div>
+<!--    </div>-->
+    </Card>
 </template>
 
 <script>
@@ -46,16 +45,18 @@
     import {
         Button,
         BorderPane,
+        Card,
         TextLabel,
         Popup,
     }                      from 'saffarid-ui-kit'
     import Plus            from "@/assets/img/plus";
-    import EditPublication from "@/components/admin/pages/publications/EditPublication";
+    import EditPublication from "@/components/cabinet/pages/publications/EditPublication";
     import PublicationList from "@/components/commons/publications_list/PublicationList";
 
     export default {
         name: "Publications",
         components: {
+            Card,
             PublicationList,
             EditPublication,
             Button,
@@ -103,7 +104,7 @@
             const removePublication = (removedPublication) => {
                 asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove), JSON.stringify({_id: removedPublication._id}))
                     .then(data => {
-                        if (data.responseCode === 200) {
+                        if (data.responseCode === api.CODES_RESPONSE.removed.responseCode) {
                             publicationsList.value.refreshList(-1)
                         }
                     })
@@ -121,7 +122,7 @@
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.update), JSON.stringify(publication))
                         .then(data => {
                             editPublicationShow.value = false
-                            if (data.responseCode === 200) {
+                            if (data.responseCode === api.CODES_RESPONSE.updated.responseCode) {
                                 publicationsList.value.refreshList(0)
                             }
                         })
@@ -133,7 +134,7 @@
                     asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.insert), JSON.stringify(publication))
                         .then(data => {
                             editPublicationShow.value = false
-                            if (data.responseCode === 200) {
+                            if (data.responseCode === api.CODES_RESPONSE.created.responseCode) {
                                 publicationsList.value.refreshList(1)
                             }
                         })

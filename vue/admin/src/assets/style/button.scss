@@ -1,8 +1,11 @@
 .image-button{
+  display: grid;
   border: var(--action_component) var(--button_border) solid;
   height: auto;
   border-radius: 50%;
   padding:  var(--button_padding);
+  align-self: center;
+  justify-self: center;
   svg {
     fill: var(--action_component_content)
   }

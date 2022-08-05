@@ -76,8 +76,8 @@
         display: grid;
         min-height: var(--height);
         max-height: min-content;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
 
         h1 {
             margin: 0;
@@ -99,8 +99,8 @@
         background-position-x: center;
         background-size: 100%;
         background-position-y: var(--blur-position-y);
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
 
         .clear {
             display: grid;
@@ -112,8 +112,8 @@
             background-position-x: center;
             background-size: var(--size);
             background-position-y: var(--position-y);
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
         }
     }
 

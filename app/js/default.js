@@ -1,3 +1,4 @@
+const api = require('../api/api_desc.js')
 const hash = require('jshashes')
 
 module.exports = {
@@ -6,28 +7,53 @@ module.exports = {
             isShowingAds: false,
         },
     },
-    roleOfUser: [
+    accessRights: [
+        {value: api.ACCESS_RIGHTS.ReadOnly},
+        {value: api.ACCESS_RIGHTS.ReadWrite},
+        {value: api.ACCESS_RIGHTS.NotAllow},
+    ],
+    groups: [
         {
-            name: 'guest',
-            accessRights: {}
+            name: 'guests',
+            rights: {
+                publications:{value: api.ACCESS_RIGHTS.ReadOnly,},
+                system:{value: api.ACCESS_RIGHTS.NotAllow,},
+                themesOfPublication:{value: api.ACCESS_RIGHTS.ReadOnly,},
+                groups:{value: api.ACCESS_RIGHTS.NotAllow,},
+                users:{value: api.ACCESS_RIGHTS.NotAllow,},
+                accessRights:{value: api.ACCESS_RIGHTS.NotAllow},
+            }
         },
         {
-            name: 'user',
-            accessRights: {}
+            name: 'reader',
+            rights: {
+                publications:{value: api.ACCESS_RIGHTS.ReadOnly,},
+                system:{value: api.ACCESS_RIGHTS.NotAllow,},
+                themesOfPublication:{value: api.ACCESS_RIGHTS.ReadOnly,},
+                groups:{value: api.ACCESS_RIGHTS.NotAllow,},
+                users:{value: api.ACCESS_RIGHTS.NotAllow,},
+                accessRights:{value: api.ACCESS_RIGHTS.NotAllow},
+            }
         },
         {
-            name: 'admin',
-            accessRights: {}
+            name: 'administrators',
+            rights: {
+                publications:{value: api.ACCESS_RIGHTS.ReadWrite,},
+                system:{value: api.ACCESS_RIGHTS.ReadWrite,},
+                themesOfPublication:{value: api.ACCESS_RIGHTS.ReadWrite,},
+                groups:{value: api.ACCESS_RIGHTS.ReadWrite,},
+                users:{value: api.ACCESS_RIGHTS.ReadWrite,},
+                accessRights:{value: api.ACCESS_RIGHTS.ReadOnly},
+            }
         },
     ],
     users: [
         {
             name: "admin",
-            pass: new hash.SHA1().b64('not admin'),
-            role: {
-                name: 'admin',
+            pass: new hash.SHA1().b64('admin'),
+            group: {
+                name: 'administrators',
             }
         }
     ]
-
 }

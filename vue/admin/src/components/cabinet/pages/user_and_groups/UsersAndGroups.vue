@@ -1,0 +1,65 @@
+<template>
+    <Tabs :options="{ useUrlFragment: false }">
+        <Tab name="Пользователи">
+            <Users />
+        </Tab>
+
+        <Tab name="Группы">
+            <Groups />
+        </Tab>
+    </Tabs>
+</template>
+
+<script>
+
+    import {Tab, Tabs} from 'vue3-tabs-component'
+
+    import {
+        provide,
+        // reactive,
+        ref,
+        inject
+    }                     from 'vue'
+    import {asyncRequest} from "@/js/web";
+    import Groups         from "./Groups";
+    import Users          from "./Users";
+
+    export default {
+        name: "UsersAndGroups",
+        components: {
+            Users,
+            Groups,
+            Tab,
+            Tabs,
+        },
+        setup() {
+            const api = inject('$api')
+            const workObject = inject('workObject')
+
+            const users = ref([])
+            const groups = ref([])
+
+            provide('users', users)
+            provide('groups', groups)
+
+            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+            .then(data => {
+                users.value = data.datas.findings
+            })
+
+            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+                .then(data => {
+                    groups.value = data.datas.findings
+                })
+
+            return {
+                groups,
+                users
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

@@ -1,7 +1,9 @@
 <template>
     <BorderPane class="header">
         <template v-slot:left>
-            <Logo :height="100" :width="100"/>
+            <div class="left">
+                <Logo :height="100" :width="100"/>
+            </div>
         </template>
         <template v-slot:center>
             <div class="title">
@@ -9,9 +11,11 @@
             </div>
         </template>
         <template v-slot:right>
-            <Button class="image-button link">
-                <mail :width="20" :height="20"/>
-            </Button>
+            <div class="right">
+                <Button class="image-button link">
+                    <mail :width="20" :height="20"/>
+                </Button>
+            </div>
         </template>
     </BorderPane>
 </template>
@@ -22,7 +26,7 @@
         BorderPane,
         Button,
         TextLabel
-    } from 'saffarid-ui-kit'
+    }           from 'saffarid-ui-kit'
     import Mail from "../../assets/img/mail";
 
     export default {

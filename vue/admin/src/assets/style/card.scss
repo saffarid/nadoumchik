@@ -1,4 +1,14 @@
 .card{
-    background: grey;
-    width: min-content;
+    width: 100%;
+
+    .title{
+        padding: 5px;
+        border-bottom: 1px grey solid;
+    }
+
+    .content{
+        display: grid;
+        align-items: stretch;
+        justify-items: stretch;
+    }
 }
