@@ -19,13 +19,19 @@
 </template>
 
 <script>
-    import {ref}   from 'vue'
-    import {pages} from './pages/pages.js'
+    import {
+        inject,
+        ref
+    }             from 'vue'
+    import {
+        pages,
+        getPages
+    }             from './pages/pages.js'
     import {
         BorderPane,
         NavigationMenu
-    }              from 'saffarid-ui-kit'
-    import Header  from "@/components/commons/Header";
+    }             from 'saffarid-ui-kit'
+    import Header from "@/components/commons/Header";
 
     export default {
         name: "Studio",
@@ -35,7 +41,9 @@
             Header
         },
         setup() {
-            const _pages = pages
+            // const _pages = pages
+            const user = inject('user')
+            const _pages = getPages(user.value)
             const showingPage = ref(_pages.Main)
 
             const setActivePage = (page) => {

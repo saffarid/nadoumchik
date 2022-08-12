@@ -1,6 +1,277 @@
+const schemas = {
+    publication: {
+        /**
+         * uuid публикаци
+         * */
+        _id: {
+            type: String,
+            required: true
+        },
+        author: {
+            type: String,
+            ref: 'users',
+            required: true
+        },
+        /**
+         * Дата пубдикации статьи
+         * */
+        dateStamp: {
+            type: Date,
+            required: true
+        },
+        /**
+         * Кол-во лайков
+         * */
+        likes: {
+            type: Number,
+            required: false
+        },
+        /**
+         * Кол-во дизлайков
+         * */
+        dislikes: {
+            type: Number,
+            required: false
+        },
+        /**
+         * Кол-во просмотров
+         * */
+        views: {
+            type: Number,
+            required: false
+        },
+        /**
+         * Тема публикации
+         * */
+        theme: {
+            type: String,
+            ref: 'themesOfPublication',
+            required: true
+        },
+        /**
+         * Содержимое публикации
+         * */
+        content: {
+            /**
+             * Тип статьи, в это полу устанавливается идентификатор из коллекции typesOfArticles
+             * */
+            type: {
+                type: String,
+                required: false
+            },
+            /**
+             * Заголовок статьи
+             * */
+            title: {
+                type: String,
+                required: true,
+                unique: true
+            },
+            /**
+             * Основное содержимое статьи
+             * */
+            content: {
+                type: String,
+                required: true
+            },
+        },
+        /**
+         * Внешнее отображение предпросмотра публикации
+         * */
+        preview: {
+            /**
+             * Флаг положения изображения
+             * */
+            imgOnLeft: {
+                type: Boolean,
+                required: true
+            },
+            /**
+             * Цвет фона
+             * */
+            backgroundColor: {
+                type: String,
+                required: true
+            },
+            /**
+             * Цвет текста
+             * */
+            textColor: {
+                type: String,
+                required: true
+            },
+            /**
+             * Изображение предпросмотра
+             * */
+            image: {
+                type: String,
+                required: true
+            },
+        },
+        /**
+         * Внешнее отображение публикации
+         * */
+        view: {
+            title: {
+                /**
+                 * Использование изображения для заголовка,
+                 * true - используется изображение,
+                 * false - используется заливка
+                 * */
+                useImage: {
+                    type: Boolean,
+                    required: true
+                },
+                /**
+                 * Изображение или заливка заголовка
+                 * */
+                image: {
+                    type: String,
+                    required: false
+                },
+                /**
+                 * Высота заголовка
+                 * */
+                height: {
+                    type: Number,
+                    required: true
+                },
+                /**
+                 * Оформление текста звголовка
+                 * */
+                text: {
+                    /**
+                     * Цвет текста
+                     * */
+                    textColor: {
+                        type: String,
+                        required: true
+                    },
+                    /**
+                     * Шрифт текста
+                     * */
+                    fontFamily: {
+                        type: String,
+                        required: true
+                    },
+                    /**
+                     * Вес
+                     * */
+                    fontWeight: {
+                        type: Number,
+                        required: true
+                    },
+                    /**
+                     * Стиль
+                     * */
+                    fontStyle: {
+                        type: String,
+                        required: true
+                    }
+                },
+                /**
+                 * Оформление размытой части заголовка
+                 * */
+                blur: {
+                    /**
+                     * Размер
+                     * */
+                    size: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Степень размытости
+                     * */
+                    blur: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Позиция по высоте
+                     * */
+                    position_y: {
+                        type: Number,
+                        required: false
+                    }
+                },
+                /**
+                 * Оформление чистой части заголовка
+                 * */
+                clear: {
+                    /**
+                     * Размер
+                     * */
+                    size: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Положение по оси Y
+                     * */
+                    position_y: {
+                        type: Number,
+                        required: false
+                    }
+                }
+            },
+        }
+    },
+    list: {
+        _id: {
+            type: String,
+            required: true
+        },
+        value: {
+            type: String,
+            required: true,
+            unique: true
+        },
+    }
+}
+
+const accessRights = {
+    ReadOnly: 'Read Only',
+    ReadWrite: 'Read/Write',
+    NotAllow: 'Not allow',
+}
+
+const collectionsName = {
+    /**
+     * Коллекция прав доступа
+     * */
+    accessRights: 'accessRights',
+    /**
+     * Коллекция групп пользователей
+     * */
+    groups: 'groups',
+    /**
+     * Коллекция пользователей
+     * */
+    users: 'users',
+
+    /**
+     * Коллекция черновиков публикаций
+     * */
+    drafts: 'drafts',
+    /**
+     * Коллекция публикаций
+     * */
+    publications: 'publications',
+    /**
+     * Коллекция категорий статей
+     * */
+    themesOfPublication: 'themesOfPublication',
+
+    /**
+     * Коллекция системных параметров
+     * */
+    system: 'system',
+}
+
 module.exports = {
     /**
-     * Основные действия
+     * Основные действия с БД
      * */
     ACTS: {
         /**
@@ -23,44 +294,7 @@ module.exports = {
     /**
      * Права доступа к контенту
      * */
-    ACCESS_RIGHTS: {
-        ReadOnly: 'Read Only',
-        ReadWrite: 'Read/Write',
-        NotAllow: 'Not allow',
-    },
-    /**
-     * Коды ответов
-     * */
-    CODES_RESPONSE: {
-        ok: {
-            responseCode: 200,
-            message: "Хорошо"
-        },
-        created:{
-            responseCode: 201,
-            message: "Создано"
-        },
-        updated:{
-            responseCode: 202,
-            message: "Обновлено"
-        },
-        removed:{
-            responseCode: 203,
-            message: "Удалено"
-        },
-        noContent:{
-            responseCode: 204,
-            message: "Нет контента"
-        },
-        alreadyReported:{
-            responseCode: 208,
-            message: "Уже сообщалось"
-        },
-        unauthorized:{
-            responseCode: 401,
-            message: "Не авторизован"
-        }
-    },
+    ACCESS_RIGHTS: accessRights,
     /**
      * Заготовки тел заросов
      * */
@@ -97,6 +331,47 @@ module.exports = {
         }
     },
     /**
+     * Коды ответов
+     * */
+    CODES_RESPONSE: {
+        ok: {
+            responseCode: 200,
+            message: "Хорошо"
+        },
+        created: {
+            responseCode: 201,
+            message: "Создано"
+        },
+        updated: {
+            responseCode: 202,
+            message: "Обновлено"
+        },
+        removed: {
+            responseCode: 203,
+            message: "Удалено"
+        },
+        noContent: {
+            responseCode: 204,
+            message: "Нет контента"
+        },
+        alreadyReported: {
+            responseCode: 208,
+            message: "Уже сообщалось"
+        },
+        badRequest: {
+            responseCode: 400,
+            message: "Некорректный запрос"
+        },
+        unauthorized: {
+            responseCode: 401,
+            message: "Не авторизован"
+        },
+        notFound: {
+            responseCode: 404,
+            message: "Не найдено"
+        },
+    },
+    /**
      * Объект описание БД
      * */
     DATABASE: {
@@ -112,21 +387,11 @@ module.exports = {
              * Права доступа
              * */
             accessRights: {
-                name: 'accessRights',
+                name: collectionsName.accessRights,
                 /**
                  * Схема пользователя
                  * */
-                schema: {
-                    _id: {
-                        type: String,
-                        required: true
-                    },
-                    value: {
-                        type: String,
-                        required: true,
-                        unique: true
-                    },
-                }
+                schema: schemas.list
             },
             /**
              * Группы пользователей
@@ -135,7 +400,7 @@ module.exports = {
                 /**
                  * Наименование
                  * */
-                name: 'groups',
+                name: collectionsName.groups,
                 /**
                  * Схема групп пользователей.
                  * */
@@ -158,65 +423,49 @@ module.exports = {
                     /**
                      * Описание группы
                      * */
-                    description:{
+                    description: {
                         type: String,
                         required: false,
                     },
                     rights: {
                         publications: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         },
                         system: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         },
                         themesOfPublication: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         },
                         groups: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         },
                         users: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         },
                         accessRights: {
                             type: String,
-                            ref: 'accessRights',
+                            ref: collectionsName.accessRights,
                             required: true
                         }
                     }
                 },
-                /**
-                 * Заготовка для создания нового объекта
-                 * */
-                newObject: {
-                    _id: undefined,
-                    name: 'New group',
-                    description: '',
-                    rights: {
-                        publications:{value: 'Not allow'},
-                        system:{value: 'Not allow'},
-                        themesOfPublication:{value: 'Not allow'},
-                        groups:{value: 'Not allow'},
-                        users:{value: 'Not allow'},
-                        accessRights:{value: 'Not allow'},
-                    }
-                }
             },
             /**
              * Пользователи
              * */
             users: {
-                name: 'users',
+                name: collectionsName.users,
                 /**
                  * Схема пользователя
                  * */
@@ -228,24 +477,51 @@ module.exports = {
                         type: String,
                         required: true
                     },
-                    name: {
-                        type: String,
-                        required: true,
-                        unique: true
+                    /**
+                     * Поля для авторизации и аутентификации
+                     * */
+                    auth: {
+                        name: {
+                            type: String,
+                            required: true,
+                            unique: true
+                        },
+                        pass: {
+                            type: String,
+                            required: true
+                        },
                     },
-                    pass: {
-                        type: String,
-                        required: true
+                    /**
+                     * Персональные данные
+                     * */
+                    personal: {
+                        nickname: {
+                            type: String,
+                        }
                     },
                     /**
                      * Идентификатор роли пользователя
                      * */
                     group: {
                         type: String,
-                        ref: 'groups',
+                        ref: collectionsName.groups,
                         required: true,
                     }
                 }
+            },
+
+            /**
+             * Черновики публикаций
+             * */
+            drafts: {
+                /**
+                 * Наименование
+                 * */
+                name: collectionsName.drafts,
+                /**
+                 * Схема черновика в БД
+                 * */
+                schema: schemas.publication,
             },
             /**
              * Публикации
@@ -254,271 +530,32 @@ module.exports = {
                 /**
                  * Наименование
                  * */
-                name: 'publications',
+                name: collectionsName.publications,
                 /**
                  * Схема публикации в БД
                  * */
-                schema: {
-                    /**
-                     * uuid публикаци
-                     * */
-                    _id: {
-                        type: String,
-                        required: true
-                    },
-                    /**
-                     * Дата пубдикации статьи
-                     * */
-                    dateStamp: {
-                        type: Date,
-                        required: true
-                    },
-                    /**
-                     * Кол-во лайков
-                     * */
-                    likes: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Кол-во дизлайков
-                     * */
-                    dislikes: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Кол-во просмотров
-                     * */
-                    views: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Тема публикации
-                     * */
-                    theme: {
-                        type: String,
-                        ref: 'themesOfPublication',
-                        required: true
-                    },
-                    /**
-                     * Содержимое публикации
-                     * */
-                    content: {
-                        /**
-                         * Тип статьи, в это полу устанавливается идентификатор из коллекции typesOfArticles
-                         * */
-                        type: {
-                            type: String,
-                            required: false
-                        },
-                        /**
-                         * Заголовок статьи
-                         * */
-                        title: {
-                            type: String,
-                            required: true,
-                            unique: true
-                        },
-                        /**
-                         * Основное содержимое статьи
-                         * */
-                        content: {
-                            type: String,
-                            required: true
-                        },
-                    },
-                    /**
-                     * Внешнее отображение предпросмотра публикации
-                     * */
-                    preview: {
-                        /**
-                         * Флаг положения изображения
-                         * */
-                        imgOnLeft: {
-                            type: Boolean,
-                            required: true
-                        },
-                        /**
-                         * Цвет фона
-                         * */
-                        backgroundColor: {
-                            type: String,
-                            required: true
-                        },
-                        /**
-                         * Цвет текста
-                         * */
-                        textColor: {
-                            type: String,
-                            required: true
-                        },
-                        /**
-                         * Изображение предпросмотра
-                         * */
-                        image: {
-                            type: String,
-                            required: true
-                        },
-                    },
-                    /**
-                     * Внешнее отображение публикации
-                     * */
-                    view: {
-                        title: {
-                            /**
-                             * Использование изображения для заголовка,
-                             * true - используется изображение,
-                             * false - используется заливка
-                             * */
-                            useImage: {
-                                type: Boolean,
-                                required: true
-                            },
-                            /**
-                             * Изображение или заливка заголовка
-                             * */
-                            image: {
-                                type: String,
-                                required: false
-                            },
-                            /**
-                             * Высота заголовка
-                             * */
-                            height: {
-                                type: Number,
-                                required: true
-                            },
-                            /**
-                             * Оформление текста звголовка
-                             * */
-                            text: {
-                                /**
-                                 * Цвет текста
-                                 * */
-                                textColor: {
-                                    type: String,
-                                    required: true
-                                },
-                                /**
-                                 * Шрифт текста
-                                 * */
-                                fontFamily: {
-                                    type: String,
-                                    required: true
-                                },
-                                /**
-                                 * Вес
-                                 * */
-                                fontWeight: {
-                                    type: Number,
-                                    required: true
-                                },
-                                /**
-                                 * Стиль
-                                 * */
-                                fontStyle: {
-                                    type: String,
-                                    required: true
-                                }
-                            },
-                            /**
-                             * Оформление размытой части заголовка
-                             * */
-                            blur: {
-                                /**
-                                 * Размер
-                                 * */
-                                size: {
-                                    type: Number,
-                                    required: false
-                                },
-                                /**
-                                 * Степень размытости
-                                 * */
-                                blur: {
-                                    type: Number,
-                                    required: false
-                                },
-                                /**
-                                 * Позиция по высоте
-                                 * */
-                                position_y: {
-                                    type: Number,
-                                    required: false
-                                }
-                            },
-                            /**
-                             * Оформление чистой части заголовка
-                             * */
-                            clear: {
-                                /**
-                                 * Размер
-                                 * */
-                                size: {
-                                    type: Number,
-                                    required: false
-                                },
-                                /**
-                                 * Положение по оси Y
-                                 * */
-                                position_y: {
-                                    type: Number,
-                                    required: false
-                                }
-                            }
-                        },
-                    }
-                },
-                /**
-                 * Заготовка для создания новых объектов
-                 * */
-                newObject: {
-                    _id: undefined,
-                    dateStamp: new Date(),
-                    theme: {
-                        _id: '-1'
-                    },
-                    content: {
-                        title: 'Your title is here',
-                        content: 'Your publication`s content is here'
-                    },
-                    preview: {
-                        imgOnLeft: true,
-                        backgroundColor: '#B7AEAE',
-                        textColor: '#ff5d5d',
-                        image: ''
-                    },
-                    view: {
-                        title: {
-                            useImage: false,
-                            height: 150,
-                            image: '#724242',
-                            text: {
-                                textColor: '#2b2b2b',
-                                fontFamily: 'YST',
-                                fontWeight: 400,
-                                fontStyle: 'normal'
-                            },
-                            blur: {
-                                size: 100,
-                                blur: 10,
-                                position_y: 50
-                            },
-                            clear: {
-                                size: 50,
-                                position_y: 50
-                            }
-                        },
-                    }
-                },
+                schema: schemas.publication,
             },
+
+            /**
+             * Категории статей
+             * */
+            themesOfPublication: {
+                /**
+                 * Наименование
+                 * */
+                name: collectionsName.themesOfPublication,
+                /**
+                 * Схема тем публикаций
+                 * */
+                schema: schemas.list,
+            },
+
             /**
              * Системные параметры
              * */
             system: {
-                name: 'system',
+                name: collectionsName.system,
                 schema: {
                     /**
                      * uuid статьи
@@ -541,36 +578,125 @@ module.exports = {
                     }
                 }
             },
-            /**
-             * Категории статей
-             * */
-            themesOfPublication: {
-                /**
-                 * Наименование
-                 * */
-                name: 'themesOfPublication',
-                /**
-                 * Схема тем публикаций
-                 * */
-                schema: {
-                    /**
-                     * uuid темы публикации
-                     * */
-                    _id: {
-                        type: String,
-                        required: true
+        },
+    },
+
+    /**
+     * Сущности с которыми проводятся взаимодействия
+     * */
+    ESSENCE: {
+        user: {
+            name: 'user',
+            actions: {
+                auth: 'auth',
+                addNew: 'add_new',
+                edit: 'edit',
+
+            }
+        },
+        group: {
+            name: 'group',
+            actions: {
+                addNew: 'add_new',
+                edit: 'edit',
+            }
+        },
+        publication: {
+            name: 'publication',
+            actions: {
+                findSampleByAuthor: 'findSampleByAuthor',
+                findByTitle: 'findByTitle',
+                findSample: 'findSample',
+                saveDraft: 'saveDraft',
+                publish: 'publish',
+                edit: 'edit',
+                remove: 'remove',
+                addTheme: 'addTheme',
+                editTheme: 'editTheme',
+                removeTheme: 'removeTheme',
+            }
+        },
+        system: {
+            name: 'system',
+            actions: {
+                edit: 'edit'
+            }
+        },
+    },
+
+    NEW_OBJECTS: {
+        /**
+         * Заготовка для создания нового объекта группы пользователей
+         * */
+        group: {
+            _id: undefined,
+            name: 'New group',
+            description: '',
+            rights: {
+                publications: {value: accessRights.NotAllow},
+                system: {value: accessRights.NotAllow},
+                themesOfPublication: {value: accessRights.NotAllow},
+                groups: {value: accessRights.NotAllow},
+                users: {value: accessRights.NotAllow},
+                accessRights: {value: accessRights.NotAllow},
+            }
+        },
+        /**
+         * Заготовка для создания новых объектов публикаций
+         * */
+        publication: {
+            _id: undefined,
+            author: undefined,
+            dateStamp: new Date(),
+            theme: {
+                _id: '-1'
+            },
+            content: {
+                title: 'Your title is here',
+                content: 'Your publication`s content is here'
+            },
+            preview: {
+                imgOnLeft: true,
+                backgroundColor: '#B7AEAE',
+                textColor: '#ff5d5d',
+                image: ''
+            },
+            view: {
+                title: {
+                    useImage: false,
+                    height: 150,
+                    image: '#724242',
+                    text: {
+                        textColor: '#2b2b2b',
+                        fontFamily: 'YST',
+                        fontWeight: 400,
+                        fontStyle: 'normal'
                     },
-                    /**
-                     * Значение темы публикации
-                     * */
-                    value: {
-                        type: String,
-                        required: true,
-                        unique: true
+                    blur: {
+                        size: 100,
+                        blur: 10,
+                        position_y: 50
+                    },
+                    clear: {
+                        size: 50,
+                        position_y: 50
                     }
                 },
-            },
+            }
         },
+        /**
+         * Заготовка для создания нового объекта пользователя
+         * */
+        user: {
+            auth: {
+                name: '',
+                pass: ''
+            },
+            personal: {
+                nickname: ''
+            },
+            group: ''
+        }
     },
     /**
      * Модель запросов
@@ -588,6 +714,15 @@ module.exports = {
          * */
         db: (collection, action) => {
             return `/db/${collection}/${action}`
+        },
+        /**
+         * Функция формирует адрес запроса к серверу для работы с сущностью.
+         * Входные параметры рекомендуется брать из соответствущих разделов api
+         * @param essence {String} Наиенование коллекции
+         * @param action {String} Выполняемый запрос к БД
+         * */
+        work_e: (essence, action) => {
+            return `/work/${essence}/${action}`
         },
     },
 }

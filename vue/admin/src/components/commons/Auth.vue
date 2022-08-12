@@ -79,12 +79,24 @@
                     workObject.objectCopy(localUser, user)
                     userFromStorage = true
                 } else {
-                    context.emit('successful', gettingUser)
+                    asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify(gettingUser))
+                        .then(value => {
+                            if (value.responseCode === 200) {
+                                // const user = value.data
+                                setUser(storages.session, JSON.stringify(user))
+                                // const u = user
+
+                                setUser(storages.local, JSON.stringify(user))
+
+                                context.emit('successful', value.data)
+                            }
+                        })
+
                 }
             }
 
             const auth = () => {
-                if(user.name.localeCompare('') === 0 && user.pass.localeCompare('') === 0) return
+                if(user.name.localeCompare('') == 0 && user.pass.localeCompare('') == 0) return
 
                 if(!userFromStorage){
                     user.pass = new hash.SHA1().b64(user.pass)
@@ -93,11 +105,11 @@
                 asyncRequest(api.MODEL_REQUESTS.auth, JSON.stringify(user))
                     .then(value => {
                         if (value.responseCode === 200) {
-                            const user = value.data
+                            // const user = value.data
                             setUser(storages.session, JSON.stringify(user))
-                            const u = user
-                            delete u.role
-                            setUser(storages.local, JSON.stringify(u))
+                            // const u = user
+
+                            setUser(storages.local, JSON.stringify(user))
 
                             context.emit('successful', value.data)
                         }

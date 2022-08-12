@@ -66,6 +66,7 @@
             Popup,
         },
         setup() {
+            const user = inject('user')
             const api = inject('$api')
             const workObject = inject('workObject')
             const publicationsList = ref(null)
@@ -74,7 +75,6 @@
             const articles = ref([])
             const countLoadPublications = ref(10)
 
-            const emptyPublication = api.DATABASE.collections.publications.newObject;
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
              * Используется для создания новых публикаций или редактирования уже существующих
@@ -85,7 +85,8 @@
              * Функция запускает этап создания новой публикации
              * */
             const newPublication = () => {
-                workObject.objectCopy(emptyPublication, publication)
+                workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
+                publication.author = user
                 publication.dateStamp = new Date()
                 editPublicationShow.value = true
             }

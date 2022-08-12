@@ -63,7 +63,7 @@
             }
 
             const newGroup = () => {
-                workObject.objectCopy(api.DATABASE.collections.groups.newObject, showingGroup)
+                workObject.objectCopy(api.NEW_OBJECTS.group, showingGroup)
                 showingGroupShow.value = true
             }
 

@@ -13,6 +13,7 @@
     import Auth   from "@/components/commons/Auth";
     import {
         ref,
+        provide
     }             from 'vue'
 
     export default {
@@ -23,6 +24,8 @@
         },
         setup() {
             const user = ref(null)
+
+            provide('user', user)
 
             const login = value => {
                 user.value = value

@@ -7,6 +7,7 @@ const bodyParser = require("body-parser")
 
 const auth = require('./js/check_auth')
 const database = require('./js/database')
+const work = require('./js/work/work')
 
 /**
  * Парсер json-в запросах
@@ -68,6 +69,16 @@ app
             .catch((err) => {
                 res.json(err)
             })
+    })
+    .post(/\/work(\/.+)?/, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        database.execute(req.url, req.body)
+                .then(data => {
+                    res.json(data)
+                })
+                .catch((err) => {
+                    res.json(err)
+                })
     })
     .post(/\/auth(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)

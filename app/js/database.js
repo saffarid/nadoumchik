@@ -41,13 +41,15 @@ const init = async () => {
  * Функция проверяет наличие идентификатора
  * */
 const isById = (data) => {
-    return data['_id'] !== undefined
+    // return data['_id'] !== undefined
+    return ('id' in data)
 }
 /**
  * Функция проверяет наличие параметров кол-ва выборки
  * */
 const isSampling = (data) => {
-    return ((data['shift'] !== undefined) && (data['count'] !== undefined))
+    // return ((data['shift'] !== undefined) && (data['count'] !== undefined))
+    return (('shift' in data) && ('count' in data))
 }
 /**
  * Функция проверяет является аргумент объектом
@@ -153,7 +155,7 @@ const hasUnique = (collections, schema, obj) => {
                 }
             }
             else {
-                res |= ((await hasUnique(collections, desc[key], obj[key])).datas.findings.length != 0)
+                res |= ((await hasUnique(collections, desc, obj[key])) != 0)
             }
         }
         resolve(res)
@@ -179,8 +181,27 @@ const find = (collection, terms) => {
         return findBySampling(collection, terms)
     }
     else {
-        return findByCustomKeys(collection, terms)
+        return findAllByCustomKeys(collection, terms)
     }
+}
+
+const findAllByCustomKeys = (collection, terms) => {
+    return new Promise((resolve, reject) => {
+        models[collection].find(terms)
+                          .then(async findings => {
+                              if (findings == null) {
+                                  resolve([])
+                                  return
+                              }
+
+                              for (let i = 0; i < findings.length; i++) {
+                                  findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
+                              }
+
+                              resolve(findings)
+                          })
+                          .catch(err => reject(err))
+    })
 }
 
 /**
@@ -336,17 +357,11 @@ const insertOne = (collection, data) => {
         data['_id'] = uuid()
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         if ((await hasUnique(collection, api.DATABASE.collections[collection].schema, data))) {
-            resolve({
-                ...api.CODES_RESPONSE.alreadyReported,
-                datas: null
-            })
+            resolve( null )
         }
         else {
             models[collection].create(data)
-                              .then(value => resolve({
-                                  ...api.CODES_RESPONSE.created,
-                                  datas: value
-                              }))
+                              .then(value => resolve(value))
                               .catch(err => reject(err))
         }
     })

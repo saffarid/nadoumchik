@@ -4,8 +4,8 @@
             <template v-slot:top>
                 <Header/>
             </template>
-            <template v-slot:left>
-                <div class="ads" v-if="true">
+            <template v-slot:left v-if="isReady">
+                <div class="ads" v-if="systemData.ads.isShowingAds">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
@@ -19,8 +19,8 @@
                             @read="showPublication"/>
                 </div>
             </template>
-            <template v-slot:right>
-                <div class="ads" v-if="true">
+            <template v-slot:right v-if="isReady">
+                <div class="ads" v-if="systemData.ads.isShowingAds">
                     <img src="https://i01.fotocdn.net/s111/260ae80cce6d159a/public_pin_m/2488908908.jpg" height="300"
                          width="200"/>
                 </div>
@@ -60,11 +60,13 @@
             const api = inject('$api')
             const showedPublication = ref(null)
             const systemData = ref(null)
+            const isReady = ref(false)
 
             asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select), JSON.stringify({}))
                 .then(data => {
                     systemData.value = data.datas.findings[0]
                     provide('system', systemData)
+                    isReady.value = true
                 })
                 .catch(err => console.log(err))
 
@@ -75,7 +77,8 @@
             return {
                 showPublication,
                 showedPublication,
-                systemData
+                systemData,
+                isReady
             }
         }
     }

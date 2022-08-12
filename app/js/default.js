@@ -49,10 +49,27 @@ module.exports = {
     ],
     users: [
         {
-            name: "admin",
-            pass: new hash.SHA1().b64('admin'),
+            auth:{
+                name: "admin",
+                pass: new hash.SHA1().b64('admin'),
+            },
+            personal:{
+              nickname:"admin",
+            },
             group: {
                 name: 'administrators',
+            }
+        },
+        {
+            auth:{
+                name: "saffarid",
+                pass: new hash.SHA1().b64('PnO030994'),
+            },
+            personal:{
+                nickname:"saffarid",
+            },
+            group: {
+                name: 'reader',
             }
         }
     ]
