@@ -612,6 +612,7 @@ module.exports = {
                 edit: 'edit',
                 remove: 'remove',
                 addTheme: 'addTheme',
+                getThemes: 'getThemes',
                 editTheme: 'editTheme',
                 removeTheme: 'removeTheme',
             }

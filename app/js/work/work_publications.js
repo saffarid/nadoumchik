@@ -1,5 +1,5 @@
-const db = require('../database')
-const api = require('../../api/api_desc.js')
+const db = require('./../database')
+const api = require('./../../api/api_desc')
 
 
 /**
@@ -217,6 +217,32 @@ const addTheme = (data) => {
     })
 }
 
+const getThemes = (data) => {
+    return new Promise((resolve, reject) => {
+        db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select),
+            data
+        )
+            .then(findings => {
+                if(findings.length == 0){
+                    resolve({
+                        ...api.CODES_RESPONSE.notFound,
+                        datas:{
+                            findings: []
+                        }
+                    })
+                    return
+                }
+                resolve({
+                    ...api.CODES_RESPONSE.ok,
+                    datas:{
+                        findings: findings
+                    }
+                })
+            })
+    })
+}
+
 const editTheme = (data) => {
     return new Promise((resolve, reject) => {
         db.execute(
@@ -285,6 +311,9 @@ const execute = (url, data) => {
         }
         case a.addTheme : {
             return addTheme(data)
+        }
+        case a.getThemes : {
+            return getThemes(data)
         }
         case a.editTheme : {
             return editTheme(data)

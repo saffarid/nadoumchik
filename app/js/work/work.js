@@ -7,17 +7,17 @@ const sys = require('./work_system.js')
 const execute = (url, data) => {
     const request = url.split('/')
     switch (request[2]) {
-        case api.ESSENCE.group :{
-            group.execute(url, data)
+        case api.ESSENCE.group.name :{
+            return group.execute(url, data)
         }
-        case api.ESSENCE.publication :{
-            publ.execute(url, data)
+        case api.ESSENCE.publication.name :{
+            return publ.execute(url, data)
         }
-        case api.ESSENCE.user :{
-            user.execute(url, data)
+        case api.ESSENCE.user.name :{
+            return user.execute(url, data)
         }
-        case api.ESSENCE.system :{
-            url.execute(url, data)
+        case api.ESSENCE.system.name :{
+            return sys.execute(url, data)
         }
         default: {
             return new Promise((resolve, reject) => {

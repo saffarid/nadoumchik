@@ -1,5 +1,5 @@
-const db = require('./database')
-const api = require('./../api/api_desc')
+const db = require('./../database')
+const api = require('./../../api/api_desc')
 
 const addNew = (user) => {
     return new Promise((resolve, reject) => {
@@ -49,15 +49,15 @@ const checkAuth = (user) => {
     return new Promise((resolve, reject) => {
         db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), {auth: user})
           .then(user => {
-              if (user.datas.findings.length == 0) {
-                  reject(...api.CODES_RESPONSE.unauthorized)
+              if (user.length == 0) {
+                  reject(api.CODES_RESPONSE.unauthorized)
               }
               else {
-                  user.datas.findings[0].auth.pass = null
+                  user[0].auth.pass = null
                   resolve({
                           ...api.CODES_RESPONSE.ok,
                           datas: {
-                              findings: user.datas.findings[0]
+                              findings: user[0]
                           }
                       }
                   )

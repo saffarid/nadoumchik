@@ -90,7 +90,7 @@
             }
 
             const loadThemes = () => {
-                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.getThemes), JSON.stringify(api.BODY_REQUEST.termsSampling))
                     .then(data => {
                         themes.length = 0
                         data.datas.findings.forEach((category) => {
@@ -120,7 +120,7 @@
             const sendTheme = () => {
                 if (localTheme.value.localeCompare('') === 0) return
                 if (localTheme._id) {
-                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.update), JSON.stringify(localTheme))
+                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme), JSON.stringify(localTheme))
                         .then((data) => {
                             if (data.responseCode === api.CODES_RESPONSE.updated.responseCode) {
                                 clearLocalTheme()
@@ -135,7 +135,7 @@
                         })
                 }
                 else {
-                    asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.insert), JSON.stringify(localTheme))
+                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme), JSON.stringify(localTheme))
                         .then((data) => {
                             if (data.responseCode === api.CODES_RESPONSE.created.responseCode) {
                                 clearLocalTheme()
@@ -160,7 +160,7 @@
             }
 
             const removeTheme = (theme) => {
-                asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.remove), JSON.stringify(theme))
+                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeTheme), JSON.stringify(theme))
                     .then(() => loadThemes())
                     .catch(err => {
                         console.log(err)

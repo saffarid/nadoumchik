@@ -72,7 +72,7 @@ app
     })
     .post(/\/work(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
-        database.execute(req.url, req.body)
+        work.execute(req.url, req.body)
                 .then(data => {
                     res.json(data)
                 })

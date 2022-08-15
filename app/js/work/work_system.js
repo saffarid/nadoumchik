@@ -1,5 +1,5 @@
-const db = require('./database')
-const api = require('./../api/api_desc')
+const db = require('./../database')
+const api = require('./../../api/api_desc')
 
 const edit = (data) => {
     return new Promise((resolve, reject) => {
