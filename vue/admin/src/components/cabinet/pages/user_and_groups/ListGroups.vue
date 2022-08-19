@@ -2,11 +2,13 @@
 
     <TableView :headers="[
                 {name: 'Группа'},
+                {name: 'Описание'},
             ]"
                :items="groups">
         <template #row="{item}">
             <tr @click="clickGroup(item)">
                 <td>{{item.name}}</td>
+                <td>{{item.description}}</td>
             </tr>
         </template>
     </TableView>

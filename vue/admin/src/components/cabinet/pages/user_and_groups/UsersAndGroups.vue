@@ -1,11 +1,11 @@
 <template>
     <Tabs :options="{ useUrlFragment: false }">
         <Tab name="Пользователи">
-            <Users />
+            <Users/>
         </Tab>
 
         <Tab name="Группы">
-            <Groups />
+            <Groups/>
         </Tab>
     </Tabs>
 </template>
@@ -42,12 +42,12 @@
             provide('users', users)
             provide('groups', groups)
 
-            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
-            .then(data => {
-                users.value = data.datas.findings
-            })
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.getAllUsers), JSON.stringify({}))
+                .then(data => {
+                    users.value = data.datas.findings
+                })
 
-            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.getGroups), JSON.stringify({}))
                 .then(data => {
                     groups.value = data.datas.findings
                 })

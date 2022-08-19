@@ -8,18 +8,20 @@ const add = (group) => {
             group
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.created,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -30,15 +32,42 @@ const edit = (group) => {
             group
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.updated,
                   datas: value
+              })
+          })
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
+    })
+}
+
+const getGroups = (data) => {
+    return new Promise((resolve, reject) => {
+        db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select),
+            {}
+        )
+          .then(findings => {
+              if (findings.length == 0) {
+                  resolve({
+                      ...api.CODES_RESPONSE.notFound,
+                      datas: null
+                  })
+                  return
+              }
+              resolve({
+                  ...api.CODES_RESPONSE.notFound,
+                  datas: {
+                      findings: findings
+                  }
               })
           })
           .catch(err => reject(err))
@@ -53,6 +82,9 @@ const execute = (url, data) => {
         }
         case api.ESSENCE.group.actions.edit : {
             return edit(data)
+        }
+        case api.ESSENCE.group.actions.getGroups : {
+            return getGroups(data)
         }
         default: {
             return new Promise((resolve, reject) => {

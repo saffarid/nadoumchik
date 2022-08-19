@@ -589,22 +589,26 @@ module.exports = {
             name: 'user',
             actions: {
                 auth: 'auth',
-                addNew: 'add_new',
+                addNew: 'addNew',
                 edit: 'edit',
-
+                changePass: 'changePass',
+                getAllUsers: 'getAllUsers',
+                getUsersByGroup: 'getUsersByGroup'
             }
         },
         group: {
             name: 'group',
             actions: {
-                addNew: 'add_new',
+                addNew: 'addNew',
                 edit: 'edit',
+                getGroups: 'getGroups'
             }
         },
         publication: {
             name: 'publication',
             actions: {
                 findSampleByAuthor: 'findSampleByAuthor',
+                findDraftsByAuthor: 'findDraftsByAuthor',
                 findByTitle: 'findByTitle',
                 findSample: 'findSample',
                 saveDraft: 'saveDraft',
@@ -620,7 +624,8 @@ module.exports = {
         system: {
             name: 'system',
             actions: {
-                edit: 'edit'
+                edit: 'edit',
+                get: 'get',
             }
         },
     },
@@ -641,6 +646,14 @@ module.exports = {
                 users: {value: accessRights.NotAllow},
                 accessRights: {value: accessRights.NotAllow},
             }
+        },
+        /**
+         * Заготовка для создания новых пользователей
+         * */
+        user: {
+            _id: undefined,
+            auth: { },
+            group: { }
         },
         /**
          * Заготовка для создания новых объектов публикаций

@@ -8,7 +8,98 @@ const api = require('./../../api/api_desc')
 const findSampleByAuthor = (data) => {
     return new Promise(async (resolve, reject) => {
         if (!('author' in data)) reject(api.CODES_RESPONSE.badRequest)
-        resolve(await findSample(data))
+
+        let findings = await db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
+            {
+                author: data.author._id
+            }
+        )
+
+        if (findings.length == 0) {
+            resolve({
+                ...api.CODES_RESPONSE.noContent,
+                datas: {
+                    findings: [],
+                    thereIsMore: false
+                }
+            })
+            return
+        }
+
+        findings = findings.reverse()
+
+        if (!('shift' in data && 'count' in data)) {
+            resolve({
+                ...api.CODES_RESPONSE.ok,
+                datas: {
+                    findings: findings,
+                    thereIsMore: false
+                }
+            })
+            return
+        }
+
+        const range = data.shift + data.count
+
+        if (range < findings.length) {
+            resolve(
+                {
+                    ...api.CODES_RESPONSE.ok,
+                    datas: {
+                        findings: findings.slice(data.shift, range),
+                        thereIsMore: true
+                    }
+                }
+            )
+        }
+        else {
+            resolve(
+                {
+                    ...api.CODES_RESPONSE.ok,
+                    datas: {
+                        findings: findings.slice(data.shift, data.count),
+                        thereIsMore: false
+                    }
+                }
+            )
+        }
+
+    })
+}
+
+const findDraftsByAuthor = (data) => {
+    return new Promise(async (resolve, reject) => {
+        if (!('author' in data)) reject(api.CODES_RESPONSE.badRequest)
+
+        let findings = await db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.select),
+            {
+                author: data.author._id
+            }
+        )
+
+        if (findings.length == 0) {
+            resolve({
+                ...api.CODES_RESPONSE.noContent,
+                datas: {
+                    findings: [],
+                    thereIsMore: false
+                }
+            })
+            return
+        }
+
+        findings = findings.reverse()
+
+        resolve({
+            ...api.CODES_RESPONSE.ok,
+            datas: {
+                findings: findings,
+                thereIsMore: false
+            }
+        })
+
     })
 }
 
@@ -116,8 +207,49 @@ const findSample = (data) => {
 /**
  * Функция сохраняет черновик публикации
  * */
-const saveDraft = (data) => {
+const saveDraft = (draft) => {
+    return new Promise((resolve, reject) => {
 
+        if (!('_id' in draft)) {
+            db.execute(
+                api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.insert),
+                draft
+            )
+              .then(value => resolve({
+                  ...api.CODES_RESPONSE.created,
+                  datas: value
+              }))
+              .catch(err => {
+                  if (err.code == db.codes.duplicate) {
+                      resolve({
+                          ...api.CODES_RESPONSE.alreadyReported,
+                          datas: err.keyValue
+                      })
+                  }
+                  reject(err)
+              })
+        }
+        else {
+            db.execute(
+                api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.update),
+                draft
+            )
+              .then(value => resolve({
+                  ...api.CODES_RESPONSE.updated,
+                  datas: value
+              }))
+              .catch(err => {
+                  if (err.code == db.codes.duplicate) {
+                      resolve({
+                          ...api.CODES_RESPONSE.alreadyReported,
+                          datas: err.keyValue
+                      })
+                  }
+                  reject(err)
+              })
+        }
+
+    })
 }
 
 /**
@@ -130,18 +262,20 @@ const publish = (data) => {
             data
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.created,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -155,18 +289,20 @@ const edit = (data) => {
             data
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.updated,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -176,7 +312,7 @@ const edit = (data) => {
 const remove = (data) => {
     return new Promise((resolve, reject) => {
         db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.update),
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove),
             data
         )
           .then(value => {
@@ -202,18 +338,20 @@ const addTheme = (data) => {
             data
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.created,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -223,23 +361,23 @@ const getThemes = (data) => {
             api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select),
             data
         )
-            .then(findings => {
-                if(findings.length == 0){
-                    resolve({
-                        ...api.CODES_RESPONSE.notFound,
-                        datas:{
-                            findings: []
-                        }
-                    })
-                    return
-                }
-                resolve({
-                    ...api.CODES_RESPONSE.ok,
-                    datas:{
-                        findings: findings
-                    }
-                })
-            })
+          .then(findings => {
+              if (findings.length == 0) {
+                  resolve({
+                      ...api.CODES_RESPONSE.notFound,
+                      datas: {
+                          findings: []
+                      }
+                  })
+                  return
+              }
+              resolve({
+                  ...api.CODES_RESPONSE.ok,
+                  datas: {
+                      findings: findings
+                  }
+              })
+          })
     })
 }
 
@@ -250,18 +388,20 @@ const editTheme = (data) => {
             data
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.updated,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -294,7 +434,13 @@ const execute = (url, data) => {
         case a.findSampleByAuthor : {
             return findSampleByAuthor(data)
         }
-        case a.findByTitle :  {
+        case a.findDraftsByAuthor : {
+            return findDraftsByAuthor(data)
+        }
+        case a.findSample : {
+            return findSample(data)
+        }
+        case a.findByTitle : {
             return findByTitle(data)
         }
         case a.saveDraft : {

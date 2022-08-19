@@ -2,7 +2,7 @@
     <div @click="$emit('click', publication)"
          @mouseenter="isAnimFrom = true"
          @mouseleave="isAnimFrom = false"
-         :class="{'image-left':(publication.preview.imgOnLeft || canEdit), 'image-right':(!publication.preview.imgOnLeft && !canEdit)}"
+         :class="{'image-left':(/*publication.preview.img*/onLeft || canEdit), 'image-right':(!/*publication.preview.img*/onLeft && !canEdit)}"
          class="publication-item"
          :style="styleVars">
         <div
@@ -62,6 +62,11 @@
             'remove'
         ],
         props: {
+            onLeft:{
+                type: Boolean,
+                required: false,
+                default: false
+            },
             publication: {
                 type: Object,
                 required: true

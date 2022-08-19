@@ -29,16 +29,14 @@
             users: {
                 type: Object,
                 required: true
+            },
+            clickUser: {
+                type: Function,
+                required: true
             }
         },
-        setup(props, context){
-            const clickUser = (group) => {
-                context.emit('clickGroup', group)
-            }
-
-            return {
-                clickUser,
-            }
+        setup() {
+            return {}
         }
     }
 </script>

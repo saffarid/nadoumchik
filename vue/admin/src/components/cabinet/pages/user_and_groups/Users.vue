@@ -1,23 +1,22 @@
 <template>
     <div>
         <BorderPane>
-
             <template v-slot:top>
                 <div class="tool-bar">
-                    <Button class="text-button" text="Создать"/>
-                    <Button class="text-button" text="Редактировать"/>
+                    <Button class="text-button" text="Создать" @click="create"/>
                     <Button class="text-button" text="Удалить"/>
                 </div>
             </template>
 
             <template v-slot:center>
-                <ListUsers :users="users"/>
+                <ListUsers :users="users" :click-user="clickUser"/>
             </template>
 
         </BorderPane>
-        <Popup>
+
+        <Popup @close="hasShowingUser = false" v-if="hasShowingUser">
             <template v-slot:content>
-                <UserDescription />
+                <UserDescription :user="showingUser" :send="send"/>
             </template>
         </Popup>
     </div>
@@ -25,16 +24,18 @@
 
 <script>
     import {
-        inject
-    } from 'vue'
-
+        inject,
+        ref,
+        reactive
+    }                      from 'vue'
     import {
         BorderPane,
         Button,
-    } from 'saffarid-ui-kit'
-
+        Popup
+    }                      from 'saffarid-ui-kit'
     import ListUsers       from "./ListUsers";
     import UserDescription from "@/components/cabinet/pages/user_and_groups/UserDescription";
+    import {asyncRequest}  from "@/js/web";
 
     export default {
         name: "Users",
@@ -42,18 +43,70 @@
             UserDescription,
             BorderPane,
             Button,
-            ListUsers
+            ListUsers,
+            Popup
         },
         setup() {
+            const api = inject('$api')
             const users = inject('users')
+            const workObject = inject('workObject')
+            const showingUser = reactive({})
+            const hasShowingUser = ref(false)
+
+            const clickUser = (user) => {
+                workObject.objectCopy(user, showingUser)
+                hasShowingUser.value = true
+            }
+
+            const send = () => {
+                if (showingUser._id) {
+                    //Редактируем
+                    asyncRequest(
+                        api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit),
+                        JSON.stringify(showingUser)
+                    )
+                        .then(data => {
+                            if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                                for (const user of users.value) {
+                                    if (user._id == data.datas._id) {
+                                        workObject.objectCopy(showingUser, user)
+                                        break
+                                    }
+                                }
+                                hasShowingUser.value = false
+                            }
+                        })
+                        .catch(err => console.log(err))
+                }
+                else {
+                    //Добавляем
+                    asyncRequest(
+                        api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew),
+                        JSON.stringify(showingUser)
+                    )
+                        .then(data => {
+                            if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
+                                users.value.push(data.datas)
+                                hasShowingUser.value = false
+                            }
+                        })
+                        .catch(err => console.log(err))
+                }
+            }
+
+            const create = () => {
+                workObject.objectCopy(api.NEW_OBJECTS.user, showingUser)
+                hasShowingUser.value = true
+            }
 
             return {
+                showingUser,
+                hasShowingUser,
+                clickUser,
+                create,
+                send,
                 users
             }
         }
     }
 </script>
-
-<style scoped>
-
-</style>

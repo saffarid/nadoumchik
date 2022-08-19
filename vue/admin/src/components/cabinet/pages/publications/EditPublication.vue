@@ -12,10 +12,6 @@
                         class="text-button publish"
                         :text="publication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
                         @click="publish"/>
-                <Button
-                        class="text-button publish"
-                        text="Напечатать"
-                        @click="print"/>
             </div>
         </template>
         <template v-slot:center>
@@ -297,7 +293,7 @@
                 title: 1
             }
 
-            asyncRequest(api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select), JSON.stringify(api.BODY_REQUEST.termsSampling))
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.getThemes), JSON.stringify(api.BODY_REQUEST.termsSampling))
                 .then(gettingData => {
                     const res = {}
 
@@ -311,7 +307,7 @@
                     for (let i = 0; i < themes.value.length; i++) {
                         res[themes.value[i]._id] = {
                             disabled: false,
-                            value: themes.value[i].value,
+                            value: themes.value[i]._id,
                             selected: false,
                             label: themes.value[i].value
                         }
@@ -321,9 +317,8 @@
                 })
 
             const setTheme = (newTheme) => {
-                console.log(newTheme)
                 themes.value.forEach(theme => {
-                    if (theme.value === newTheme) {
+                    if (theme._id == newTheme) {
                         props.publication.theme = theme
                     }
                 })
@@ -381,10 +376,6 @@
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })
 
-            const print = () => {
-                console.log(props.publication)
-            }
-
             const convertFonts = () => {
                 font["-1"] = {
                     disabled: true,
@@ -402,6 +393,7 @@
                 }
             }
             convertFonts()
+
             return {
                 canSendPublication,
                 font,
@@ -413,8 +405,13 @@
                 loadImage,
                 publish,
                 imageKeys,
-                print
             }
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    textarea{
+        width: 100%;
+    }
+</style>

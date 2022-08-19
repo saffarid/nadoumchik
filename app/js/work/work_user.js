@@ -8,18 +8,20 @@ const addNew = (user) => {
             user
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.created,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -30,18 +32,26 @@ const edit = (user) => {
             user
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.updated,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
+    })
+}
+
+const changePass = (data) => {
+    return new Promise((resolve, reject) => {
+
     })
 }
 
@@ -66,6 +76,31 @@ const checkAuth = (user) => {
     })
 }
 
+const getAllUsers = (data) => {
+    return new Promise((resolve, reject) => {
+        db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select),
+            {}
+        )
+          .then(findings => {
+              if (findings.length == 0) {
+                  resolve({
+                      ...api.CODES_RESPONSE.notFound,
+                      datas: null
+                  })
+                  return
+              }
+              resolve({
+                  ...api.CODES_RESPONSE.notFound,
+                  datas: {
+                      findings: findings
+                  }
+              })
+          })
+          .catch(err => reject(err))
+    })
+}
+
 const execute = (url, data) => {
     const request = url.split('/')
     switch (request[3]) {
@@ -77,6 +112,9 @@ const execute = (url, data) => {
         }
         case api.ESSENCE.user.actions.edit : {
             return edit(data)
+        }
+        case api.ESSENCE.user.actions.getAllUsers : {
+            return getAllUsers(data)
         }
         default: {
             return new Promise((resolve, reject) => {
