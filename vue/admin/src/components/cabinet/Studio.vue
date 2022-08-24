@@ -1,15 +1,16 @@
 <template>
     <BorderPane>
         <template v-slot:top>
-            <Header/>
+            <Header />
         </template>
         <template v-slot:left>
             <NavigationMenu
                     :buttons="_pages" @navigate="setActivePage"
+
             />
         </template>
         <template v-slot:center>
-            <div class="workspace">
+            <div class="workspace" >
                 <keep-alive>
                     <component :is="showingPage"/>
                 </keep-alive>
@@ -24,7 +25,6 @@
         ref
     }             from 'vue'
     import {
-        pages,
         getPages
     }             from './pages/pages.js'
     import {

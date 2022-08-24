@@ -1,13 +1,19 @@
+
+
 .header {
     //padding: 5px;
     border-bottom: grey 1px solid;
-
+        height: 10vh;
     .left {
         display: grid;
         align-self: center;
         align-content: center;
         justify-content: center;
         margin: 5px;
+        svg{
+            width: 9vh;
+            height: 9vh;
+        }
     }
 
     .title {
@@ -15,16 +21,15 @@
         align-self: stretch;
         align-content: center;
         justify-content: start;
-        padding: 15px;
-        font-size: 50px;
+        padding: 5px 15px 5px 5px;
+        font-size: calc(16px + 3vh);
     }
 
     .right {
         display: grid;
         align-content: center;
         justify-content: center;
-
-        padding: 15px;
+        padding: 5px 15px 5px 5px;
 
         .link {
             svg {
@@ -36,6 +41,21 @@
                     fill: var(--action_component_content_hover);
                 }
             }
+        }
+    }
+}
+
+@media (max-height: 750px) {
+    .header{
+        height: 75px;
+        .left{
+            svg{
+                width: 65px;
+                height: 65px;
+            }
+        }
+        .title{
+            font-size: 38.5px;
         }
     }
 }

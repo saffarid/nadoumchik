@@ -12,6 +12,12 @@
                         class="text-button publish"
                         :text="publication._id?'ОБНОВИТЬ':'ОПУБЛИКОВАТЬ'"
                         @click="publish"/>
+                <Button
+                        v-if="!publication._id"
+                        class="text-button publish"
+                        :text="'СОХРАНИТЬ ЧЕРНОВИК'"
+                        @click="saveDraft"/>
+                <TextLabel :label="message"/>
             </div>
         </template>
         <template v-slot:center>
@@ -279,6 +285,16 @@
             publication: {
                 type: Object,
                 required: true
+            },
+            message: {
+                type: String,
+                required: false,
+                default: ''
+            },
+            saveDraft: {
+                type: Function,
+                required: false,
+                default: () => {}
             }
         },
         setup(props, context) {
@@ -300,7 +316,7 @@
                     themes.value = gettingData.datas.findings
                     res['-1'] = {
                         disabled: true,
-                        value: 'Выберите тему',
+                        value: '-1',
                         selected: true,
                         label: 'Выберите тему'
                     }

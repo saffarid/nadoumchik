@@ -33,11 +33,11 @@ const getPages = (user) => {
             workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/user_and_groups/UsersAndGroups.vue')),
         }
     }
-    res['User'] = {
-        title: 'Персональные настройки',
-        img: defineAsyncComponent(() => import('@/assets/img/user')),
-        workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/user/User.vue')),
-    }
+    // res['User'] = {
+    //     title: 'Персональные настройки',
+    //     img: defineAsyncComponent(() => import('@/assets/img/user')),
+    //     workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/user/User.vue')),
+    // }
     if (user.group.rights.system.value != api.ACCESS_RIGHTS.NotAllow) {
         res['System'] = {
             title: 'Системные настройки',

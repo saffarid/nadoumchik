@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="not-found">
         <CryingEmoji :height="250" :width="250"/>
-        Нет публикаций для отображения
+        <p>Нет публикаций для отображения</p>
     </div>
 </template>
 
@@ -18,5 +18,9 @@
 </script>
 
 <style scoped>
-
+    .not-found {
+        display: grid;
+        justify-items: center;
+        justify-content: center;
+    }
 </style>

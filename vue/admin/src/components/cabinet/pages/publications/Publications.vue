@@ -1,62 +1,90 @@
 <template>
 
-    <Card title="ПУБЛИКАЦИИ" style="height: 100%">
+    <BorderPane class="list-of-publications">
+        <template v-slot:top>
+            <div class="tool-bar">
+                <Button class="text-button" @click="newPublication" text="Создать"/>
+                <Row style="column-gap: 5px">
+                    <TextLabel label="Загружать по"/>
+                    <AmountUpload :amount="amountLoad"/>
+                </Row>
+            </div>
+        </template>
 
-        <BorderPane class="list-of-publications">
-            <template v-slot:top>
-                <div class="tool-bar">
-                    <Button class="text-button" @click="newPublication" text="Создать"/>
-                </div>
-            </template>
-            <template v-slot:center>
-
-                <BorderPane>
-                    <template v-slot:top>
-                        <div class="tool-bar">
-                            <Row style="column-gap: 5px">
-                                <TextLabel label="Загружать по"/>
-                                <AmountUpload :amount="amountLoad"/>
-                            </Row>
-                        </div>
-                    </template>
-                    <template v-slot:center>
-                        <div>
+        <template v-slot:center>
+            <Tabs :options="{ useUrlFragment: false }">
+                <Tab :name="'Публикации'">
+                    <BorderPane style="row-gap: 2px">
+                        <template v-slot:top>
+                            <div></div>
+                        </template>
+                        <template v-slot:center>
                             <List
                                     @edit="updatePublication"
                                     @remove="removePublication"
                                     :type="lists.simple"
                                     :list="publList"
+                                    style="height: 77vh; overflow-y: auto; "
                             />
 
-                            <PageLoading v-if="isLoading"/>
-                            <NotFound v-if="(Object.keys(publList).length == 0 && !thereIsMore) && !isLoading"/>
-                        </div>
-                    </template>
-                    <template v-slot:bottom>
-                        <Button
-                                v-if="!isLoading && thereIsMore"
-                                class="text-button"
-                                text="Загрузить ещё"
-                                @click="loadPublications(Object.keys(publList).length, amountLoad)"/>
-                    </template>
-                </BorderPane>
+                            <PageLoading v-if="isLoading.publication && !isReady.publication"/>
 
+                            <NotFound
+                                    v-if="(Object.keys(publList).length == 0 && !thereIsMore.publication) && !isLoading.publication"/>
+                        </template>
+                        <template v-slot:bottom>
+                            <Button
+                                    v-if="!isLoading.publication && thereIsMore.publication"
+                                    class="text-button"
+                                    text="Загрузить ещё"
+                                    @click="loadPublications(Object.keys(publList).length, amountLoad)"/>
+                            <PageLoading v-if="isLoading.publication && isReady.publication"/>
+                        </template>
+                    </BorderPane>
+                </Tab>
+                <Tab :name="'Черновики'">
+                    <BorderPane>
+                        <template v-slot:center>
+                            <div>
+                                <List
+                                        v-if="Object.keys(draftList).length != 0"
+                                        @edit="updateDraft"
+                                        @remove="removeDraft"
+                                        :type="lists.simple"
+                                        :list="draftList"
+                                />
 
-            </template>
-        </BorderPane>
-        <Popup
-                class="new-publication-popup"
-                v-if="Object.keys(publication).length != 0"
-                @close="closePopup">
-            <template v-slot:content>
-                <EditPublication
-                        :publication="publication"
-                        @publish="publish"
-                />
-            </template>
-        </Popup>
+                                <PageLoading v-if="isLoading.draft"/>
+                                <NotFound
+                                        v-if="(Object.keys(draftList).length == 0 && !thereIsMore.draft) && !isLoading.draft"/>
+                            </div>
+                        </template>
+                        <!--                        <template v-slot:bottom>-->
+                        <!--                            <Button-->
+                        <!--                                    v-if="!isLoading && thereIsMore"-->
+                        <!--                                    class="text-button"-->
+                        <!--                                    text="Загрузить ещё"-->
+                        <!--                                    @click="loadDrafts(Object.keys(publList).length, amountLoad)"/>-->
+                        <!--                        </template>-->
+                    </BorderPane>
+                </Tab>
+            </Tabs>
+        </template>
+    </BorderPane>
 
-    </Card>
+    <Popup
+            class="new-publication-popup"
+            v-if="Object.keys(publication).length != 0"
+            @close="closePopup">
+        <template v-slot:content>
+            <EditPublication
+                    :publication="publication"
+                    @publish="publish"
+                    :saveDraft="saveDraft"
+            />
+        </template>
+    </Popup>
+
 </template>
 
 <script>
@@ -75,6 +103,10 @@
         PageLoading,
         Popup,
     }                      from 'saffarid-ui-kit'
+    import {
+        Tabs,
+        Tab
+    }                      from 'vue3-tabs-component'
     import AmountUpload    from "@/components/commons/publications_list/AmountUpload";
     import Plus            from "@/assets/img/plus";
     import EditPublication from "@/components/cabinet/pages/publications/EditPublication";
@@ -98,6 +130,8 @@
             Row,
             TextLabel,
             Popup,
+            Tabs,
+            Tab
         },
         setup() {
             const user = inject('user')
@@ -107,21 +141,26 @@
             let lastWatchingDraft = null
 
             /**
-             * Флаг поднимается когда нечего показывать
-             * */
-            const nothingShow = ref(false)
-            /**
              * Флаг готовности отображать считанные публикации
              * */
-            const isReady = ref(false)
+            const isReady = reactive({
+                publication: false,
+                draft: false
+            })
             /**
              * Флаг окончания загрузкиновых публикаций
              * */
-            const isLoading = ref(false)
+            const isLoading = reactive({
+                publication: false,
+                draft: false
+            })
             /**
              * Флаг считвания всех публикаций с сервера
              * */
-            const thereIsMore = ref(false)
+            const thereIsMore = reactive({
+                publication: false,
+                draft: false
+            })
             /**
              * Массив публикацй
              * */
@@ -147,42 +186,21 @@
              * */
             const amountLoad = ref(10)
 
+            const message = ref('')
+
             let stopWatchDraft
+
 
             /**
              * Функция запускает этап создания новой публикации
              * */
             const newPublication = () => {
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
+                workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
                 publication.author = user
                 publication.dateStamp = new Date()
 
-                stopWatchDraft = watch(publication, () => {
-                    const  t = new Date().getMinutes() - lastWatchingDraft.getMinutes()
-                    workObject.objectCopy(publication, draft)
-                    console.log(t)
-                    console.log(publication)
-                    console.log(draft)
-                    if (Math.abs(t) >= 1) {
-
-                        draft.dateStamp = new Date()
-                        asyncRequest(
-                            api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
-                            JSON.stringify(draft)
-                        )
-                            .then(data => {
-                                if(data.responseCode == api.CODES_RESPONSE.created.responseCode){
-                                    draft['_id'] = data.datas._id
-                                    draftList[draft._id] = draft
-                                }
-                            })
-                            .catch(err => console.log(err))
-                        lastWatchingDraft = new Date()
-                    }
-
-                })
-
-                lastWatchingDraft = new Date()
+                startWatchDraft()
             }
 
             /**
@@ -208,12 +226,88 @@
                     })
             }
 
+            const startWatchDraft = () => {
+                stopWatchDraft = watch(publication, () => {
+                    const t = new Date().getSeconds() - lastWatchingDraft.getSeconds()
+
+
+                    if (Math.abs(t) > 0) {
+                        saveDraft()
+                        lastWatchingDraft = new Date()
+                    }
+                })
+
+                lastWatchingDraft = new Date()
+            }
+
+            const saveDraft = () => {
+                workObject.objectCopy(publication, draft)
+                asyncRequest(
+                    api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
+                    JSON.stringify(draft)
+                )
+                    .then(data => {
+                        switch (data.responseCode) {
+                            case api.CODES_RESPONSE.created.responseCode: {
+                                message.value = 'Черновик сохранен'
+                                draft['_id'] = data.datas._id
+                                draftList[draft._id] = data.datas
+                                // workObject.objectCopy(data.datas, draftList[data.datas._id])
+                                break
+                            }
+                            case api.CODES_RESPONSE.updated.responseCode: {
+                                message.value = 'Черновик сохранен'
+                                // draftList[draft._id] = data.datas
+                                workObject.objectCopy(data.datas, draftList[data.datas._id])
+                                break
+                            }
+                        }
+                        setTimeout(() => message.value = '', 5000)
+                    })
+                    .catch(err => console.log(err))
+            }
+
+            /**
+             * Функция запускает этап редактирования существующего черновика
+             * */
+            const updateDraft = (editDraft) => {
+                workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
+                publication.author = user
+                publication.dateStamp = new Date()
+
+                updatePublication(editDraft)
+                delete publication['_id']
+
+                workObject.objectCopy(editDraft, draft)
+
+                startWatchDraft()
+            }
+
+            /**
+             * Функция отправляет запрос на удаление черновика
+             * */
+            const removeDraft = (removedDraft) => {
+                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(removedDraft))
+                    .then(data => {
+                        if (data.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                            delete draftList[data.datas._id]
+                        }
+                    })
+                    .catch(err => {
+                        console.log('Объект успешно не удалён')
+                        console.log(err)
+                    })
+            }
+
             /**
              * Функция собирает объект публикации и отсылает его на сервер
              * */
             const publish = () => {
                 if (publication._id) {
-                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit), JSON.stringify(publication))
+                    asyncRequest(
+                        api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit),
+                        JSON.stringify(publication)
+                    )
                         .then(data => {
                             if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
                                 workObject.objectCopy(publication, publList[data.datas._id])
@@ -225,10 +319,22 @@
                         })
                 }
                 else {
-                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish), JSON.stringify(publication))
-                        .then(data => {
+                    asyncRequest(
+                        api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish),
+                        JSON.stringify(publication)
+                    )
+                        .then(async data => {
                             if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
                                 publList[data.datas._id] = data.datas
+
+                                const removedResponse = await asyncRequest(
+                                    api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft),
+                                    JSON.stringify(draft)
+                                )
+
+                                if (removedResponse.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                                    delete draftList[draft._id]
+                                }
                             }
                             closePopup()
                         })
@@ -240,7 +346,6 @@
 
             const lists = _lists
 
-
             /**
              * Функция закрывает Popup с редактированием/созданием публикации
              * */
@@ -248,6 +353,9 @@
                 stopWatchDraft()
                 for (const key of Object.keys(publication)) {
                     delete publication[key]
+                }
+                for (const key of Object.keys(draft)) {
+                    delete draft[key]
                 }
             }
 
@@ -269,16 +377,16 @@
                                 for (const obj of data.datas.findings) {
                                     publList[obj._id] = obj
                                 }
-                                nothingShow.value = !data.thereIsMore && Object.values(publList).length == 0
-                                thereIsMore.value = data.thereIsMore
+
+                                thereIsMore.publication = data.datas.thereIsMore
                             }
-                            isReady.value = true
-                            isLoading.value = false
+                            isReady.publication = true
+                            isLoading.publication = false
                         }, 300)
                     }
                 }
 
-                isLoading.value = true
+                isLoading.publication = true
 
                 const samplingTerm = {
                     shift: shift,
@@ -307,27 +415,33 @@
                                 for (const draft of findingsDrafts.datas.findings) {
                                     draftList[draft._id] = draft
                                 }
+                                thereIsMore.draft = data.datas.thereIsMore
                             }
+                            isReady.draft = true
+                            isLoading.draft = false
                         }
                     )
             }
 
             loadDrafts()
 
-
             return {
                 amountLoad,
                 closePopup,
                 draftList,
-                draft,
-                nothingShow,
+                // draft,
+                message,
                 isReady,
                 isLoading,
                 thereIsMore,
                 loadPublications,
+                loadDrafts,
                 newPublication,
+                saveDraft,
+                removeDraft,
                 removePublication,
                 updatePublication,
+                updateDraft,
                 publish,
                 publList,
                 publication,

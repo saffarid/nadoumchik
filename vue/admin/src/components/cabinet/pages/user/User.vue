@@ -23,6 +23,7 @@
 <script>
     import {
         BorderPane,
+        Button,
         Card
     } from 'saffarid-ui-kit'
 
@@ -30,6 +31,7 @@
         name: "User",
         components:{
             BorderPane,
+            Button,
             Card
         }
     }

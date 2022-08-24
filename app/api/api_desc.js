@@ -217,6 +217,188 @@ const schemas = {
             },
         }
     },
+    draft: {
+        /**
+         * uuid публикаци
+         * */
+        _id: {
+            type: String,
+            required: true
+        },
+        author: {
+            type: String,
+            ref: 'users',
+            required: true
+        },
+        /**
+         * Тема публикации
+         * */
+        theme: {
+            type: String,
+            required: true
+        },
+        /**
+         * Содержимое публикации
+         * */
+        content: {
+            /**
+             * Заголовок статьи
+             * */
+            title: {
+                type: String,
+                required: true,
+                unique: true
+            },
+            /**
+             * Основное содержимое статьи
+             * */
+            content: {
+                type: String,
+                required: true
+            },
+        },
+        /**
+         * Внешнее отображение предпросмотра публикации
+         * */
+        preview: {
+            /**
+             * Флаг положения изображения
+             * */
+            imgOnLeft: {
+                type: Boolean,
+                required: false
+            },
+            /**
+             * Цвет фона
+             * */
+            backgroundColor: {
+                type: String,
+                required: false
+            },
+            /**
+             * Цвет текста
+             * */
+            textColor: {
+                type: String,
+                required: false
+            },
+            /**
+             * Изображение предпросмотра
+             * */
+            image: {
+                type: String,
+                required: false
+            },
+        },
+        /**
+         * Внешнее отображение публикации
+         * */
+        view: {
+            title: {
+                /**
+                 * Использование изображения для заголовка,
+                 * true - используется изображение,
+                 * false - используется заливка
+                 * */
+                useImage: {
+                    type: Boolean,
+                    required: false
+                },
+                /**
+                 * Изображение или заливка заголовка
+                 * */
+                image: {
+                    type: String,
+                    required: false
+                },
+                /**
+                 * Высота заголовка
+                 * */
+                height: {
+                    type: Number,
+                    required: false
+                },
+                /**
+                 * Оформление текста звголовка
+                 * */
+                text: {
+                    /**
+                     * Цвет текста
+                     * */
+                    textColor: {
+                        type: String,
+                        required: false
+                    },
+                    /**
+                     * Шрифт текста
+                     * */
+                    fontFamily: {
+                        type: String,
+                        required: false
+                    },
+                    /**
+                     * Вес
+                     * */
+                    fontWeight: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Стиль
+                     * */
+                    fontStyle: {
+                        type: String,
+                        required: false
+                    }
+                },
+                /**
+                 * Оформление размытой части заголовка
+                 * */
+                blur: {
+                    /**
+                     * Размер
+                     * */
+                    size: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Степень размытости
+                     * */
+                    blur: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Позиция по высоте
+                     * */
+                    position_y: {
+                        type: Number,
+                        required: false
+                    }
+                },
+                /**
+                 * Оформление чистой части заголовка
+                 * */
+                clear: {
+                    /**
+                     * Размер
+                     * */
+                    size: {
+                        type: Number,
+                        required: false
+                    },
+                    /**
+                     * Положение по оси Y
+                     * */
+                    position_y: {
+                        type: Number,
+                        required: false
+                    }
+                }
+            },
+        }
+    },
     list: {
         _id: {
             type: String,
@@ -521,7 +703,7 @@ module.exports = {
                 /**
                  * Схема черновика в БД
                  * */
-                schema: schemas.publication,
+                schema: schemas.draft,
             },
             /**
              * Публикации
@@ -618,6 +800,7 @@ module.exports = {
                 addTheme: 'addTheme',
                 getThemes: 'getThemes',
                 editTheme: 'editTheme',
+                removeDraft: 'removeDraft',
                 removeTheme: 'removeTheme',
             }
         },
@@ -635,7 +818,6 @@ module.exports = {
          * Заготовка для создания нового объекта группы пользователей
          * */
         group: {
-            _id: undefined,
             name: 'New group',
             description: '',
             rights: {
@@ -647,19 +829,11 @@ module.exports = {
                 accessRights: {value: accessRights.NotAllow},
             }
         },
-        /**
-         * Заготовка для создания новых пользователей
-         * */
-        user: {
-            _id: undefined,
-            auth: { },
-            group: { }
-        },
+
         /**
          * Заготовка для создания новых объектов публикаций
          * */
         publication: {
-            _id: undefined,
             author: undefined,
             dateStamp: new Date(),
             theme: {

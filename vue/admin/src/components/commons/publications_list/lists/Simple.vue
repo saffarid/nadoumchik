@@ -1,6 +1,6 @@
 <template>
     <div class="simple">
-        <PublicationItem v-for="(publication, index) in l"
+        <PublicationItem v-for="(publication, index) in list"
                          :key="index" :publication="publication"
                          @edit="$emit('edit', publication)"
                          @remove="$emit('remove', publication)"
@@ -23,27 +23,30 @@
         },
         props: {
             list: {
-                type: Object,
+                type: Array,
                 required: true
             }
         },
-        setup(props) {
+        // setup(props) {
 
-            const l = reactive([])
+            // const l = reactive([])
+            //
+            // watch(props, () => {
+            //     l.length = 0
+            //     for (const v of Object.values(props.list)) {
+            //         l.push(v)
+            //     }
+            //     l.sort((a, b) => {
+            //             return new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds()
+            //         }
+            //     )
+            // })
+            //
+            // return {
+            //     l
+            // }
 
-            watch(props, () => {
-                l.length = 0
-                for(const v of Object.values(props.list)){
-                    l.push(v)
-                }
-                l.sort( (a, b) => new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds() )
-            })
-
-            return{
-                l
-            }
-
-        }
+        // }
     }
 </script>
 
@@ -53,5 +56,6 @@
         grid-template-rows: repeat(auto-fit, var(--publication_item_h));
         row-gap: 2px;
         width: 100%;
+        padding-top: 2px;
     }
 </style>

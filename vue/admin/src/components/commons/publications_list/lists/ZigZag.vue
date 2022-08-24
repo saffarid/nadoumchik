@@ -1,6 +1,6 @@
 <template>
     <div class="zigzag">
-        <PublicationItem v-for="(publication, index) in l"
+        <PublicationItem v-for="(publication, index) in list"
                          :key="index" :publication="publication"
                          :class="{'item-on-left':(index % 2), 'item-on-right':!(index % 2)}"
                          :can-edit="false"
@@ -22,27 +22,30 @@
         },
         props: {
             list: {
-                type: Object,
+                type: Array,
                 required: true
             }
         },
-        setup(props) {
-
-            const l = reactive([])
-
-            watch(props, () => {
-                l.length = 0
-                for(const v of Object.values(props.list)){
-                    l.push(v)
-                }
-                l.sort( (a, b) => new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds() )
-            })
-
-            return{
-                l
-            }
-
-        }
+        // setup(props) {
+        //
+        //     const l = reactive([])
+        //
+        //     watch(props, () => {
+        //         l.length = 0
+        //         for (const v of Object.values(props.list)) {
+        //             l.push(v)
+        //         }
+        //         l.sort((a, b) => {
+        //                 return new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds()
+        //             }
+        //         )
+        //     })
+        //
+        //     return {
+        //         l
+        //     }
+        //
+        // }
     }
 </script>
 

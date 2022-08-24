@@ -2,7 +2,7 @@
     <BorderPane class="header">
         <template v-slot:left>
             <div class="left">
-                <Logo :height="100" :width="100"/>
+                <Logo/>
             </div>
         </template>
         <template v-slot:center>

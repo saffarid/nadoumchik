@@ -58,7 +58,7 @@ const findSampleByAuthor = (data) => {
                 {
                     ...api.CODES_RESPONSE.ok,
                     datas: {
-                        findings: findings.slice(data.shift, data.count),
+                        findings: findings.slice(data.shift, data.count+1),
                         thereIsMore: false
                     }
                 }
@@ -261,12 +261,10 @@ const publish = (data) => {
             api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.insert),
             data
         )
-          .then(value => {
-              resolve({
-                  ...api.CODES_RESPONSE.created,
-                  datas: value
-              })
-          })
+          .then(value => resolve({
+              ...api.CODES_RESPONSE.created,
+              datas: value
+          }))
           .catch(err => {
               if (err.code == db.codes.duplicate) {
                   resolve({
@@ -309,25 +307,54 @@ const edit = (data) => {
 /**
  * Функция удаляет полученный объект из БД
  * */
-const remove = (data) => {
+const removeDraft = (data) => {
     return new Promise((resolve, reject) => {
         db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove),
-            data
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.remove),
+            {_id: data._id}
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.removed,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
+    })
+}
+
+/**
+ * Функция удаляет полученный объект из БД
+ * */
+const remove = (data) => {
+    return new Promise((resolve, reject) => {
+        db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove),
+            {_id: data._id}
+        )
+          .then(value => {
+              resolve({
+                  ...api.CODES_RESPONSE.removed,
+                  datas: value
+              })
+          })
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -409,21 +436,23 @@ const removeTheme = (data) => {
     return new Promise((resolve, reject) => {
         db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.remove),
-            data
+            {_id: data._id}
         )
           .then(value => {
-              if (value == null) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: null
-                  })
-              }
               resolve({
                   ...api.CODES_RESPONSE.removed,
                   datas: value
               })
           })
-          .catch(err => reject(err))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
@@ -466,6 +495,9 @@ const execute = (url, data) => {
         }
         case a.removeTheme : {
             return removeTheme(data)
+        }
+        case a.removeDraft : {
+            return removeDraft(data)
         }
         default: {
             return new Promise((resolve, reject) => {
