@@ -1,3 +1,4 @@
+require('dotenv').config();
 const api = require('./api/api_desc')
 const fs = require("fs")
 const path = require('path')
@@ -79,17 +80,4 @@ app
                 .catch((err) => {
                     res.json(err)
                 })
-    })
-    .post(/\/auth(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        auth.checkAuth(req.body)
-            .then(data => {
-                res.json({
-                    responseCode: 200,
-                    data: data
-                })
-            })
-            .catch((err) => {
-                res.json(err)
-            })
     })

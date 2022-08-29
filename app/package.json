@@ -12,7 +12,7 @@
     "mongodb": "4.1.0",
     "uuid": "8.3.2",
     "jshashes": "1.0.8",
-    "mariadb": "3.0.0"
+    "dotenv": "16.0.1"
   },
   "devDependencies": {
     "mongoose": "^6.3.0",
