@@ -25,7 +25,11 @@
                 <Tab :name="'ОТОБРАЖЕНИЕ В СПИСКЕ'">
                     <div class="new-publication-item-view">
                         <PublicationItem
-                                :publication="publication"
+                                :type="p_item_types.listed"
+                                :data="{
+                                    publication: publication,
+                                    onLeft: true
+                                }"
                         />
                         <Row>
                             <TextLabel
@@ -256,11 +260,12 @@
         Slider
     }                      from 'saffarid-ui-kit'
     import Eye             from "@/assets/img/eye";
-    import PublicationItem from "@/components/commons/publications_list/PublicationItem";
+    import PublicationItem from "@/components/commons/publications_list/p_item/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
     import Title           from "@/components/commons/publications/Title";
     import Row             from "@/components/commons/Row";
     import {asyncRequest}  from "@/js/web";
+    import {p_item_types}  from "@/components/commons/publications_list/p_item/p_item_types";
 
     export default {
         name: "EditPublication",
@@ -294,7 +299,8 @@
             saveDraft: {
                 type: Function,
                 required: false,
-                default: () => {}
+                default: () => {
+                }
             }
         },
         setup(props, context) {
@@ -421,13 +427,14 @@
                 loadImage,
                 publish,
                 imageKeys,
+                p_item_types
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    textarea{
+    textarea {
         width: 100%;
     }
 </style>

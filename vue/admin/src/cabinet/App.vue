@@ -9,7 +9,7 @@
 
 <script>
 
-    import Studio from "@/components/cabinet/Studio";
+    import Studio from "./components/Studio";
     import Auth   from "@/components/commons/Auth";
     import {
         ref,

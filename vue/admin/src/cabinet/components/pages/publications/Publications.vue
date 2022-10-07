@@ -109,11 +109,11 @@
     }                      from 'vue3-tabs-component'
     import AmountUpload    from "@/components/commons/publications_list/AmountUpload";
     import Plus            from "@/assets/img/plus";
-    import EditPublication from "@/components/cabinet/pages/publications/EditPublication";
+    import EditPublication from "@/cabinet/components/pages/publications/EditPublication";
     import NotFound        from "@/components/commons/NotFound";
     import List            from "@/components/commons/publications_list/lists/List";
-    import Row             from "@/components/commons/Row";
-    import {_lists}        from '@/components/commons/publications_list/lists/list_types'
+    import Row          from "@/components/commons/Row";
+    import {list_types} from '@/components/commons/publications_list/lists/list_types'
 
     export default {
         name: "Publications",
@@ -344,7 +344,7 @@
                 }
             }
 
-            const lists = _lists
+            const lists = list_types
 
             /**
              * Функция закрывает Popup с редактированием/созданием публикации

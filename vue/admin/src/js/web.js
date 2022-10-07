@@ -26,7 +26,9 @@ const setUser = (storage, user) => {
  * @param {Function} onprogress
  * @returns {Promise<any>}
  */
-const asyncRequest = (url, body, onprogress = null) => {
+const asyncRequest = (url,
+                      body       = JSON.stringify({}),
+                      onprogress = null) => {
     const xhr = new XMLHttpRequest()
 
     return new Promise((resolve, reject) => {
@@ -40,11 +42,13 @@ const asyncRequest = (url, body, onprogress = null) => {
 
                     resolve(xhr.response)
 
-                } else {
+                }
+                else {
                     throw new Error('Invalid status')
                 }
 
-            } catch (e) {
+            }
+            catch (e) {
                 reject({
                     request: {
                         url: url,
@@ -59,7 +63,7 @@ const asyncRequest = (url, body, onprogress = null) => {
                 })
             }
         }
-        if( onprogress ) {
+        if (onprogress) {
             xhr.upload.onprogress = onprogress
         }
         xhr.send(body)

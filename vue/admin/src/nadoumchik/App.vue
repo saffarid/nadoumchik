@@ -1,11 +1,11 @@
 <template>
     <Nadoumchik
-        class="light dimension site n-view"/>
+        class="light dimension site"/>
 </template>
 
 <script>
 
-    import Nadoumchik from "@/components/index/Nadoumchik";
+    import Nadoumchik from "@/nadoumchik/components/Nadoumchik";
 
     export default {
         name: 'App',
@@ -17,5 +17,4 @@
 
 <style lang="scss">
     @import "../assets/style/main";
-    @import "../assets/style/index";
 </style>

@@ -34,7 +34,7 @@
         Popup
     }                      from 'saffarid-ui-kit'
     import ListUsers       from "./ListUsers";
-    import UserDescription from "@/components/cabinet/pages/user_and_groups/UserDescription";
+    import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
     import {asyncRequest}  from "@/js/web";
 
     export default {

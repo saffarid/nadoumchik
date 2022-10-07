@@ -6,7 +6,7 @@ const getPages = (user) => {
         Main: {
             title: 'Главная',
             img: defineAsyncComponent(() => import('@/assets/img/dashboard')),
-            workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/main/Main.vue')),
+            workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/main/Main.vue')),
         }
     }
 
@@ -14,7 +14,7 @@ const getPages = (user) => {
         res['Publications'] = {
             title: 'Публикации',
             img: defineAsyncComponent(() => import('@/assets/img/ArticleLogo')),
-            workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/publications/Publications.vue')),
+            workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/publications/Publications.vue')),
         }
     }
 
@@ -22,7 +22,7 @@ const getPages = (user) => {
         res['ThemesOfPublications'] = {
             title: 'Темы публикаций',
                 img: defineAsyncComponent(() => import('@/assets/img/empty')),
-                workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/themes/ThemesOfPublications.vue')),
+                workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/themes/ThemesOfPublications.vue')),
         }
     }
 
@@ -30,7 +30,7 @@ const getPages = (user) => {
         res['UsersAndGroups'] = {
             title: 'Пользователи и группы',
             img: defineAsyncComponent(() => import('@/assets/img/users')),
-            workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/user_and_groups/UsersAndGroups.vue')),
+            workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/user_and_groups/UsersAndGroups.vue')),
         }
     }
     // res['User'] = {
@@ -42,7 +42,7 @@ const getPages = (user) => {
         res['System'] = {
             title: 'Системные настройки',
             img: defineAsyncComponent(() => import('@/assets/img/settings')),
-            workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/system/System.vue')),
+            workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/system/System.vue')),
         }
     }
 
@@ -54,22 +54,22 @@ const pages = {
     Main: {
         title: 'Главная',
         img: defineAsyncComponent(() => import('@/assets/img/dashboard')),
-        workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/main/Main.vue')),
+        workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/main/Main.vue')),
     },
     Publications: {
         title: 'Публикации',
         img: defineAsyncComponent(() => import('@/assets/img/ArticleLogo')),
-        workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/publications/Publications.vue')),
+        workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/publications/Publications.vue')),
     },
     ThemesOfPublications: {
         title: 'Темы публикаций',
         img: defineAsyncComponent(() => import('@/assets/img/empty')),
-        workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/themes/ThemesOfPublications.vue')),
+        workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/themes/ThemesOfPublications.vue')),
     },
     UsersAndGroups: {
         title: 'Пользователи и группы',
         img: defineAsyncComponent(() => import('@/assets/img/user')),
-        workspace: defineAsyncComponent(() => import('@/components/cabinet/pages/user_and_groups/UsersAndGroups.vue')),
+        workspace: defineAsyncComponent(() => import('@/cabinet/components/pages/user_and_groups/UsersAndGroups.vue')),
     },
 }
 

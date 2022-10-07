@@ -1,16 +1,17 @@
 
-
 .header {
     //padding: 5px;
     border-bottom: grey 1px solid;
-        height: 10vh;
+    height: 10vh;
+
     .left {
         display: grid;
         align-self: center;
         align-content: center;
         justify-content: center;
         margin: 5px;
-        svg{
+
+        svg {
             width: 9vh;
             height: 9vh;
         }
@@ -23,6 +24,11 @@
         justify-content: start;
         padding: 5px 15px 5px 5px;
         font-size: calc(16px + 3vh);
+
+        h1 {
+            margin: 0;
+            font-weight: 400;
+        }
     }
 
     .right {
@@ -46,15 +52,17 @@
 }
 
 @media (max-height: 750px) {
-    .header{
+    .header {
         height: 75px;
-        .left{
-            svg{
-                width: 65px;
-                height: 65px;
+
+        .left {
+            svg {
+                width: 67.5px;
+                height: 67.5px;
             }
         }
-        .title{
+
+        .title {
             font-size: 38.5px;
         }
     }

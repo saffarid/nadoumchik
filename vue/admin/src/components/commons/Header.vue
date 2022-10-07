@@ -7,7 +7,7 @@
         </template>
         <template v-slot:center>
             <div class="title">
-                <TextLabel label="#НАДОУМЧИК"/>
+                <h1 >#НАДОУМЧИК</h1>
             </div>
         </template>
         <template v-slot:right>

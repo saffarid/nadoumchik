@@ -3,25 +3,24 @@
 @import "card";
 @import "header";
 @import "tabs-component";
-@import "list-of-publications";
-@import "publication-item";
 @import "navigation-menu";
 @import "popup";
 @import "new-publications";
-@import "publication";
 @import "toolbar";
 
 body {
     margin: 0;
     height: 100vh;
+    width: 100vw;
 }
 
 #app {
     height: 100vh;
+    width: 100vw;
     font-family: "Yandex Sans Text";
     .site {
         height: 100vh;
-        overflow: hidden;
+        width: 100vw;
         .workspace {
             height: 98.8%;
             width: 80%;

@@ -1,23 +1,31 @@
 <template>
     <div class="simple">
-        <PublicationItem v-for="(publication, index) in list"
-                         :key="index" :publication="publication"
-                         @edit="$emit('edit', publication)"
-                         @remove="$emit('remove', publication)"
-                         :can-edit="true"
+        <PublicationItem v-for="(p, index) in list"
+                         :key="index"
+                         :type="p_item_types.editable"
+                         :data="{
+                             publication: p
+                         }"
+                         @edit="$emit('edit', p)"
+                         @remove="$emit('remove', p)"
+                         @read="$emit('read', p)"
         />
     </div>
 </template>
 
 <script>
-    import PublicationItem from "@/components/commons/publications_list/PublicationItem";
+    import PublicationItem from "@/components/commons/publications_list/p_item/PublicationItem";
     import {
         reactive,
         watch
     }                      from 'vue'
+    import {
+        p_item_types
+    }                      from "@/components/commons/publications_list/p_item/p_item_types";
+
 
     export default {
-        name: "Simple",
+        name: "L_Simple",
         components: {
             PublicationItem
         },
@@ -27,7 +35,7 @@
                 required: true
             }
         },
-        // setup(props) {
+        setup() {
 
             // const l = reactive([])
             //
@@ -41,12 +49,13 @@
             //         }
             //     )
             // })
-            //
-            // return {
-            //     l
-            // }
 
-        // }
+            return {
+                // l
+                p_item_types
+            }
+
+        }
     }
 </script>
 

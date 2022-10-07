@@ -16,17 +16,17 @@ module.exports = {
 
     pages: {
         index: {
-            entry: './src/index/main.js',
+            entry: './src/nadoumchik/main.js',
             template: './public/index.html',
             filename: 'index.html',
-            title: 'Index',
+            title: 'Надоумчик',
             // chunks: ["index", "chunk-vendors", "chunk-common", ],
         },
         cabinet: {
             entry: './src/cabinet/main.js',
             template: './public/index.html',
             filename: 'cabinet.html',
-            title: 'Cabinet',
+            title: 'Кабинет',
             // chunks: ["cabinet"],
         },
     },

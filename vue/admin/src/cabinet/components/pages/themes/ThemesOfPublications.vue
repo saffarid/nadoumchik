@@ -51,7 +51,7 @@
         ref,
         reactive,
     }                     from 'vue'
-    import ThemeItem      from "@/components/cabinet/pages/themes/ThemeItem";
+    import ThemeItem      from "@/cabinet/components/pages/themes/ThemeItem";
     import Checkmark      from "@/assets/img/checkmark";
     import Cancel         from "@/assets/img/cancel";
 

@@ -14,8 +14,8 @@
     import {
         Button,
         TextLabel
-    } from 'saffarid-ui-kit'
-    import Edit from "@/assets/img/edit";
+    }            from 'saffarid-ui-kit'
+    import Edit  from "@/assets/img/edit";
     import Trash from "@/assets/img/trash";
 
     export default {

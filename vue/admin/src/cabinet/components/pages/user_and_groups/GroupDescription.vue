@@ -107,7 +107,7 @@
         TextField,
         Row
     }                     from 'saffarid-ui-kit'
-    import Users          from "@/components/cabinet/pages/user_and_groups/ListUsers";
+    import Users          from "@/cabinet/components/pages/user_and_groups/ListUsers";
     import {asyncRequest} from "@/js/web";
 
     export default {
