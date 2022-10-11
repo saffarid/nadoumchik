@@ -53,9 +53,8 @@
 <style lang="scss">
     .n_p_item {
         display: grid;
-        min-height: 250px;
+        min-height: 350px;
         height: 100%;
-        max-height: 300px;
         min-width: 200px;
         width: 100%;
         position: relative;

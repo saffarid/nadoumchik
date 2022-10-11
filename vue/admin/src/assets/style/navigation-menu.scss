@@ -1,12 +1,15 @@
 .navigation-menu {
-    border-right: grey 1px solid;
+    margin: 0 5px;
     padding: 5px;
     gap: 5px;
     display: flex;
     flex-direction: column;
     max-width: max-content;
-    height: 100%;
+    height: calc(100% - 15px);
     align-items: stretch;
+    background-color: var(--primary_color);
+    border-radius: 5px;
+    z-index: 10;
 
     .button {
         justify-content: start;

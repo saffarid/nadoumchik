@@ -61,7 +61,7 @@
         padding: 5px;
         position: sticky;
         top: 0px;
-        z-index: 100;
+        z-index: 50;
     }
 
     .top-header {

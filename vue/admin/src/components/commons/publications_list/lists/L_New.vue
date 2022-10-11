@@ -38,7 +38,7 @@
 
     .new_ps {
         display: grid;
-        grid-template-columns: repeat(6, minmax(200px, 1fr));
+        grid-template-columns: repeat(4, minmax(200px, 1fr));
         gap: 5px;
         justify-content: stretch;
     }
@@ -49,16 +49,12 @@
         }
     }
 
-    @media (max-width: 900px) {
-        .new_ps {
-            grid-template-columns: repeat(3, minmax(200px, 1fr));
-        }
-    }
-    @media (max-width: 800px) {
+    @media (max-width: 835px) {
         .new_ps {
             grid-template-columns: repeat(2, minmax(200px, 1fr));
         }
     }
+
     @media (max-width: 600px) {
         .new_ps {
             grid-template-columns: repeat(1, 1fr);

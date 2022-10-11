@@ -1,89 +1,66 @@
 <template>
 
-    <BorderPane class="list-of-publications">
-        <template v-slot:top>
-            <div class="tool-bar">
-                <Button class="text-button" @click="newPublication" text="Создать"/>
-                <Row style="column-gap: 5px">
-                    <TextLabel label="Загружать по"/>
-                    <AmountUpload :amount="amountLoad"/>
-                </Row>
-            </div>
-        </template>
+    <div class="p" :class="{'show_editor': Object.keys(publication).length != 0}">
+        <BorderPane class="list-of-publications">
+            <template v-slot:top>
+                <div class="tool-bar">
+                    <Button class="text-button" @click="newPublication" text="Создать"/>
+                </div>
+            </template>
 
-        <template v-slot:center>
-            <Tabs :options="{ useUrlFragment: false }">
-                <Tab :name="'Публикации'">
-                    <BorderPane style="row-gap: 2px">
-                        <template v-slot:top>
-                            <div></div>
-                        </template>
-                        <template v-slot:center>
-                            <List
-                                    @edit="updatePublication"
-                                    @remove="removePublication"
-                                    :type="lists.simple"
-                                    :list="publList"
-                                    style="height: 77vh; overflow-y: auto; "
-                            />
-
-                            <PageLoading v-if="isLoading.publication && !isReady.publication"/>
-
-                            <NotFound
-                                    v-if="(Object.keys(publList).length == 0 && !thereIsMore.publication) && !isLoading.publication"/>
-                        </template>
-                        <template v-slot:bottom>
-                            <Button
-                                    v-if="!isLoading.publication && thereIsMore.publication"
-                                    class="text-button"
-                                    text="Загрузить ещё"
-                                    @click="loadPublications(Object.keys(publList).length, amountLoad)"/>
-                            <PageLoading v-if="isLoading.publication && isReady.publication"/>
-                        </template>
-                    </BorderPane>
-                </Tab>
-                <Tab :name="'Черновики'">
-                    <BorderPane>
-                        <template v-slot:center>
-                            <div>
+            <template v-slot:center>
+                <Tabs :options="{ useUrlFragment: false }">
+                    <Tab :name="'Публикации'">
+                        <BorderPane style="row-gap: 2px">
+                            <template v-slot:top>
+                                <div></div>
+                            </template>
+                            <template v-slot:center>
                                 <List
-                                        v-if="Object.keys(draftList).length != 0"
-                                        @edit="updateDraft"
-                                        @remove="removeDraft"
+                                        @edit="updatePublication"
+                                        @remove="removePublication"
                                         :type="lists.simple"
-                                        :list="draftList"
+                                        :list="publList"
+                                        style="height: 77vh; overflow-y: auto; "
                                 />
 
-                                <PageLoading v-if="isLoading.draft"/>
-                                <NotFound
-                                        v-if="(Object.keys(draftList).length == 0 && !thereIsMore.draft) && !isLoading.draft"/>
-                            </div>
-                        </template>
-                        <!--                        <template v-slot:bottom>-->
-                        <!--                            <Button-->
-                        <!--                                    v-if="!isLoading && thereIsMore"-->
-                        <!--                                    class="text-button"-->
-                        <!--                                    text="Загрузить ещё"-->
-                        <!--                                    @click="loadDrafts(Object.keys(publList).length, amountLoad)"/>-->
-                        <!--                        </template>-->
-                    </BorderPane>
-                </Tab>
-            </Tabs>
-        </template>
-    </BorderPane>
+                                <PageLoading v-if="isLoading.publication && !isReady.publication"/>
 
-    <Popup
-            class="new-publication-popup"
-            v-if="Object.keys(publication).length != 0"
-            @close="closePopup">
-        <template v-slot:content>
-            <EditPublication
-                    :publication="publication"
-                    @publish="publish"
-                    :saveDraft="saveDraft"
-            />
-        </template>
-    </Popup>
+                                <NotFound
+                                        v-if="(Object.keys(publList).length == 0 && !thereIsMore.publication) && !isLoading.publication"/>
+                            </template>
+                        </BorderPane>
+                    </Tab>
+                    <Tab :name="'Черновики'">
+                        <BorderPane>
+                            <template v-slot:center>
+                                <div>
+                                    <List
+                                            v-if="Object.keys(draftList).length != 0"
+                                            @edit="updateDraft"
+                                            @remove="removeDraft"
+                                            :type="lists.simple"
+                                            :list="draftList"
+                                    />
+
+                                    <PageLoading v-if="isLoading.draft"/>
+                                    <NotFound
+                                            v-if="(Object.keys(draftList).length == 0 && !thereIsMore.draft) && !isLoading.draft"/>
+                                </div>
+                            </template>
+
+                        </BorderPane>
+                    </Tab>
+                </Tabs>
+            </template>
+        </BorderPane>
+        <EditPublication
+                :publication="publication"
+                @publish="publish"
+                :saveDraft="saveDraft"
+                @cancel="closePopup"
+        />
+    </div>
 
 </template>
 
@@ -101,7 +78,6 @@
         Card,
         TextLabel,
         PageLoading,
-        Popup,
     }                      from 'saffarid-ui-kit'
     import {
         Tabs,
@@ -112,8 +88,8 @@
     import EditPublication from "@/cabinet/components/pages/publications/EditPublication";
     import NotFound        from "@/components/commons/NotFound";
     import List            from "@/components/commons/publications_list/lists/List";
-    import Row          from "@/components/commons/Row";
-    import {list_types} from '@/components/commons/publications_list/lists/list_types'
+    import Row             from "@/components/commons/Row";
+    import {list_types}    from '@/components/commons/publications_list/lists/list_types'
 
     export default {
         name: "Publications",
@@ -129,7 +105,6 @@
             BorderPane,
             Row,
             TextLabel,
-            Popup,
             Tabs,
             Tab
         },
@@ -197,7 +172,10 @@
             const newPublication = () => {
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
                 workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
-                publication.author = user
+
+                console.log(user.value)
+
+                publication.author = user.value
                 publication.dateStamp = new Date()
 
                 startWatchDraft()
@@ -229,7 +207,6 @@
             const startWatchDraft = () => {
                 stopWatchDraft = watch(publication, () => {
                     const t = new Date().getSeconds() - lastWatchingDraft.getSeconds()
-
 
                     if (Math.abs(t) > 0) {
                         saveDraft()
@@ -351,6 +328,7 @@
              * */
             const closePopup = () => {
                 stopWatchDraft()
+                console.log('closePopup')
                 for (const key of Object.keys(publication)) {
                     delete publication[key]
                 }
@@ -415,7 +393,7 @@
                                 for (const draft of findingsDrafts.datas.findings) {
                                     draftList[draft._id] = draft
                                 }
-                                thereIsMore.draft = data.datas.thereIsMore
+                                thereIsMore.draft = findingsDrafts.datas.thereIsMore
                             }
                             isReady.draft = true
                             isLoading.draft = false
@@ -451,3 +429,38 @@
         }
     }
 </script>
+
+<style lang="scss">
+
+    .p {
+        position: relative;
+        left: 0;
+        width: 200%;
+        transition: left 2s;
+        display: flex;
+
+        .list-of-publications {
+            width: 100%;
+            transition: opacity 2s ease-out;
+            opacity: 1;
+        }
+
+        .new-publication {
+            width: 100%;
+            opacity: 0;
+            transition: opacity 2s ease-out;
+        }
+    }
+
+    .show_editor {
+        left: -100%;
+
+        .list-of-publications {
+            opacity: 0;
+        }
+
+        .new-publication {
+            opacity: 1;
+        }
+    }
+</style>

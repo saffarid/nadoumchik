@@ -97,7 +97,7 @@
         background: var(--img);
         background-repeat: no-repeat;
         background-position-x: center;
-        background-size: 100%;
+        background-size: 100% 100%;
         background-position-y: var(--blur-position-y);
         border-top-left-radius: 18px;
         border-top-right-radius: 18px;
@@ -114,6 +114,13 @@
             background-position-y: var(--position-y);
             border-top-left-radius: 18px;
             border-top-right-radius: 18px;
+
+            h1{
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                font-size: 30px;
+            }
         }
     }
 

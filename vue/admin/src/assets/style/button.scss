@@ -26,6 +26,7 @@
   font-size: var(--button-font);
   border-radius: var(--button_radius);
   padding:  var(--button_padding);
+  min-width: 100px;
   &:hover{
     background-color: var(--action_component);
     color: var(--action_component_content_hover);

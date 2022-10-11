@@ -1,7 +1,7 @@
 <template>
     <BorderPane>
         <template v-slot:top>
-            <Header />
+            <Header :type="header_types.cabinet"/>
         </template>
         <template v-slot:left>
             <NavigationMenu
@@ -23,15 +23,16 @@
     import {
         inject,
         ref
-    }             from 'vue'
+    }                     from 'vue'
     import {
         getPages
-    }             from './pages/pages.js'
+    }                     from './pages/pages.js'
     import {
         BorderPane,
         NavigationMenu
-    }             from 'saffarid-ui-kit'
-    import Header from "@/components/commons/Header";
+    }                     from 'saffarid-ui-kit'
+    import Header         from "@/components/commons/header/Header";
+    import {header_types} from "@/components/commons/header/header_types";
 
     export default {
         name: "Studio",
@@ -51,6 +52,7 @@
             }
 
             return {
+                header_types,
                 _pages,
                 showingPage,
                 setActivePage,

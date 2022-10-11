@@ -1,7 +1,10 @@
 <template>
-    <BorderPane class="new-publication" @keyup.enter="publish">
+    <BorderPane class="new-publication" @keyup.enter="publish" :style="styleVars">
         <template v-slot:top>
             <div class="tool-bar" style="padding-left:2px">
+                <Button class="image-button" @click="$emit('cancel')">
+                    <SvgBack :fill="'#000000'" :width="20" :height="20"/>
+                </Button>
                 <Button
                         class="text-button preview"
                         @click="popupIsShow = true"
@@ -15,223 +18,224 @@
                 <Button
                         v-if="!publication._id"
                         class="text-button publish"
-                        :text="'СОХРАНИТЬ ЧЕРНОВИК'"
+                        :text="'В ЧЕРНОВИКИ'"
                         @click="saveDraft"/>
-                <TextLabel :label="message"/>
+                <span>{{message}}</span>
             </div>
         </template>
+        <template v-slot:left>
+            <div></div>
+        </template>
         <template v-slot:center>
-            <Tabs :options="{ useUrlFragment: false }">
-                <Tab :name="'ОТОБРАЖЕНИЕ В СПИСКЕ'">
-                    <div class="new-publication-item-view">
-                        <PublicationItem
-                                :type="p_item_types.listed"
-                                :data="{
-                                    publication: publication,
-                                    onLeft: true
-                                }"
-                        />
-                        <Row>
-                            <TextLabel
-                                    :label="`Положение изображения: ${publication.preview.imgOnLeft?'Да':'Нет'}`"/>
-                            <Toggle
-                                    id="imgOnLeft"
-                                    v-model="publication.preview.imgOnLeft"
-                                    :true-value="true"
-                                    :false-value="false"
-                            />
-                        </Row>
-                        <Row>
-                            <TextLabel label="Цвет текста"/>
-                            <input type="color" v-model="publication.preview.textColor">
-                        </Row>
-                        <Row>
-                            <TextLabel label="Цвет фона"/>
-                            <input type="color" v-model="publication.preview.backgroundColor">
-                        </Row>
-                        <Row>
-                            <TextLabel label="Изображение"/>
-                            <input type="file" @change="loadImage($event,imageKeys.preview)">
-                        </Row>
-                    </div>
-                </Tab>
-                <Tab :name="'СОДЕРЖИМОЕ'">
-                    <BorderPane class="new-publication-content">
-                        <template v-slot:top>
-                            <TextField
-                                    class="title"
-                                    type="text"
-                                    v-model="publication.content.title"
-                            />
-                        </template>
-                        <template v-slot:center>
-                            <editor
-                                    ref="edit"
-                                    api-key="no-api-key"
-                                    :init="{
-                                plugins: 'lists link image table code help wordcount preview media save visualblocks emoticons'
-                            }"
-                                    initial-value="publication.content"
-                                    v-model="publication.content.content"
-
-                            />
-                        </template>
-                    </BorderPane>
-                </Tab>
-                <Tab :name="'ЗАГОЛОВОК'">
-                    <Title :publication="publication"/>
-                    <div class="new-publication-item-view">
-                        <Row>
-                            <TextLabel :label="`Цвет текста`"/>
-                            <input type="color" v-model="publication.view.title.text.textColor"/>
-                        </Row>
-                        <Row>
-                            <TextLabel label="Шрифт"/>
-                            <ComboBox
-                                    :options="font"
-                                    v-model="publication.view.title.text.fontFamily"
-                            />
-                        </Row>
-                        <Row>
-                            <TextLabel label="Насыщеность шрифта"/>
-                            <div>
-                                <input type="number" min="100" max="900" step="100"
-                                       v-model="publication.view.title.text.fontWeight">
-                                <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:100, max: 900}"
-                                            :step="100"
-                                            v-model="publication.view.title.text.fontWeight"
-                                            :tooltips="false"
-                                    />
-                                </div>
-                            </div>
-                        </Row>
-                        <Row>
-                            <TextLabel label="Наклонный текст"/>
-                            <Toggle
-                                    id="fontStyle"
-                                    v-model="publication.view.title.text.fontStyle"
-                                    :true-value="'oblique'"
-                                    :false-value="'normal'"
-                            />
-                        </Row>
-                        <Row>
-                            <TextLabel label="Высота заголовка"/>
-                            <div>
-                                <input type="number" min="50" max="300" step="1"
-                                       v-model="publication.view.title.height">
-                                <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:50, max: 300}"
-                                            :step="1"
-                                            v-model="publication.view.title.height"
-                                            :tooltips="false"
-                                    />
-                                </div>
-                            </div>
-                        </Row>
-                        <Row>
-                            <TextLabel
-                                    :label="`Использовать фоновое изображение: ${publication.view.title.useImage?'Да':'Нет'}`"/>
-                            <Toggle
-                                    id="useImage"
-                                    v-model="publication.view.title.useImage"
-                                    :true-value="true"
-                                    :false-value="false"
-                            />
-                        </Row>
-                        <template v-if="publication.view.title.useImage">
-                            <Row>
-                                <TextLabel :label="`Фоновое изображение`"/>
-                                <input :disabled="!publication.view.title.useImage" type="file"
-                                       @change="loadImage($event,imageKeys.title)">
-
-                            </Row>
-                            <Row>
-                                <TextLabel :label="`Положение размытого изображения`"/>
-                                <div>
-                                    <input :disabled="!publication.view.title.useImage"
-                                           type="number" min="0" max="100" step="0.1"
-                                           v-model="publication.view.title.blur.position_y">
-                                    <div style="width: 250px">
-                                        <Slider
-                                                :range="{min:0, max: 100}"
-                                                :step="0.1"
-                                                v-model="publication.view.title.blur.position_y"
-                                                :tooltips="false"
-                                        />
-                                    </div>
-                                </div>
-                            </Row>
-                            <Row>
-                                <TextLabel :label="`Размытие изображения`"/>
-                                <div>
-                                    <input :disabled="!publication.view.title.useImage"
-                                           type="number" min="0" max="10" step="0.1"
-                                           v-model="publication.view.title.blur.blur">
-                                    <div style="width: 250px">
-                                        <Slider
-                                                :range="{min:0, max: 10}"
-                                                :step="0.1"
-                                                v-model="publication.view.title.blur.blur"
-                                                :tooltips="false"
-                                        />
-                                    </div>
-                                </div>
-                            </Row>
-                            <Row>
-                                <TextLabel :label="`Размер изображения`"/>
-                                <div>
-                                    <input :disabled="!publication.view.title.useImage"
-                                           type="number" min="0" max="100" step="0.1"
-                                           v-model="publication.view.title.clear.size">
-                                    <div style="width: 250px">
-                                        <Slider
-                                                :range="{min:0, max: 100}"
-                                                :step="0.1"
-                                                v-model="publication.view.title.clear.size"
-                                                :tooltips="false"
-                                        />
-                                    </div>
-                                </div>
-                            </Row>
-                            <Row>
-                                <TextLabel :label="`Положение изображения`"/>
-                                <div>
-                                    <input :disabled="!publication.view.title.useImage"
-                                           type="number" min="0" max="100" step="0.1"
-                                           v-model="publication.view.title.clear.position_y">
-                                    <div style="width: 250px">
-                                        <Slider
-                                                :range="{min:0, max: 100}"
-                                                :step="0.1"
-                                                v-model="publication.view.title.clear.position_y"
-                                                :tooltips="false"
-                                        />
-                                    </div>
-                                </div>
-                            </Row>
-                        </template>
-                        <template v-else>
-                            <Row>
-                                <TextLabel :label="`Фоновое зображение`"/>
-                                <input :disabled="publication.view.title.useImage" type="color"
-                                       v-model="publication.view.title.image">
-                            </Row>
-                        </template>
-                    </div>
-                </Tab>
-                <Tab :name="'ПРОЧИЕ АТРИБУТЫ'">
+            <div class="editor">
+                <div class="main_settings">
                     <Row>
-                        <TextLabel label="Тема публикации"/>
+                        <span>Тема публикации</span>
                         <ComboBox :options="themesOptions"
                                   :modelValue=publication.theme._id
                                   @update:modelValue="setTheme"
                         />
                     </Row>
-                </Tab>
-            </Tabs>
+                    <Row>
+                        <span>Заголовок</span>
+                        <TextField
+                                type="text"
+                                v-model="publication.content.title"
+                        />
+                    </Row>
+                    <PublicationItem
+                            :type="p_item_types.listed"
+                            :data="{
+                                    publication: publication,
+                                    onLeft: true
+                                }"
+                    />
+                    <Row>
+                        <span>{{`Положение изображения: ${publication.preview.imgOnLeft?'Да':'Нет'}`}}</span>
+                        <Toggle
+                                id="imgOnLeft"
+                                v-model="publication.preview.imgOnLeft"
+                                :true-value="true"
+                                :false-value="false"
+                        />
+                    </Row>
+                    <Row>
+                        <span>Цвет текста</span>
+                        <input type="color" v-model="publication.preview.textColor">
+                    </Row>
+                    <Row>
+                        <span>Цвет фона</span>
+                        <input type="color" v-model="publication.preview.backgroundColor">
+                    </Row>
+                    <Row>
+                        <span>Изображение</span>
+                        <input type="file" @change="loadImage($event,imageKeys.preview)">
+                    </Row>
+                    <div class="phantom_title"><Title :publication="publication"/></div>
+                    <Row>
+                        <span>Цвет текста</span>
+                        <input type="color" v-model="publication.view.title.text.textColor"/>
+                    </Row>
+                    <Row>
+                        <span>Шрифт</span>
+                        <ComboBox
+                                :options="font"
+                                v-model="publication.view.title.text.fontFamily"
+                        />
+                    </Row>
+                    <Row>
+                        <span>Насыщеность шрифта</span>
+                        <div>
+                            <input type="number" min="100" max="900" step="100"
+                                   v-model="publication.view.title.text.fontWeight">
+                            <div style="width: 250px">
+                                <Slider
+                                        :range="{min:100, max: 900}"
+                                        :step="100"
+                                        v-model="publication.view.title.text.fontWeight"
+                                        :tooltips="false"
+                                />
+                            </div>
+                        </div>
+                    </Row>
+                    <Row>
+                        <span>Наклонный текст</span>
+                        <Toggle
+                                id="fontStyle"
+                                v-model="publication.view.title.text.fontStyle"
+                                :true-value="'oblique'"
+                                :false-value="'normal'"
+                        />
+                    </Row>
+                    <Row>
+                        <span>Высота заголовка</span>
+                        <div>
+                            <input type="number" min="50" max="300" step="1"
+                                   v-model="publication.view.title.height">
+                            <div style="width: 250px">
+                                <Slider
+                                        :range="{min:50, max: 300}"
+                                        :step="1"
+                                        v-model="publication.view.title.height"
+                                        :tooltips="false"
+                                />
+                            </div>
+                        </div>
+                    </Row>
+                    <Row>
+                        <span>{{`Использовать фоновое изображение: ${publication.view.title.useImage?'Да':'Нет'}`}}</span>
+                        <Toggle
+                                id="useImage"
+                                v-model="publication.view.title.useImage"
+                                :true-value="true"
+                                :false-value="false"
+                        />
+                    </Row>
+                    <template v-if="publication.view.title.useImage">
+                        <Row>
+                            <span>Фоновое изображение</span>
+                            <input :disabled="!publication.view.title.useImage" type="file"
+                                   @change="loadImage($event,imageKeys.title)">
+
+                        </Row>
+                        <Row>
+                            <span>Положение размытого изображения</span>
+                            <div>
+                                <input :disabled="!publication.view.title.useImage"
+                                       type="number" min="0" max="100" step="0.1"
+                                       v-model="publication.view.title.blur.position_y">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:0, max: 100}"
+                                            :step="0.1"
+                                            v-model="publication.view.title.blur.position_y"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+                        <Row>
+                            <span>Размытие изображения</span>
+                            <div>
+                                <input :disabled="!publication.view.title.useImage"
+                                       type="number" min="0" max="10" step="0.1"
+                                       v-model="publication.view.title.blur.blur">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:0, max: 10}"
+                                            :step="0.1"
+                                            v-model="publication.view.title.blur.blur"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+                        <Row>
+                            <span>Размер изображения</span>
+                            <div>
+                                <input :disabled="!publication.view.title.useImage"
+                                       type="number" min="0" max="100" step="0.1"
+                                       v-model="publication.view.title.clear.size">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:0, max: 100}"
+                                            :step="0.1"
+                                            v-model="publication.view.title.clear.size"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+                        <Row>
+                            <span>Положение изображения</span>
+                            <div>
+                                <input :disabled="!publication.view.title.useImage"
+                                       type="number" min="0" max="100" step="0.1"
+                                       v-model="publication.view.title.clear.position_y">
+                                <div style="width: 250px">
+                                    <Slider
+                                            :range="{min:0, max: 100}"
+                                            :step="0.1"
+                                            v-model="publication.view.title.clear.position_y"
+                                            :tooltips="false"
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+                    </template>
+                    <template v-else>
+                        <Row>
+                            <span>Фоновое зображение</span>
+                            <input :disabled="publication.view.title.useImage" type="color"
+                                   v-model="publication.view.title.image">
+                        </Row>
+                    </template>
+                </div>
+                <div class="wysiwyg">
+                    <editor
+                            ref="edit"
+                            api-key="no-api-key"
+                            :init="{
+                                plugins: 'lists link image table code help wordcount preview media save visualblocks emoticons'
+                            }"
+                            initial-value="publication.content"
+                            v-model="publication.content.content"/>
+                </div>
+            </div>
+        </template>
+        <template v-slot:bottom>
+            <div class="tool-bar">
+                <Button
+                        class="text-button preview"
+                        @click="showSettings"
+                        text="НАЗАД"
+                />
+                <Button
+                        class="text-button preview"
+                        @click="showEditor"
+                        text="ВПЕРЕД"
+                />
+            </div>
         </template>
     </BorderPane>
     <PublicationView
@@ -246,6 +250,7 @@
         ref,
         inject,
         computed,
+        reactive
     }                      from 'vue'
     import {Tabs, Tab}     from 'vue3-tabs-component'
     import editor          from '@tinymce/tinymce-vue'
@@ -266,10 +271,12 @@
     import Row             from "@/components/commons/Row";
     import {asyncRequest}  from "@/js/web";
     import {p_item_types}  from "@/components/commons/publications_list/p_item/p_item_types";
+    import SvgBack         from "@/assets/img/SvgBack";
 
     export default {
         name: "EditPublication",
         components: {
+            SvgBack,
             ComboBox,
             Title,
             PublicationView,
@@ -314,6 +321,12 @@
                 preview: 0,
                 title: 1
             }
+
+            const styleVars = reactive({
+                '--shift': '0%',
+                '--opacity_settings': '1',
+                '--opacity_wysiwyg': '0',
+            })
 
             asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.getThemes), JSON.stringify(api.BODY_REQUEST.termsSampling))
                 .then(gettingData => {
@@ -416,6 +429,18 @@
             }
             convertFonts()
 
+            const showEditor = () => {
+                styleVars['--shift'] = '-100%'
+                styleVars['--opacity_wysiwyg'] = '1'
+                styleVars['--opacity_settings'] = '0'
+            }
+
+            const showSettings = () => {
+                styleVars['--shift'] = '0%'
+                styleVars['--opacity_wysiwyg'] = '0'
+                styleVars['--opacity_settings'] = '1'
+            }
+
             return {
                 canSendPublication,
                 font,
@@ -427,14 +452,65 @@
                 loadImage,
                 publish,
                 imageKeys,
-                p_item_types
+                p_item_types,
+                styleVars,
+                showEditor,
+                showSettings
             }
         }
     }
 </script>
 
-<style lang="scss" scoped>
-    textarea {
-        width: 100%;
+<style lang="scss">
+
+
+    .new-publication {
+
+
+        height: var(--workspace_h);
+
+
+        .editor {
+            position: relative;
+            width: 200%;
+            display: flex;
+            left: var(--shift);
+            transition: left 2s;
+
+            .main_settings {
+                position: relative;
+                width: 100%;
+                display: grid;
+                row-gap: 5px;
+                opacity: var(--opacity_settings);
+                transition: opacity 2s;
+                .p_item {
+                    max-width: 650px;
+                }
+                .phantom_title {
+                    background: var(--primary_color);
+                    height: 300px;
+                }
+
+                .row > div {
+                    display: grid;
+                    grid-template-columns: 50px auto;
+                    align-items: center;
+                    justify-items: stretch;
+                    column-gap: 5px;
+                }
+            }
+
+            .wysiwyg {
+                position: relative;
+                width: 100%;
+                opacity: var(--opacity_wysiwyg);
+                transition: opacity 2s;
+                textarea {
+                    width: 100%;
+                }
+            }
+        }
     }
+
 </style>

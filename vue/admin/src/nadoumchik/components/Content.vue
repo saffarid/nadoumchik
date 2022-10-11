@@ -87,7 +87,7 @@
 
                                 for (let i = 0; i < data.datas.findings.length; i++) {
                                     const obj = data.datas.findings[i]
-                                    if (i < 6) {
+                                    if (i < 4) {
                                         publList.newP[obj._id] = obj
                                     }
                                     else {

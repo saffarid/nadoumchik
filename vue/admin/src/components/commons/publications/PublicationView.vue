@@ -12,6 +12,14 @@
             </div>
         </template>
     </Popup>
+    <div class="close">
+        <SvgClose
+                @click="close"
+                :fill="'#a5a5a5'"
+                :height="40"
+                :width="40"
+        />
+    </div>
 </template>
 
 <script>
@@ -19,15 +27,17 @@
         onMounted,
         ref,
         watch
-    }            from "vue";
+    } from "vue";
     import {
         Popup,
-    }            from 'saffarid-ui-kit'
+    } from 'saffarid-ui-kit'
     import Title from "@/components/commons/publications/Title";
+    import SvgClose from "@/assets/img/SvgClose";
 
     export default {
         name: "PublicationView",
         components: {
+            SvgClose,
             Title,
             Popup,
         },
@@ -62,6 +72,12 @@
 </script>
 
 <style lang="scss">
+    @import "@/assets/style/popup.scss";
+
+    .close {
+        display: none;
+    }
+
     .publication {
         z-index: 100;
         overflow-y: auto;
@@ -98,4 +114,19 @@
         }
     }
 
+    @media (max-width: 500px) {
+        .close {
+            display: grid;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 200;
+            border-radius: 50%;
+            border: 2px #a5a5a5 solid;
+        }
+
+        .publication .popup {
+            width: 98%;
+        }
+    }
 </style>

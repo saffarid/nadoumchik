@@ -22,6 +22,11 @@
                 type: Number,
                 required: false,
                 default: 216
+            },
+            fill:{
+                type: String,
+                required: false,
+                default: '#ffffff'
             }
         }
     }
