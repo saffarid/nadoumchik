@@ -3,7 +3,7 @@
     <Card title="ТЕМЫ ПУБЛИКАЦИЙ" style="height: 100%">
         <BorderPane class="themes-of-publications">
             <template v-slot:top>
-                <div class="edit-category">
+                <div class="tool-bar">
                     <TextField v-model="localTheme.value"/>
                     <Button
                             :disabled="localTheme.value.localeCompare('') == 0"
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    Загрузка...
+                    <PageLoading/>
                 </div>
             </template>
         </BorderPane>
@@ -43,6 +43,7 @@
         Card,
         BorderPane,
         Button,
+        PageLoading,
         TextField,
     }                     from 'saffarid-ui-kit'
     import {
@@ -65,6 +66,7 @@
             BorderPane,
             Button,
             TextField,
+            PageLoading
         },
 
         setup() {
@@ -187,17 +189,9 @@
 <style lang="scss" scoped>
 
     .themes-of-publications {
-        .edit-category {
-            align-content: center;
-            align-items: center;
-            border-bottom: #888888 1px solid;
-            display: grid;
-            grid-template-columns: 300px min-content min-content auto;
-            padding: 5px;
-            /*width: fit-content;*/
-            column-gap: 5px;
-
+        .tool-bar {
             input {
+                min-width: 250px;
                 height: 100%;
                 border: 0;
                 border-bottom: #888888 1px solid;
@@ -214,6 +208,7 @@
             }
         }
 
+
         .theme-of-publications {
             display: grid;
             row-gap: 2px;
@@ -223,6 +218,7 @@
                 background-color: #888888;
             }
         }
+
     }
 
 </style>

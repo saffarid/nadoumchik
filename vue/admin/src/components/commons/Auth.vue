@@ -3,7 +3,7 @@
         <div class="auth-form">
             <div class="header-auth">
                 <Logo :x="0" :y="0" :height="50" :width="50"/>
-                <TextLabel label="НАДОУМЧИК"/>
+                <span>#НАДОУМЧИК</span>
             </div>
             <div class="form">
                 <TextField
@@ -36,7 +36,6 @@
     import {
         Button,
         TextField,
-        TextLabel
     }                     from 'saffarid-ui-kit'
     import Logo           from "@/assets/img/logo";
     import {
@@ -59,7 +58,6 @@
             Button,
             Logo,
             TextField,
-            TextLabel
         },
         emit: ['successful'],
         setup(props, context) {

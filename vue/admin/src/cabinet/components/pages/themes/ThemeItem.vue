@@ -1,10 +1,10 @@
 <template>
-    <div class="theme-item">
-        <TextLabel :label="theme.value"/>
-        <Button class="image-button" @click="$emit('edit')">
+    <div class="theme_item">
+        <span>{{theme.value}}</span>
+        <Button class="image_button" @click="$emit('edit')">
             <edit :width="20" :height="20"/>
         </Button>
-        <Button class="image-button" @click="$emit('remove')">
+        <Button class="image_button" @click="$emit('remove')">
             <trash :width="20" :height="20"/>
         </Button>
     </div>
@@ -37,7 +37,7 @@
 
 <style lang="scss" scoped>
 
-    .theme-item {
+    .theme_item {
         align-content: center;
         align-items: center;
         border-radius: 5px;
@@ -47,13 +47,13 @@
         column-gap: 5px;
         padding: 5px;
 
-        .image-button{
+        .image_button{
             opacity: 0;
         }
 
         &:hover{
             background-color: #888888;
-            .image-button{
+            .image_button{
                 opacity: 1;
             }
         }

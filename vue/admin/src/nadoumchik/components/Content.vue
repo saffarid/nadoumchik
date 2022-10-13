@@ -1,5 +1,6 @@
 <template>
     <div class="content_container">
+
         <div class="new_content">
             <List :type="list_types.new"
                   :list="publList.newP"
@@ -12,6 +13,7 @@
                   @read="showPublication"
             />
         </div>
+
     </div>
 
     <PublicationView
@@ -26,13 +28,14 @@
     import List                             from "@/components/commons/publications_list/lists/List";
     import {list_types}                     from "@/components/commons/publications_list/lists/list_types";
     import {inject, provide, reactive, ref} from "vue";
-    import {asyncRequest}  from "@/js/web";
-    import PublicationView from "@/components/commons/publications/PublicationView";
-
+    import {asyncRequest}                   from "@/js/web";
+    import PublicationView                  from "@/components/commons/publications/PublicationView";
+    import Loader                           from "@/components/Loader";
 
     export default {
         name: "Content",
         components: {
+            Loader,
             List,
             PublicationView
         },
@@ -41,15 +44,6 @@
             const api = inject('$api')
 
             const showedPublication = ref(null)
-
-            /**
-             * Флаг готовности отображать считанные публикации
-             * */
-            const isReady = ref(false)
-            /**
-             * Флаг окончания загрузки новых публикаций
-             * */
-            const isLoading = ref(false)
 
             /**
              * Массив публикацй
@@ -95,7 +89,7 @@
                                     }
                                 }
                             }
-                            isReady.value = true
+
                         }, 300)
                     }
                 }
@@ -118,6 +112,7 @@
 
             return {
                 publList,
+
                 list_types,
                 showPublication,
                 showedPublication,
@@ -133,6 +128,7 @@
         border-radius: 10px;
         padding: 5px;
         width: 1330px;
+
         .new_content {
 
             display: grid;

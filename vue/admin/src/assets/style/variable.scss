@@ -11,10 +11,15 @@
 
   --publication_item_h: calc(min(140px, 18vw));
 
+  --tab_h: 34px;
+  --toolbar_h: 38px;
+
   --workspace_h: calc(100vh - 75px)
 }
 
 .light {
+  --background: #ffffff;
+
   --primary_color: #C8C8C8;
   --secondary_color: #535152;
 

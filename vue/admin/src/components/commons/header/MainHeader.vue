@@ -56,7 +56,7 @@
 
 <style lang="scss" scoped>
     .w_bgr {
-        background-color: #ffffff;
+        background-color: var(--background);
         width: calc(100vw - 10px);
         padding: 5px;
         position: sticky;

@@ -10,7 +10,7 @@
             />
         </template>
         <template v-slot:center>
-            <div class="workspace" >
+            <div class="workspace">
                 <keep-alive>
                     <component :is="showingPage"/>
                 </keep-alive>

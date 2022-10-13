@@ -1,8 +1,9 @@
 <template>
-    <div v-if="isLoading">
-        <Card title="Рекламные блоки">
+    <div v-if="isLoading"
+         class="system_settings">
+        <TitlePane title="Рекламные блоки">
             <Row>
-                <TextLabel label="Показ рекламы"/>
+                <span>Показ рекламы</span>
                 <Toggle
                         id="isShowAds"
                         v-model="systemData.ads.isShowingAds"
@@ -10,16 +11,15 @@
                         :false-value="false"
                 />
             </Row>
-        </Card>
+        </TitlePane>
     </div>
     <PageLoading v-else/>
 </template>
 
 <script>
     import {
-        Card,
+        TitlePane,
         PageLoading,
-        TextLabel,
         Toggle
     }                     from "saffarid-ui-kit"
     import Row            from "@/components/commons/Row";
@@ -34,10 +34,9 @@
     export default {
         name: "System",
         components: {
-            Card,
+            TitlePane,
             PageLoading,
             Row,
-            TextLabel,
             Toggle
         },
         setup() {
@@ -81,6 +80,10 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    .system_settings {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(1fr, 500px));
 
+    }
 </style>

@@ -15,14 +15,7 @@
 
 <script>
     import PublicationItem from "@/components/commons/publications_list/p_item/PublicationItem";
-    import {
-        reactive,
-        watch
-    }                      from 'vue'
-    import {
-        p_item_types
-    }                      from "@/components/commons/publications_list/p_item/p_item_types";
-
+    import {p_item_types}  from "@/components/commons/publications_list/p_item/p_item_types";
 
     export default {
         name: "L_Simple",
@@ -36,25 +29,9 @@
             }
         },
         setup() {
-
-            // const l = reactive([])
-            //
-            // watch(props, () => {
-            //     l.length = 0
-            //     for (const v of Object.values(props.list)) {
-            //         l.push(v)
-            //     }
-            //     l.sort((a, b) => {
-            //             return new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds()
-            //         }
-            //     )
-            // })
-
             return {
-                // l
                 p_item_types
             }
-
         }
     }
 </script>
@@ -65,6 +42,5 @@
         grid-template-rows: repeat(auto-fit, var(--publication_item_h));
         row-gap: 2px;
         width: 100%;
-        padding-top: 2px;
     }
 </style>

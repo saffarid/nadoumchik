@@ -12,33 +12,33 @@
                 <Tab name="Настройка группы">
                     <Card title="Описание">
                         <Row>
-                            <TextLabel label="Наименование"/>
+                            <span>Наименование</span>
                             <TextField v-model="group.name"/>
                         </Row>
                         <Row>
-                            <TextLabel label="Описание"/>
+                            <span>Описание</span>
                             <TextField v-model="group.description"/>
                         </Row>
                     </Card>
                     <Card title="Права доступа">
                         <Row>
-                            <TextLabel label="Пользователи"/>
+                            <span>Пользователи</span>
                             <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
                         </Row>
                         <Row>
-                            <TextLabel label="Группы"/>
+                            <span>Группы</span>
                             <ComboBox :options="accessRights" v-model="group.rights.groups.value"/>
                         </Row>
                         <Row>
-                            <TextLabel label="Публикации"/>
+                            <span>Публикации</span>
                             <ComboBox :options="accessRights" v-model="group.rights.publications.value"/>
                         </Row>
                         <Row>
-                            <TextLabel label="Темы публикаций"/>
+                            <span>Темы публикаций</span>
                             <ComboBox :options="accessRights" v-model="group.rights.themesOfPublication.value"/>
                         </Row>
                         <Row>
-                            <TextLabel label="Система"/>
+                            <span>Система</span>
                             <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                         </Row>
                     </Card>
@@ -52,33 +52,33 @@
             <div>
                 <Card title="Описание">
                     <Row>
-                        <TextLabel label="Наименование"/>
+                        <span>Наименование</span>
                         <TextField v-model="group.name"/>
                     </Row>
                     <Row>
-                        <TextLabel label="Описание"/>
+                        <span>Описание</span>
                         <TextField v-model="group.description"/>
                     </Row>
                 </Card>
                 <Card title="Права доступа">
                     <Row>
-                        <TextLabel label="Пользователи"/>
+                        <span>Пользователи</span>
                         <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
                     </Row>
                     <Row>
-                        <TextLabel label="Группы"/>
+                        <span>Группы</span>
                         <ComboBox :options="accessRights" v-model="group.rights.groups.value"/>
                     </Row>
                     <Row>
-                        <TextLabel label="Публикации"/>
+                        <span>Публикации</span>
                         <ComboBox :options="accessRights" v-model="group.rights.publications.value"/>
                     </Row>
                     <Row>
-                        <TextLabel label="Темы публикаций"/>
+                        <span>Темы публикаций</span>
                         <ComboBox :options="accessRights" v-model="group.rights.themesOfPublication.value"/>
                     </Row>
                     <Row>
-                        <TextLabel label="Система"/>
+                        <span>Система</span>
                         <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                     </Row>
                 </Card>
@@ -103,7 +103,6 @@
         Button,
         Card,
         ComboBox,
-        TextLabel,
         TextField,
         Row
     }                     from 'saffarid-ui-kit'
@@ -120,7 +119,6 @@
             ComboBox,
             Tabs,
             Tab,
-            TextLabel,
             TextField,
             Row
         },

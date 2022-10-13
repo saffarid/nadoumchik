@@ -3,8 +3,7 @@
             class="light dimension site"/>
     <Auth v-else
           @successful="login"
-          class="light dimension site"
-    />
+          class="light dimension site"/>
 </template>
 
 <script>

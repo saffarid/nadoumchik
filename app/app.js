@@ -29,7 +29,7 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
     await database.init()
     if (err) return console.error(err)
     app.listen(APP_PORT, APP_IP, () => {
-        console.log(`Wait connection to http://${APP_IP}:${APP_PORT}`)
+        console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
     })
 })
 app

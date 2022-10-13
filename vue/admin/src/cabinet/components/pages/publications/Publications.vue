@@ -1,6 +1,6 @@
 <template>
 
-    <div class="p" :class="{'show_editor': Object.keys(publication).length != 0}">
+    <div class="p" :style="styleVars">
         <BorderPane class="list-of-publications">
             <template v-slot:top>
                 <div class="tool-bar">
@@ -11,54 +11,32 @@
             <template v-slot:center>
                 <Tabs :options="{ useUrlFragment: false }">
                     <Tab :name="'Публикации'">
-                        <BorderPane style="row-gap: 2px">
-                            <template v-slot:top>
-                                <div></div>
-                            </template>
-                            <template v-slot:center>
-                                <List
-                                        @edit="updatePublication"
-                                        @remove="removePublication"
-                                        :type="lists.simple"
-                                        :list="publList"
-                                        style="height: 77vh; overflow-y: auto; "
-                                />
-
-                                <PageLoading v-if="isLoading.publication && !isReady.publication"/>
-
-                                <NotFound
-                                        v-if="(Object.keys(publList).length == 0 && !thereIsMore.publication) && !isLoading.publication"/>
-                            </template>
-                        </BorderPane>
+                        <P_D_Lists
+                                :list="lists.publications"
+                                :remove="removePublication"
+                                :edit="updatePublication"
+                                :is-loading="isLoading.publication"
+                                :there-is-more="thereIsMore.publication"
+                        />
                     </Tab>
                     <Tab :name="'Черновики'">
-                        <BorderPane>
-                            <template v-slot:center>
-                                <div>
-                                    <List
-                                            v-if="Object.keys(draftList).length != 0"
-                                            @edit="updateDraft"
-                                            @remove="removeDraft"
-                                            :type="lists.simple"
-                                            :list="draftList"
-                                    />
-
-                                    <PageLoading v-if="isLoading.draft"/>
-                                    <NotFound
-                                            v-if="(Object.keys(draftList).length == 0 && !thereIsMore.draft) && !isLoading.draft"/>
-                                </div>
-                            </template>
-
-                        </BorderPane>
+                        <P_D_Lists
+                                :list="lists.drafts"
+                                :remove="removeDraft"
+                                :edit="updateDraft"
+                                :is-loading="isLoading.draft"
+                                :there-is-more="thereIsMore.draft"
+                        />
                     </Tab>
                 </Tabs>
             </template>
         </BorderPane>
         <EditPublication
+                v-if="Object.keys(publication).length != 0"
                 :publication="publication"
                 @publish="publish"
                 :saveDraft="saveDraft"
-                @cancel="closePopup"
+                @cancel="closeEdit"
         />
     </div>
 
@@ -89,11 +67,12 @@
     import NotFound        from "@/components/commons/NotFound";
     import List            from "@/components/commons/publications_list/lists/List";
     import Row             from "@/components/commons/Row";
-    import {list_types}    from '@/components/commons/publications_list/lists/list_types'
+    import P_D_Lists       from "@/cabinet/components/pages/publications/P_D_Lists";
 
     export default {
         name: "Publications",
         components: {
+            P_D_Lists,
             AmountUpload,
             List,
             Card,
@@ -136,14 +115,14 @@
                 publication: false,
                 draft: false
             })
+
             /**
-             * Массив публикацй
+             * Списки публикаций и черновиков
              * */
-            const publList = reactive({})
-            /**
-             * Массив черновиков
-             * */
-            const draftList = reactive({})
+            const lists = reactive({
+                publications: reactive({}),
+                drafts: reactive({})
+            })
 
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
@@ -161,10 +140,19 @@
              * */
             const amountLoad = ref(10)
 
+            /**
+             * Сообщение-ответ от сервера
+             * */
             const message = ref('')
 
             let stopWatchDraft
 
+            const styleVars = reactive({
+                '--main_width': '100%',
+                '--shift': '0%',
+                '--opacity_list': '1',
+                '--opacity_p': '0',
+            })
 
             /**
              * Функция запускает этап создания новой публикации
@@ -173,12 +161,12 @@
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
                 workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
 
-                console.log(user.value)
-
                 publication.author = user.value
                 publication.dateStamp = new Date()
 
                 startWatchDraft()
+
+                showEditor()
             }
 
             /**
@@ -186,6 +174,7 @@
              * */
             const updatePublication = (editPublication) => {
                 workObject.objectCopy(editPublication, publication)
+                showEditor()
             }
 
             /**
@@ -195,7 +184,7 @@
                 asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify({_id: removedPublication._id}))
                     .then(data => {
                         if (data.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                            delete publList[data.datas._id]
+                            delete lists.publications[data.datas._id]
                         }
                     })
                     .catch(err => {
@@ -228,14 +217,14 @@
                             case api.CODES_RESPONSE.created.responseCode: {
                                 message.value = 'Черновик сохранен'
                                 draft['_id'] = data.datas._id
-                                draftList[draft._id] = data.datas
+                                lists.drafts[draft._id] = data.datas
                                 // workObject.objectCopy(data.datas, draftList[data.datas._id])
                                 break
                             }
                             case api.CODES_RESPONSE.updated.responseCode: {
                                 message.value = 'Черновик сохранен'
                                 // draftList[draft._id] = data.datas
-                                workObject.objectCopy(data.datas, draftList[data.datas._id])
+                                workObject.objectCopy(data.datas, lists.drafts[data.datas._id])
                                 break
                             }
                         }
@@ -267,7 +256,7 @@
                 asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(removedDraft))
                     .then(data => {
                         if (data.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                            delete draftList[data.datas._id]
+                            delete lists.drafts[data.datas._id]
                         }
                     })
                     .catch(err => {
@@ -287,9 +276,9 @@
                     )
                         .then(data => {
                             if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                                workObject.objectCopy(publication, publList[data.datas._id])
+                                workObject.objectCopy(publication, lists.publications[data.datas._id])
                             }
-                            closePopup()
+                            closeEdit()
                         })
                         .catch(err => {
                             console.log(err)
@@ -302,7 +291,7 @@
                     )
                         .then(async data => {
                             if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                                publList[data.datas._id] = data.datas
+                                lists.publications[data.datas._id] = data.datas
 
                                 const removedResponse = await asyncRequest(
                                     api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft),
@@ -310,10 +299,10 @@
                                 )
 
                                 if (removedResponse.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                                    delete draftList[draft._id]
+                                    delete lists.drafts[draft._id]
                                 }
                             }
-                            closePopup()
+                            closeEdit()
                         })
                         .catch(err => {
                             console.log(err)
@@ -321,20 +310,25 @@
                 }
             }
 
-            const lists = list_types
-
             /**
-             * Функция закрывает Popup с редактированием/созданием публикации
+             * Функция закрывает блок с редактированием/созданием публикации
              * */
-            const closePopup = () => {
-                stopWatchDraft()
-                console.log('closePopup')
-                for (const key of Object.keys(publication)) {
-                    delete publication[key]
-                }
-                for (const key of Object.keys(draft)) {
-                    delete draft[key]
-                }
+            const closeEdit = () => {
+                if (stopWatchDraft != undefined) stopWatchDraft()
+
+                styleVars['--main_width'] = '100%'
+                styleVars['--shift'] = '0'
+                styleVars['--opacity_list'] = '1'
+                styleVars['--opacity_p'] = '0'
+                setTimeout(() => {
+                    for (const key of Object.keys(publication)) {
+                        delete publication[key]
+                    }
+                    for (const key of Object.keys(draft)) {
+                        delete draft[key]
+                    }
+                }, 2000)
+
             }
 
             /**
@@ -344,23 +338,22 @@
             const loadPublications = (shift, count, resolve) => {
                 if (resolve == undefined) {
                     resolve = data => {
-                        setTimeout(() => {
-                            if (data.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                                if (shift == 0) {
-                                    for (const key of Object.keys(publList)) {
-                                        delete publList[key]
-                                    }
-                                }
 
-                                for (const obj of data.datas.findings) {
-                                    publList[obj._id] = obj
+                        if (data.responseCode == api.CODES_RESPONSE.ok.responseCode) {
+                            if (shift == 0) {
+                                for (const key of Object.keys(lists.publications)) {
+                                    delete lists.publications[key]
                                 }
-
-                                thereIsMore.publication = data.datas.thereIsMore
                             }
-                            isReady.publication = true
-                            isLoading.publication = false
-                        }, 300)
+
+                            for (const obj of data.datas.findings) {
+                                lists.publications[obj._id] = obj
+                            }
+
+                            thereIsMore.publication = data.datas.thereIsMore
+                        }
+                        isReady.publication = true
+                        isLoading.publication = false
                     }
                 }
 
@@ -378,9 +371,8 @@
                     .then(resolve)
                     .catch(err => console.log(err))
             }
-
             loadPublications(
-                Object.keys(publList).length,
+                Object.keys(lists.publications).length,
                 amountLoad.value)
 
             const loadDrafts = () => {
@@ -391,7 +383,7 @@
                     .then(findingsDrafts => {
                             if (findingsDrafts.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                                 for (const draft of findingsDrafts.datas.findings) {
-                                    draftList[draft._id] = draft
+                                    lists.drafts[draft._id] = draft
                                 }
                                 thereIsMore.draft = findingsDrafts.datas.thereIsMore
                             }
@@ -400,13 +392,19 @@
                         }
                     )
             }
-
             loadDrafts()
+
+
+            const showEditor = () => {
+                styleVars['--main_width'] = '200%'
+                styleVars['--shift'] = '-100%'
+                styleVars['--opacity_list'] = '0'
+                styleVars['--opacity_p'] = '1'
+            }
 
             return {
                 amountLoad,
-                closePopup,
-                draftList,
+                closeEdit,
                 // draft,
                 message,
                 isReady,
@@ -421,10 +419,10 @@
                 updatePublication,
                 updateDraft,
                 publish,
-                publList,
                 publication,
                 user,
-                lists
+                lists,
+                styleVars
             }
         }
     }
@@ -434,33 +432,22 @@
 
     .p {
         position: relative;
-        left: 0;
-        width: 200%;
-        transition: left 2s;
+        left: var(--shift);
+        width: var(--main_width);
+        transition: left 1s;
         display: flex;
 
         .list-of-publications {
             width: 100%;
-            transition: opacity 2s ease-out;
-            opacity: 1;
+            transition: opacity 1s ease-out;
+            opacity: var(--opacity_list);
         }
 
         .new-publication {
             width: 100%;
-            opacity: 0;
-            transition: opacity 2s ease-out;
+            opacity: var(--opacity_p);
+            transition: opacity 1s ease-in;
         }
     }
 
-    .show_editor {
-        left: -100%;
-
-        .list-of-publications {
-            opacity: 0;
-        }
-
-        .new-publication {
-            opacity: 1;
-        }
-    }
 </style>

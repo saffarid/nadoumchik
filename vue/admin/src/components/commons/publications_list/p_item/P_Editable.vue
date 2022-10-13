@@ -9,9 +9,8 @@
             <img v-else :src="data.publication.preview.image" :height="140" :width="140"/>
         </div>
         <div class="text">
-            <TextLabel
-                    :label="data.publication.content.title.toUpperCase()"/>
-            <TextLabel :label="`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`" />
+            <span>{{data.publication.content.title.toUpperCase()}}</span>
+            <span>{{`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`}}</span>
         </div>
         <div class="buttons">
             <Button class="image-button" @click="$emit('remove')">
@@ -33,7 +32,6 @@
     } from 'vue'
     import {
         Button,
-        TextLabel
     } from 'saffarid-ui-kit'
     import ArticleLogo from "@/assets/img/ArticleLogo";
     import trash from "@/assets/img/trash";
@@ -46,7 +44,6 @@
             trash,
             edit,
             ArticleLogo,
-            TextLabel
         },
         props: {
             data:{
@@ -113,7 +110,7 @@
             justify-items: stretch;
             justify-self: stretch;
 
-            label {
+            span {
                 color: var(--color);
                 text-align: center;
                 position: relative;

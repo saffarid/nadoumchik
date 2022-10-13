@@ -23,9 +23,6 @@
                 <span>{{message}}</span>
             </div>
         </template>
-        <template v-slot:left>
-            <div></div>
-        </template>
         <template v-slot:center>
             <div class="editor">
                 <div class="main_settings">
@@ -313,7 +310,6 @@
         setup(props, context) {
             const api = inject('$api')
             const popupIsShow = ref(false)
-            // const _fonts = fonts
             const font = {}
             const themesOptions = ref({})
             const themes = ref([])
@@ -346,7 +342,6 @@
                             selected: false,
                             label: themes.value[i].value
                         }
-
                     }
                     themesOptions.value = res
                 })
@@ -463,19 +458,23 @@
 
 <style lang="scss">
 
+    $height_editor: calc(var(--workspace_h) - 2 * var(--toolbar_h));
 
     .new-publication {
 
-
         height: var(--workspace_h);
 
+        .center_line {
+            height: $height_editor !important;
+            overflow-y: auto;
+        }
 
         .editor {
             position: relative;
             width: 200%;
             display: flex;
             left: var(--shift);
-            transition: left 2s;
+            transition: left 1s;
 
             .main_settings {
                 position: relative;
@@ -483,7 +482,9 @@
                 display: grid;
                 row-gap: 5px;
                 opacity: var(--opacity_settings);
-                transition: opacity 2s;
+                transition: opacity 1s;
+                height: $height_editor !important;
+                overflow-y: auto;
                 .p_item {
                     max-width: 650px;
                 }
@@ -505,9 +506,14 @@
                 position: relative;
                 width: 100%;
                 opacity: var(--opacity_wysiwyg);
-                transition: opacity 2s;
+                transition: opacity 1s;
+                height: $height_editor !important;
+                overflow-y: auto;
                 textarea {
                     width: 100%;
+                }
+                .tox {
+                    height: 100% !important;
                 }
             }
         }

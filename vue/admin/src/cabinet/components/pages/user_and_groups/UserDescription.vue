@@ -11,22 +11,22 @@
             <div>
                 <Card title="Аутентификация">
                     <Row>
-                        <TextLabel :label="'Логин'"/>
+                        <span>Логин</span>
                         <TextField v-model="user.auth.name"/>
                     </Row>
                     <Row v-if="user._id == null">
-                        <TextLabel :label="'Пароль'"/>
+                        <span>Пароль</span>
                         <TextField v-model="user.auth.pass"/>
                     </Row>
                 </Card>
                 <Card title="Персональные настройки">
                     <Row>
-                        <TextLabel :label="'Псевдоним'"/>
+                        <span>Псевдоним</span>
                         <TextField v-model="user.personal.nickname"/>
                     </Row>
 
                     <Row>
-                        <TextLabel :label="'Группа пользователей'"/>
+                        <span>Группа пользователей</span>
                         <ComboBox :options="_groups" :modelValue="user.group._id" @update:modelValue="changeGroup"/>
                     </Row>
                 </Card>
@@ -48,7 +48,6 @@
         BorderPane,
         Card,
         ComboBox,
-        TextLabel,
         TextField
     } from 'saffarid-ui-kit'
 
@@ -62,7 +61,6 @@
             Card,
             ComboBox,
             Row,
-            TextLabel,
             TextField
         },
         props: {

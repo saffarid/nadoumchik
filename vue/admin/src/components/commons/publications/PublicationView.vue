@@ -27,11 +27,11 @@
         onMounted,
         ref,
         watch
-    } from "vue";
+    }               from "vue";
     import {
         Popup,
-    } from 'saffarid-ui-kit'
-    import Title from "@/components/commons/publications/Title";
+    }               from 'saffarid-ui-kit'
+    import Title    from "@/components/commons/publications/Title";
     import SvgClose from "@/assets/img/SvgClose";
 
     export default {
@@ -72,10 +72,17 @@
 </script>
 
 <style lang="scss">
+
     @import "@/assets/style/popup.scss";
 
     .close {
         display: none;
+        position: absolute;
+        top: 1vh;
+        right: 1vw;
+        z-index: 200;
+        border-radius: 50%;
+        border: 2px #a5a5a5 solid;
     }
 
     .publication {
@@ -84,6 +91,8 @@
         height: min-content;
         min-height: 98vh;
         max-height: 100%;
+        width: 100vw !important;
+        position: fixed !important;
 
         .popup {
             margin: 5px;
@@ -114,19 +123,26 @@
         }
     }
 
-    @media (max-width: 500px) {
-        .close {
-            display: grid;
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            z-index: 200;
-            border-radius: 50%;
-            border: 2px #a5a5a5 solid;
-        }
-
+    @media (max-width: 1500px) {
         .publication .popup {
-            width: 98%;
+            width: 1125px;
+            margin: 0 6.25px;
         }
     }
+
+    @media (max-width: 1150px) {
+        .close {
+            display: grid;
+        }
+    }
+
+    @media (max-width: 1137.5px) {
+        .publication .popup {
+            width: 98vw;
+            height: 98vh;
+        }
+    }
+
+
+
 </style>

@@ -1,10 +1,8 @@
 <template>
     <div @click="$emit('read')"
          class="n_p_item"
-        :style="styleVars">
-        <div class="p_image">
-<!--            <img :src="data.publication.preview.image"/>-->
-        </div>
+         :style="styleVars">
+        <div class="p_image"></div>
         <div class="p_desc">
             <div class="p_title">
                 <span>{{data.publication.content.title.toUpperCase()}}</span>
@@ -86,4 +84,5 @@
         }
 
     }
+
 </style>

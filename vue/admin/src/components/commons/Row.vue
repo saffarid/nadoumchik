@@ -20,7 +20,7 @@
 
     .row {
         display: grid;
-        grid-template-columns: 450px 300px;
+        grid-template-columns: 60% 40%;
         column-gap: 5px;
         align-content: center;
         align-items: center;
