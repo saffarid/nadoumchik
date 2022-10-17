@@ -21,7 +21,7 @@ const objectCopy = (copied, target) => {
 
 }
 
-export default {
+module.exports = {
     isObject,
     objectCopy
 }

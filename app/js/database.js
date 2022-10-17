@@ -1,3 +1,5 @@
+const work_object = require('./work_object')
+
 const mongoose = require('mongoose')
 const {v4: uuid} = require('uuid')
 
@@ -115,7 +117,7 @@ const convertClearToRefsObj = (schema, obj) => {
                 * Проверим его на наличие поля _id.
                 * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
                 * */
-                if ('_id' in obj[key]) {
+                if (work_object.isObject(obj[key]) && '_id' in obj[key]) {
                     obj[key] = obj[key]['_id']
                 }
                 else {

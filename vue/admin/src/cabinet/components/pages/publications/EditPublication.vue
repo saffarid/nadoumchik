@@ -44,16 +44,16 @@
                             :type="p_item_types.listed"
                             :data="{
                                     publication: publication,
-                                    onLeft: true
+                                    onLeft: imgOnLeft
                                 }"
                     />
                     <Row>
-                        <span>{{`Положение изображения: ${publication.preview.imgOnLeft?'Да':'Нет'}`}}</span>
+                        <span>Положение изображения. Не влияет на положение изобржения в списке. Служит только для визуального контроля.</span>
                         <Toggle
                                 id="imgOnLeft"
-                                v-model="publication.preview.imgOnLeft"
-                                :true-value="true"
-                                :false-value="false"
+                                v-model="imgOnLeft"
+                                :true-value="false"
+                                :false-value="true"
                         />
                     </Row>
                     <Row>
@@ -317,6 +317,8 @@
                 preview: 0,
                 title: 1
             }
+            const imgOnLeft = ref(false)
+
 
             const styleVars = reactive({
                 '--shift': '0%',
@@ -440,6 +442,7 @@
                 canSendPublication,
                 font,
                 fontIndex,
+                imgOnLeft,
                 popupIsShow,
                 setFont,
                 setTheme,
@@ -454,6 +457,7 @@
             }
         }
     }
+
 </script>
 
 <style lang="scss">
@@ -485,20 +489,27 @@
                 transition: opacity 1s;
                 height: $height_editor !important;
                 overflow-y: auto;
+
                 .p_item {
                     max-width: 650px;
                 }
+
                 .phantom_title {
                     background: var(--primary_color);
                     height: 300px;
                 }
 
-                .row > div {
-                    display: grid;
-                    grid-template-columns: 50px auto;
-                    align-items: center;
-                    justify-items: stretch;
-                    column-gap: 5px;
+                .row {
+
+                    grid-template-columns: 500px 300px;
+                    & > div {
+                        display: grid;
+                        grid-template-columns: 50px auto;
+                        align-items: center;
+                        justify-items: stretch;
+
+                        column-gap: 5px;
+                    }
                 }
             }
 
@@ -509,9 +520,11 @@
                 transition: opacity 1s;
                 height: $height_editor !important;
                 overflow-y: auto;
+
                 textarea {
                     width: 100%;
                 }
+
                 .tox {
                     height: 100% !important;
                 }

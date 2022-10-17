@@ -110,16 +110,35 @@
             background: var(--img);
             background-repeat: no-repeat;
             background-position-x: center;
-            background-size: var(--size);
+            background-size: var(--size) auto;
             background-position-y: var(--position-y);
             border-top-left-radius: 18px;
             border-top-right-radius: 18px;
 
-            h1{
+            h1 {
                 word-break: break-word;
                 overflow-wrap: break-word;
                 hyphens: auto;
                 font-size: 30px;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            min-height: 200px;
+            height: 200px;
+
+
+        }
+        .blur .clear {
+            min-height: 200px;
+            height: 200px;
+
+            background-size: 100% auto;
+
+            h1 {
+                font-size: 20px;
             }
         }
     }

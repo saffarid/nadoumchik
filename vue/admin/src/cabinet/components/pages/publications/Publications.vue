@@ -66,7 +66,6 @@
     import EditPublication from "@/cabinet/components/pages/publications/EditPublication";
     import NotFound        from "@/components/commons/NotFound";
     import List            from "@/components/commons/publications_list/lists/List";
-    import Row             from "@/components/commons/Row";
     import P_D_Lists       from "@/cabinet/components/pages/publications/P_D_Lists";
 
     export default {
@@ -82,7 +81,6 @@
             NotFound,
             Plus,
             BorderPane,
-            Row,
             TextLabel,
             Tabs,
             Tab

@@ -80,13 +80,6 @@ const schemas = {
          * */
         preview: {
             /**
-             * Флаг положения изображения
-             * */
-            imgOnLeft: {
-                type: Boolean,
-                required: true
-            },
-            /**
              * Цвет фона
              * */
             backgroundColor: {
@@ -261,13 +254,6 @@ const schemas = {
          * Внешнее отображение предпросмотра публикации
          * */
         preview: {
-            /**
-             * Флаг положения изображения
-             * */
-            imgOnLeft: {
-                type: Boolean,
-                required: false
-            },
             /**
              * Цвет фона
              * */

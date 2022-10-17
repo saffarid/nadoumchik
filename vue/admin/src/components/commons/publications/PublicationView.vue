@@ -2,8 +2,7 @@
     <Popup
             class="publication"
             @close="close"
-            @keypress.esc="close"
-    >
+            @keypress.esc="close">
         <template v-slot:header>
             <Title :publication="publication"/>
         </template>
@@ -50,6 +49,7 @@
         setup(props, context) {
             const articleView = ref(null)
 
+
             const refreshContentView = () => {
                 if (articleView.value !== null) {
                     articleView.value.innerHTML = props.publication.content.content
@@ -65,7 +65,7 @@
 
             return {
                 articleView,
-                close
+                close,
             }
         }
     }
@@ -89,8 +89,7 @@
         z-index: 100;
         overflow-y: auto;
         height: min-content;
-        min-height: 98vh;
-        max-height: 100%;
+        height: 100%;
         width: 100vw !important;
         position: fixed !important;
 
@@ -139,10 +138,8 @@
     @media (max-width: 1137.5px) {
         .publication .popup {
             width: 98vw;
-            height: 98vh;
+            height: 98%;
         }
     }
-
-
 
 </style>
