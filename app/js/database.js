@@ -16,7 +16,7 @@ const runOnObject = (sysDef, sysDb) => {
         }
         else {
             //Если запись определена и...
-            if (isObject(sysDb[key])) {
+            if (work_object.isObject(sysDb[key])) {
                 // и является объектом
                 runOnObject(sysDef[key], sysDb[key])
             }
@@ -41,19 +41,13 @@ const init = async () => {
  * Функция проверяет наличие идентификатора
  * */
 const isById = (data) => {
-    return ('_id' in data)
+    return (work_object.isObject(data) && ('_id' in data))
 }
 /**
  * Функция проверяет наличие параметров кол-ва выборки
  * */
 const isSampling = (data) => {
-    return (('shift' in data) && ('count' in data))
-}
-/**
- * Функция проверяет является аргумент объектом
- * */
-const isObject = (arg) => {
-    return arg === Object(arg)
+    return (work_object.isObject(data) &&  ('shift' in data) && ('count' in data))
 }
 
 /**
