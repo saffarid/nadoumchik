@@ -1,3 +1,5 @@
+const {HOME} = process.env;
+
 const work_object = require('./work_object')
 
 const mongoose = require('mongoose')
@@ -5,6 +7,18 @@ const {v4: uuid} = require('uuid')
 
 const initDataDB = require('./default.js')
 const api = require('../api/api_desc')
+
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.prettyPrint()
+    ),
+    transports: [
+        new winston.transports.File({filename: HOME + '/log/log.txt'})
+    ]
+})
+
 
 const models = {}
 
@@ -57,34 +71,38 @@ const isSampling = (data) => {
  * */
 const convertRefsToClearObj = (schema, obj) => {
     return new Promise(async (resolve, reject) => {
-        for (const key of Object.keys(schema)) {
-            if (key === '_id') continue
+        try {
+            for (const key of Object.keys(schema)) {
+                if (key === '_id') continue
 
-            //Получаем объект-описание поля документа коллекции
-            const desc = schema[key]
+                //Получаем объект-описание поля документа коллекции
+                const desc = schema[key]
 
-            //Определяем содержит описание тип объектаили нет
-            if ('type' in desc) {
-                if (!('ref' in desc)) {
-                    continue
+                //Определяем содержит описание тип объектаили нет
+                if ('type' in desc) {
+                    if (!('ref' in desc)) {
+                        continue
+                    }
+                    /*
+                    * Тот объект, который получим из obj по ключу key, является условием выборки.
+                    * Проверим его на наличие поля _id.
+                    * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
+                    * */
+                    const term = {
+                        _id: obj[key]
+                    }
+
+                    obj[key] = (await find(schema[key].ref, term))[0]
+
                 }
-                /*
-                * Тот объект, который получим из obj по ключу key, является условием выборки.
-                * Проверим его на наличие поля _id.
-                * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
-                * */
-                const term = {
-                    _id: obj[key]
+                else {
+                    obj[key] = await convertRefsToClearObj(schema[key], obj[key])
                 }
-
-                obj[key] = (await find(schema[key].ref, term))[0]
-
             }
-            else {
-                obj[key] = await convertRefsToClearObj(schema[key], obj[key])
-            }
+            resolve(obj)
+        } catch (e) {
+            logger.error([`convertRefsToClearObj`, e])
         }
-        resolve(obj)
     })
 }
 
@@ -95,36 +113,41 @@ const convertRefsToClearObj = (schema, obj) => {
  * */
 const convertClearToRefsObj = (schema, obj) => {
     return new Promise(async (resolve, reject) => {
-        //key - наименование поля в БД
-        for (const key of Object.keys(schema)) {
-            if (key === '_id') continue
-            //Получаем объект-описание поля документа коллекции
-            const desc = schema[key]
+        try {
+            //key - наименование поля в БД
+            for (const key of Object.keys(schema)) {
+                if (key === '_id') continue
+                //Получаем объект-описание поля документа коллекции
+                const desc = schema[key]
 
-            //Определяем содержит описание тип объектаили нет
-            if ('type' in desc) {
-                if (!('ref' in desc)) {
-                    continue
-                }
-                /*
-                * Тот объект, который получим из obj по ключу key, является условием выборки.
-                * Проверим его на наличие поля _id.
-                * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
-                * */
-                if (work_object.isObject(obj[key]) && '_id' in obj[key]) {
-                    obj[key] = obj[key]['_id']
+                //Определяем содержит описание тип объектаили нет
+                if ('type' in desc) {
+                    if (!('ref' in desc)) {
+                        continue
+                    }
+                    /*
+                    * Тот объект, который получим из obj по ключу key, является условием выборки.
+                    * Проверим его на наличие поля _id.
+                    * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
+                    * */
+                    if (work_object.isObject(obj[key]) && '_id' in obj[key]) {
+                        obj[key] = obj[key]['_id']
+                    }
+                    else {
+
+                        obj[key] = (await find(schema[key].ref, obj[key]))[0]
+                    }
                 }
                 else {
-
-                    obj[key] = (await find(schema[key].ref, obj[key]))[0]
+                    obj[key] = await convertClearToRefsObj(schema[key], obj[key])
                 }
             }
-            else {
-                obj[key] = await convertClearToRefsObj(schema[key], obj[key])
-            }
+            resolve(obj)
+        }catch (e) {
+            logger.error(['convertClearToRefsObj', e])
         }
-        resolve(obj)
     })
+
 
 }
 
@@ -163,14 +186,15 @@ const findAllByCustomKeys = (collection, terms) => {
                                   resolve([])
                                   return
                               }
-
                               for (let i = 0; i < findings.length; i++) {
                                   findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
                               }
-
                               resolve(findings)
                           })
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['findAllByCustomKeys', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -187,7 +211,10 @@ const findById = (collection, terms) => {
                               }
                               resolve([await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)])
                           })
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['findById', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -211,6 +238,7 @@ const findBySampling = (collection) => {
                               resolve(findings)
                           })
                           .catch(err => {
+                              logger.error(['findBySampling', err])
                               reject(err)
                           })
     })
@@ -242,7 +270,10 @@ const insertOne = (collection, data) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].create(data)
                           .then(value => resolve(value))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['insertOne', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -262,7 +293,10 @@ const insertMany = (collection, data) => {
                               ...api.CODES_RESPONSE.created,
                               datas: value
                           }))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['insertMany', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -291,7 +325,10 @@ const removeById = (collection, data) => {
     return new Promise((resolve, reject) => {
         models[collection].findByIdAndDelete(data._id)
                           .then(removed => resolve(removed))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['removeById', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -304,7 +341,10 @@ const removeByCustomKeys = (collection, data) => {
     return new Promise((resolve, reject) => {
         models[collection].findOneAndDelete(data)
                           .then(removed => resolve(removed))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['removeByCustomKeys', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -334,7 +374,10 @@ const updateById = (collection, data) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].findByIdAndUpdate(data._id, data)
                           .then(updated => resolve(updated))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['updateById', err])
+                              reject(err)
+                          })
     })
 }
 
@@ -348,7 +391,10 @@ const updateByCustomKeys = (collection, data) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
         models[collection].findOneAndUpdate(data, data)
                           .then(updated => resolve(updated))
-                          .catch(err => reject(err))
+                          .catch(err => {
+                              logger.error(['updateByCustomKeys', err])
+                              reject(err)
+                          })
     })
 }
 

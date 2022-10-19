@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const api = require('./api/api_desc')
 const fs = require("fs")
 const path = require('path')
@@ -9,12 +9,25 @@ const bodyParser = require("body-parser")
 const database = require('./js/database')
 const work = require('./js/work/work')
 
+const winston = require('winston')
+
 /**
  * Парсер json-в запросах
  * */
 const jsonParser = express.json();
 
-const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING} = process.env;
+const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING, HOME} = process.env;
+
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.prettyPrint()
+    ),
+    transports: [
+        new winston.transports.File({filename: HOME + '/log/log.txt'})
+    ]
+})
+
 const app = express()
 
 const urlIndex = path.join(path.resolve(''), './../www/index.html')
@@ -27,9 +40,11 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
     //Нужна инициализация БД
     await database.init()
     if (err) return console.error(err)
+    logger.info(`Connection to DB ${DB_CONNECTION_STRING} is success`)
     app.listen(APP_PORT, APP_IP, () => {
-        console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
+        logger.info(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
     })
+
 })
 app
     .use(bodyParser.json({limit: '50mb'}))
@@ -67,6 +82,8 @@ app
                 res.json(data)
             })
             .catch((err) => {
+                logger.warn([`Error with`, req.url, req.body])
+                logger.warn(err)
                 res.json(err)
             })
     })
@@ -77,6 +94,8 @@ app
                     res.json(data)
                 })
                 .catch((err) => {
+                    logger.warn([`Error with`, req.url, req.body])
+                    logger.warn(err)
                     res.json(err)
                 })
     })

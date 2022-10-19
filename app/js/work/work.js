@@ -1,10 +1,26 @@
+const {HOME} = process.env;
+
 const api = require('./../../api/api_desc')
 const user = require('./work_user.js')
 const group = require('./work_group.js')
 const publ = require('./work_publications.js')
 const sys = require('./work_system.js')
 
+const winston = require('winston')
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.prettyPrint()
+    ),
+    transports: [
+        new winston.transports.File({filename: HOME + '/log/log.txt'})
+    ]
+})
+
 const execute = (url, data) => {
+
+    logger.info(['Execute', url, data])
+
     const request = url.split('/')
     switch (request[2]) {
         case api.ESSENCE.group.name :{

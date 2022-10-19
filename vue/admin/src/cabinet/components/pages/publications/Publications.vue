@@ -17,6 +17,7 @@
                                 :edit="updatePublication"
                                 :is-loading="isLoading.publication"
                                 :there-is-more="thereIsMore.publication"
+                                :is-ready="isReady.publication"
                         />
                     </Tab>
                     <Tab :name="'Черновики'">
@@ -26,6 +27,7 @@
                                 :edit="updateDraft"
                                 :is-loading="isLoading.draft"
                                 :there-is-more="thereIsMore.draft"
+                                :is-ready="isReady.draft"
                         />
                     </Tab>
                 </Tabs>

@@ -1,14 +1,17 @@
 <template>
-    <List
-            class="list"
-            @edit="edit"
-            @remove="remove"
-            :type="list_types.simple"
-            :list="list"/>
 
-    <PageLoading v-if="isLoading && Object.keys(list).length == 0"/>
+    <List class="list"
+          @edit="edit"
+          @remove="remove"
+          :type="list_types.simple"
+          :list="list"
+          v-show="isReady"
+    />
+
+    <PageLoading v-if="isLoading || !isReady"/>
+
     <NotFound
-            v-if="(Object.keys(list).length == 0 && !thereIsMore) && !isLoading"/>
+            v-if="isReady && Object.keys(list).length == 0 && !thereIsMore && !isLoading"/>
 </template>
 
 <script>
@@ -22,7 +25,6 @@
     export default {
         name: "P_D_Lists",
         components: {
-
             List,
             PageLoading,
             NotFound
@@ -49,6 +51,10 @@
                 required: false,
                 default: true
             },
+            isReady: {
+                type: Boolean,
+                required: true
+            }
         },
         setup() {
             return {
