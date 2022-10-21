@@ -43,6 +43,7 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
     logger.info(`Connection to DB ${DB_CONNECTION_STRING} is success`)
     app.listen(APP_PORT, APP_IP, () => {
         logger.info(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
+        console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
     })
 
 })

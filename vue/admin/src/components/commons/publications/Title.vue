@@ -1,12 +1,16 @@
 <template>
     <div
-            class="title blur"
+            class="title"
             :style="styleTitleVar"
     >
-        <div class="clear">
-            <h1>
-                {{publication.content.title.toUpperCase()}}
-            </h1>
+        <div class="caption">
+            <h1>{{publication.content.title.toUpperCase()}}</h1>
+        </div>
+        <div class="subcaption">
+            <div class="author"><span>{{publication.author.personal.nickname}}</span></div>
+            <div></div>
+            <div class="theme"><span>{{publication.theme.value}}</span></div>
+            <div class="date"><span>{{datePublication}}</span></div>
         </div>
     </div>
 </template>
@@ -24,39 +28,29 @@
             }
         },
         setup(props) {
-            const font = fonts
 
+            let date = new Date(props.publication.dateStamp)
             const styleTitleVar = reactive({
-                '--img': `url(${props.publication.view.title.image})`,
-                '--blur-size': props.publication.view.title.blur.size + '%',
-                '--blur-position-y': props.publication.view.title.blur.position_y + '%',
-                '--blur': props.publication.view.title.blur.blur + 'px',
-                '--size': props.publication.view.title.clear.size + '%',
-                '--position-y': props.publication.view.title.clear.position_y + '%',
-                '--height': props.publication.view.title.height + 'px',
+                '--img': `url(${props.publication.view.title.image.src})`,
+                '--position-y': props.publication.view.title.image.position_y + '%',
                 '--text-title-color': props.publication.view.title.text.textColor,
-                '--font-family': font[props.publication.view.title.text.fontFamily],
+                '--font-family': fonts[props.publication.view.title.text.fontFamily],
                 '--font-weight': props.publication.view.title.text.fontWeight,
                 '--font-style': props.publication.view.title.text.fontStyle,
             })
 
             const refreshContentView = () => {
-                styleTitleVar['--blur-size'] = props.publication.view.title.blur.size + '%'
                 styleTitleVar['--text-title-color'] = props.publication.view.title.text.textColor
-                styleTitleVar['--blur-position-y'] = props.publication.view.title.blur.position_y + '%'
-                styleTitleVar['--blur'] = props.publication.view.title.blur.blur + 'px'
-                styleTitleVar['--size'] = props.publication.view.title.clear.size + '%'
-                styleTitleVar['--position-y'] = props.publication.view.title.clear.position_y + '%'
-                styleTitleVar['--height'] = props.publication.view.title.height + 'px'
-                styleTitleVar['--font-family'] = font[props.publication.view.title.text.fontFamily]
+                styleTitleVar['--position-y'] = props.publication.view.title.image.position_y + '%'
+                styleTitleVar['--font-family'] = fonts[props.publication.view.title.text.fontFamily]
                 styleTitleVar['--font-weight'] = props.publication.view.title.text.fontWeight
                 styleTitleVar['--font-style'] = props.publication.view.title.text.fontStyle
 
-                if (props.publication.view.title.image !== undefined && props.publication.view.title.useImage) {
-                    styleTitleVar['--img'] = `url(${props.publication.view.title.image})`
+                if (props.publication.view.title.image.src !== undefined && props.publication.view.title.useImage) {
+                    styleTitleVar['--img'] = `url(${props.publication.view.title.image.src})`
                 }
                 else {
-                    styleTitleVar['--img'] = `${props.publication.view.title.image}`
+                    styleTitleVar['--img'] = `${props.publication.view.title.image.src}`
                 }
             };
 
@@ -64,6 +58,7 @@
             watch(props, refreshContentView)
 
             return {
+                datePublication: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
                 styleTitleVar
             }
         }
@@ -72,70 +67,93 @@
 
 <style lang="scss" scoped>
 
+    $border_radius: 10px;
+
     .title {
         display: grid;
-        min-height: var(--height);
-        max-height: min-content;
-        border-top-left-radius: 18px;
-        border-top-right-radius: 18px;
-
-        h1 {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            font-weight: var(--font-weight);
-            font-style: var(--font-style);
-            font-size: 50px;
-            text-align: center;
-            color: var(--text-title-color);
-        }
-    }
-
-    .blur {
-        align-content: stretch;
+        align-content: end;
         justify-content: stretch;
+
+        grid-template-rows: auto 50px;
+
+        height: 250px;
+        border-radius: $border_radius;
+
         background: var(--img);
+        background-position-y: var(--position-y);
         background-repeat: no-repeat;
         background-position-x: center;
-        background-size: 100% 100%;
-        background-position-y: var(--blur-position-y);
-        border-top-left-radius: 18px;
-        border-top-right-radius: 18px;
+        background-size: 100% auto;
 
-        .clear {
+        row-gap: 2px;
+
+        .caption {
             display: grid;
-            align-content: center;
             justify-content: center;
-            backdrop-filter: blur(var(--blur));
-            background: var(--img);
-            background-repeat: no-repeat;
-            background-position-x: center;
-            background-size: var(--size) auto;
-            background-position-y: var(--position-y);
-            border-top-left-radius: 18px;
-            border-top-right-radius: 18px;
+            align-content: center;
 
             h1 {
+                margin: 0;
+                padding: 0;
+                font-family: var(--font-family);
+                font-weight: var(--font-weight);
+                font-style: var(--font-style);
+                font-size: 50px;
+                text-align: center;
+                color: var(--text-title-color);
                 word-break: break-word;
                 overflow-wrap: break-word;
                 hyphens: auto;
-                font-size: 30px;
             }
         }
+
+        .subcaption {
+            display: grid;
+            grid-template-areas: 'author author' 'theme date';
+            grid-template-columns: repeat(2, minmax(190px, 1fr));
+            grid-template-rows: repeat(2, 20px);
+            justify-content: center;
+            justify-self: center;
+            align-content: center;
+            column-gap: 5px;
+            max-width: 500px;
+
+            .author {
+                grid-area: author;
+            }
+
+            .theme {
+                grid-area: theme;
+            }
+
+            .date {
+                grid-area: date;
+            }
+
+            span {
+                font-size: 15px;
+                letter-spacing: .1em;
+                color: var(--text-title-color);
+                font-family: var(--font-family);
+            }
+        }
+
     }
 
     @media (max-width: 768px) {
         .title {
-            min-height: 200px;
             height: 200px;
 
-
+            h1 {
+                font-size: 20px;
+            }
         }
-        .blur .clear {
-            min-height: 200px;
-            height: 200px;
+    }
 
-            background-size: 100% auto;
+    @media (max-width: 425px) {
+        .title {
+            background-size: auto 100%;
+            background-position-y: center;
 
             h1 {
                 font-size: 20px;

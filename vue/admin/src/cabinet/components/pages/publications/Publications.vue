@@ -194,9 +194,11 @@
             }
 
             const startWatchDraft = () => {
+                console.log(publication)
                 stopWatchDraft = watch(publication, () => {
                     const t = new Date().getSeconds() - lastWatchingDraft.getSeconds()
 
+                    console.log(publication)
                     if (Math.abs(t) > 0) {
                         saveDraft()
                         lastWatchingDraft = new Date()

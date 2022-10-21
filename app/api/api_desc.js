@@ -116,20 +116,6 @@ const schemas = {
                     required: true
                 },
                 /**
-                 * Изображение или заливка заголовка
-                 * */
-                image: {
-                    type: String,
-                    required: false
-                },
-                /**
-                 * Высота заголовка
-                 * */
-                height: {
-                    type: Number,
-                    required: true
-                },
-                /**
                  * Оформление текста звголовка
                  * */
                 text: {
@@ -165,19 +151,12 @@ const schemas = {
                 /**
                  * Оформление размытой части заголовка
                  * */
-                blur: {
+                image: {
                     /**
-                     * Размер
+                     * Изображение или заливка заголовка
                      * */
-                    size: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Степень размытости
-                     * */
-                    blur: {
-                        type: Number,
+                    src: {
+                        type: String,
                         required: false
                     },
                     /**
@@ -188,25 +167,6 @@ const schemas = {
                         required: false
                     }
                 },
-                /**
-                 * Оформление чистой части заголовка
-                 * */
-                clear: {
-                    /**
-                     * Размер
-                     * */
-                    size: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Положение по оси Y
-                     * */
-                    position_y: {
-                        type: Number,
-                        required: false
-                    }
-                }
             },
         }
     },
@@ -228,7 +188,8 @@ const schemas = {
          * */
         theme: {
             type: String,
-            required: true
+            ref: 'themesOfPublication',
+            required: false
         },
         /**
          * Содержимое публикации
@@ -288,21 +249,7 @@ const schemas = {
                  * */
                 useImage: {
                     type: Boolean,
-                    required: false
-                },
-                /**
-                 * Изображение или заливка заголовка
-                 * */
-                image: {
-                    type: String,
-                    required: false
-                },
-                /**
-                 * Высота заголовка
-                 * */
-                height: {
-                    type: Number,
-                    required: false
+                    required: true
                 },
                 /**
                  * Оформление текста звголовка
@@ -313,46 +260,39 @@ const schemas = {
                      * */
                     textColor: {
                         type: String,
-                        required: false
+                        required: true
                     },
                     /**
                      * Шрифт текста
                      * */
                     fontFamily: {
                         type: String,
-                        required: false
+                        required: true
                     },
                     /**
                      * Вес
                      * */
                     fontWeight: {
                         type: Number,
-                        required: false
+                        required: true
                     },
                     /**
                      * Стиль
                      * */
                     fontStyle: {
                         type: String,
-                        required: false
+                        required: true
                     }
                 },
                 /**
                  * Оформление размытой части заголовка
                  * */
-                blur: {
+                image: {
                     /**
-                     * Размер
+                     * Изображение или заливка заголовка
                      * */
-                    size: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Степень размытости
-                     * */
-                    blur: {
-                        type: Number,
+                    src: {
+                        type: String,
                         required: false
                     },
                     /**
@@ -363,25 +303,6 @@ const schemas = {
                         required: false
                     }
                 },
-                /**
-                 * Оформление чистой части заголовка
-                 * */
-                clear: {
-                    /**
-                     * Размер
-                     * */
-                    size: {
-                        type: Number,
-                        required: false
-                    },
-                    /**
-                     * Положение по оси Y
-                     * */
-                    position_y: {
-                        type: Number,
-                        required: false
-                    }
-                }
             },
         }
     },
@@ -665,6 +586,17 @@ module.exports = {
                     personal: {
                         nickname: {
                             type: String,
+                            required: true
+                        },
+                        f_name: {
+                            type: String,
+                            required: false,
+                            default: ''
+                        },
+                        s_name: {
+                            type: String,
+                            required: false,
+                            default: ''
                         }
                     },
                     /**
@@ -838,23 +770,16 @@ module.exports = {
             view: {
                 title: {
                     useImage: false,
-                    height: 150,
-                    image: '#724242',
                     text: {
                         textColor: '#2b2b2b',
                         fontFamily: 'YST',
                         fontWeight: 400,
                         fontStyle: 'normal'
                     },
-                    blur: {
-                        size: 100,
-                        blur: 10,
+                    image: {
+                        src: '#724242',
                         position_y: 50
                     },
-                    clear: {
-                        size: 50,
-                        position_y: 50
-                    }
                 },
             }
         },
@@ -867,7 +792,9 @@ module.exports = {
                 pass: ''
             },
             personal: {
-                nickname: ''
+                nickname: '',
+                f_name:'',
+                s_name:''
             },
             group: ''
         }

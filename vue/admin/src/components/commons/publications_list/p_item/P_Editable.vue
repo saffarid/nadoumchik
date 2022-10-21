@@ -10,7 +10,7 @@
         </div>
         <div class="text">
             <span>{{data.publication.content.title.toUpperCase()}}</span>
-            <span>{{`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`}}</span>
+            <span>{{datePublication}}</span>
         </div>
         <div class="buttons">
             <Button class="image-button" @click="$emit('remove')">
@@ -69,7 +69,7 @@
             watch(props, refreshContentView)
 
             return {
-                date,
+                datePublication: `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`,
                 isAnimFrom,
                 styleVars
             }

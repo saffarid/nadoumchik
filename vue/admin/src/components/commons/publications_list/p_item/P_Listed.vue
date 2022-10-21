@@ -7,13 +7,27 @@
          :style="styleVars">
         <div :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse_leave':!isAnimFrom && isAnimFrom !== null}"
              class="image">
-<!--            <img :src="data.publication.preview.image" :height="140" :width="140"/>-->
+            <!--            <img :src="data.publication.preview.image" :height="140" :width="140"/>-->
         </div>
-        <div class="text">
-            <span :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse-leave':!isAnimFrom && isAnimFrom !== null}">
-                {{data.publication.content.title.toUpperCase()}}
-            </span>
-            <span>{{`${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`}}</span>
+        <div class="desc">
+
+            <div class="caption">
+                <h1 :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse-leave':!isAnimFrom && isAnimFrom !== null}">
+                    {{data.publication.content.title}}
+                </h1>
+            </div>
+            <div class="subcaption">
+                <div class="view"></div>
+                <div class="theme">
+                    <span>{{data.publication.theme.value}}</span>
+                </div>
+                <div class="author">
+                    <span>{{data.publication.author.personal.nickname}}</span>
+                </div>
+            </div>
+            <div class="date">
+                <span>{{datePublication}}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -45,7 +59,7 @@
             }
 
             return {
-                date,
+                datePublication: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
                 isAnimFrom,
                 styleVars
             }
@@ -55,12 +69,12 @@
 
 <style lang="scss">
     .image_left {
-        grid-template-areas: "image text";
+        grid-template-areas: "image desc";
         grid-template-columns: var(--publication_item_h) calc(100% - var(--publication_item_h));
     }
 
     .image_right {
-        grid-template-areas: "text image";
+        grid-template-areas: "desc image";
         grid-template-columns: calc(100% - var(--publication_item_h)) var(--publication_item_h);
     }
 
@@ -114,22 +128,54 @@
             background-size: 100% 100%;
         }
 
-        .text {
-            grid-area: text;
+        .desc {
             display: grid;
-            padding: 15px;
-            align-self: stretch;
-            align-items: end;
-            justify-content: stretch;
-            justify-items: stretch;
-            justify-self: stretch;
+            /*align-self: stretch;*/
+            /*align-items: end;*/
 
+            justify-self: center;
+            width: 90%;
+            position: relative;
+
+            h1 {
+                color: var(--color);
+                font-size: 20px;
+                letter-spacing: .1em;
+                text-align: center;
+            }
             span {
                 color: var(--color);
-                text-align: center;
-                position: relative;
-                top: 10px
+                font-size: 12px;
+                letter-spacing: .1em;
             }
+
+            .caption {
+                display: grid;
+                align-content: center;
+                justify-content: stretch;
+                justify-items: center;
+            }
+
+            .subcaption {
+                display: flex;
+                align-content: center;
+                align-items: center;
+                justify-content: end;
+                column-gap: 5px;
+
+                position: absolute;
+                bottom: 25px;
+                right: 10px;
+                height: 20px;
+            }
+
+            .date {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                height: 20px;
+            }
+
         }
 
     }

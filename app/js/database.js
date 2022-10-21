@@ -91,8 +91,8 @@ const convertRefsToClearObj = (schema, obj) => {
                     const term = {
                         _id: obj[key]
                     }
-
-                    obj[key] = (await find(schema[key].ref, term))[0]
+                    const finded = ((await find(schema[key].ref, term)).length != 0)?((await find(schema[key].ref, term))[0]):({})
+                    obj[key] = finded
 
                 }
                 else {
@@ -186,6 +186,7 @@ const findAllByCustomKeys = (collection, terms) => {
                                   resolve([])
                                   return
                               }
+
                               for (let i = 0; i < findings.length; i++) {
                                   findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
                               }

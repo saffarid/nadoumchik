@@ -64,10 +64,23 @@
                         <span>Цвет фона</span>
                         <input type="color" v-model="publication.preview.backgroundColor">
                     </Row>
+
                     <Row>
+                        <span>Загрузить изображение из интернета</span>
+                        <Toggle id="imgTitleFromWeb"
+                                v-model="imgFromWeb.title"
+                                :true-value="true"
+                                :false-value="false"/>
+                    </Row>
+                    <Row v-if="imgFromWeb.title">
+                        <span>Фоновое изображение</span>
+                        <input type="text" v-model="publication.preview.image">
+                    </Row>
+                    <Row v-else>
                         <span>Изображение</span>
                         <input type="file" @change="loadImage($event,imageKeys.preview)">
                     </Row>
+
                     <div class="phantom_title"><Title :publication="publication"/></div>
                     <Row>
                         <span>Цвет текста</span>
@@ -75,10 +88,8 @@
                     </Row>
                     <Row>
                         <span>Шрифт</span>
-                        <ComboBox
-                                :options="font"
-                                v-model="publication.view.title.text.fontFamily"
-                        />
+                        <ComboBox :options="font"
+                                  v-model="publication.view.title.text.fontFamily"/>
                     </Row>
                     <Row>
                         <span>Насыщеность шрифта</span>
@@ -86,125 +97,68 @@
                             <input type="number" min="100" max="900" step="100"
                                    v-model="publication.view.title.text.fontWeight">
                             <div style="width: 250px">
-                                <Slider
-                                        :range="{min:100, max: 900}"
+                                <Slider :range="{min:100, max: 900}"
                                         :step="100"
                                         v-model="publication.view.title.text.fontWeight"
-                                        :tooltips="false"
-                                />
+                                        :tooltips="false"/>
                             </div>
                         </div>
                     </Row>
                     <Row>
                         <span>Наклонный текст</span>
-                        <Toggle
-                                id="fontStyle"
+                        <Toggle id="fontStyle"
                                 v-model="publication.view.title.text.fontStyle"
                                 :true-value="'oblique'"
-                                :false-value="'normal'"
-                        />
+                                :false-value="'normal'"/>
                     </Row>
-                    <Row>
-                        <span>Высота заголовка</span>
-                        <div>
-                            <input type="number" min="50" max="300" step="1"
-                                   v-model="publication.view.title.height">
-                            <div style="width: 250px">
-                                <Slider
-                                        :range="{min:50, max: 300}"
-                                        :step="1"
-                                        v-model="publication.view.title.height"
-                                        :tooltips="false"
-                                />
-                            </div>
-                        </div>
-                    </Row>
+
                     <Row>
                         <span>{{`Использовать фоновое изображение: ${publication.view.title.useImage?'Да':'Нет'}`}}</span>
-                        <Toggle
-                                id="useImage"
+                        <Toggle id="useImage"
                                 v-model="publication.view.title.useImage"
                                 :true-value="true"
-                                :false-value="false"
-                        />
+                                :false-value="false"/>
                     </Row>
                     <template v-if="publication.view.title.useImage">
+
                         <Row>
+                            <span>Загрузить изображение из интернета</span>
+                            <Toggle id="imgTitleFromWeb"
+                                    v-model="imgFromWeb.title"
+                                    :true-value="true"
+                                    :false-value="false"/>
+                        </Row>
+                        <Row v-if="imgFromWeb.title">
+                            <span>Фоновое изображение</span>
+                            <input :disabled="!publication.view.title.useImage" type="text"
+                                   v-model="publication.view.title.image.src">
+                        </Row>
+                        <Row v-else>
                             <span>Фоновое изображение</span>
                             <input :disabled="!publication.view.title.useImage" type="file"
                                    @change="loadImage($event,imageKeys.title)">
+                        </Row>
 
-                        </Row>
-                        <Row>
-                            <span>Положение размытого изображения</span>
-                            <div>
-                                <input :disabled="!publication.view.title.useImage"
-                                       type="number" min="0" max="100" step="0.1"
-                                       v-model="publication.view.title.blur.position_y">
-                                <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:0, max: 100}"
-                                            :step="0.1"
-                                            v-model="publication.view.title.blur.position_y"
-                                            :tooltips="false"
-                                    />
-                                </div>
-                            </div>
-                        </Row>
-                        <Row>
-                            <span>Размытие изображения</span>
-                            <div>
-                                <input :disabled="!publication.view.title.useImage"
-                                       type="number" min="0" max="10" step="0.1"
-                                       v-model="publication.view.title.blur.blur">
-                                <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:0, max: 10}"
-                                            :step="0.1"
-                                            v-model="publication.view.title.blur.blur"
-                                            :tooltips="false"
-                                    />
-                                </div>
-                            </div>
-                        </Row>
-                        <Row>
-                            <span>Размер изображения</span>
-                            <div>
-                                <input :disabled="!publication.view.title.useImage"
-                                       type="number" min="0" max="100" step="0.1"
-                                       v-model="publication.view.title.clear.size">
-                                <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:0, max: 100}"
-                                            :step="0.1"
-                                            v-model="publication.view.title.clear.size"
-                                            :tooltips="false"
-                                    />
-                                </div>
-                            </div>
-                        </Row>
                         <Row>
                             <span>Положение изображения</span>
                             <div>
                                 <input :disabled="!publication.view.title.useImage"
                                        type="number" min="0" max="100" step="0.1"
-                                       v-model="publication.view.title.clear.position_y">
+                                       v-model="publication.view.title.image.position_y">
                                 <div style="width: 250px">
-                                    <Slider
-                                            :range="{min:0, max: 100}"
+                                    <Slider :range="{min:0, max: 100}"
                                             :step="0.1"
-                                            v-model="publication.view.title.clear.position_y"
-                                            :tooltips="false"
-                                    />
+                                            v-model="publication.view.title.image.position_y"
+                                            :tooltips="false"/>
                                 </div>
                             </div>
                         </Row>
                     </template>
                     <template v-else>
                         <Row>
-                            <span>Фоновое зображение</span>
+                            <span>Цвет фона</span>
                             <input :disabled="publication.view.title.useImage" type="color"
-                                   v-model="publication.view.title.image">
+                                   v-model="publication.view.title.image.src">
                         </Row>
                     </template>
                 </div>
@@ -222,16 +176,12 @@
         </template>
         <template v-slot:bottom>
             <div class="tool-bar">
-                <Button
-                        class="text-button preview"
+                <Button class="text-button preview"
                         @click="showSettings"
-                        text="НАЗАД"
-                />
-                <Button
-                        class="text-button preview"
+                        text="НАЗАД"/>
+                <Button class="text-button preview"
                         @click="showEditor"
-                        text="ВПЕРЕД"
-                />
+                        text="ВПЕРЕД"/>
             </div>
         </template>
     </BorderPane>
@@ -319,6 +269,10 @@
             }
             const imgOnLeft = ref(false)
 
+            const imgFromWeb = reactive({
+                preview: false,
+                title: false,
+            })
 
             const styleVars = reactive({
                 '--shift': '0%',
@@ -380,9 +334,10 @@
                 }
                 if (key === imageKeys.title) {
                     reader.onload = ev => {
-                        props.publication.view.title.image = ev.target.result
+                        props.publication.view.title.image.src = ev.target.result
                     }
                 }
+
                 reader.readAsDataURL(file)
             }
 
@@ -402,7 +357,7 @@
                 const hasPreviewImage = props.publication.preview.image.localeCompare('') !== 0
                 const hasContentTitle = props.publication.content.title.localeCompare('') !== 0
                 const hasContent = props.publication.content.content.localeCompare('') !== 0
-                const hasViewImage = props.publication.view.title.image.localeCompare('') !== 0
+                const hasViewImage = props.publication.view.title.image.src.localeCompare('') !== 0
                 const hasTheme = props.publication.theme !== null && props.publication.theme !== undefined && props.publication.theme._id !== '-1'
 
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
@@ -431,7 +386,6 @@
                 styleVars['--opacity_wysiwyg'] = '1'
                 styleVars['--opacity_settings'] = '0'
             }
-
             const showSettings = () => {
                 styleVars['--shift'] = '0%'
                 styleVars['--opacity_wysiwyg'] = '0'
@@ -443,6 +397,7 @@
                 font,
                 fontIndex,
                 imgOnLeft,
+                imgFromWeb,
                 popupIsShow,
                 setFont,
                 setTheme,
@@ -495,13 +450,15 @@
                 }
 
                 .phantom_title {
+                    width: 800px;
                     background: var(--primary_color);
-                    height: 300px;
+                    height: 250px;
                 }
 
                 .row {
 
                     grid-template-columns: 500px 300px;
+
                     & > div {
                         display: grid;
                         grid-template-columns: 50px auto;

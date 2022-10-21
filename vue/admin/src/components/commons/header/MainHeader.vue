@@ -82,6 +82,7 @@
                 margin: 0;
                 font-size: 25px;
                 font-weight: normal;
+                letter-spacing: .1em;
             }
         }
 

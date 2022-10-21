@@ -78,8 +78,8 @@
     .close {
         display: none;
         position: absolute;
-        top: 1vh;
-        right: 1vw;
+        top: 5px;
+        right: 5px;
         z-index: 200;
         border-radius: 50%;
         border: 2px #a5a5a5 solid;
@@ -88,15 +88,16 @@
     .publication {
         z-index: 100;
         overflow-y: auto;
-        height: min-content;
         height: 100%;
         width: 100vw !important;
         position: fixed !important;
+        background-color: rgba(64, 64, 64, 0.95) !important;
 
         .popup {
-            margin: 5px;
+            margin: 0 5px;
+            width: 800px;
             min-height: 98vh;
-            height: min-content;
+            /*height: min-content;*/
             max-height: 100%;
             grid-template-rows: min-content auto 50px;
 
@@ -122,24 +123,34 @@
         }
     }
 
-    @media (max-width: 1500px) {
-        .publication .popup {
-            width: 1125px;
-            margin: 0 6.25px;
-        }
-    }
-
-    @media (max-width: 1150px) {
+    @media (max-width: 810px) {
         .close {
             display: grid;
         }
-    }
 
-    @media (max-width: 1137.5px) {
         .publication .popup {
-            width: 98vw;
-            height: 98%;
+            width: 98.765vw;
+            margin: 0 5px;
         }
     }
+
+    @media (max-width: 768px) {
+
+        .publication .popup {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            border-radius: 0;
+
+            .blur {
+                border-radius: 0;
+
+                .clear {
+                    border-radius: 0;
+                }
+            }
+        }
+    }
+
 
 </style>
