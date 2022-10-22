@@ -67,12 +67,12 @@
 
                     <Row>
                         <span>Загрузить изображение из интернета</span>
-                        <Toggle id="imgTitleFromWeb"
-                                v-model="imgFromWeb.title"
+                        <Toggle id="imgPreviewFromWeb"
+                                v-model="imgFromWeb.preview"
                                 :true-value="true"
                                 :false-value="false"/>
                     </Row>
-                    <Row v-if="imgFromWeb.title">
+                    <Row v-if="imgFromWeb.preview">
                         <span>Фоновое изображение</span>
                         <input type="text" v-model="publication.preview.image">
                     </Row>

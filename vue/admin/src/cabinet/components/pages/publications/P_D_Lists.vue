@@ -5,6 +5,7 @@
           @remove="remove"
           :type="list_types.simple"
           :list="list"
+          :d="d"
           v-show="isReady"
     />
 
@@ -16,7 +17,6 @@
 
 <script>
     import {list_types}  from '@/components/commons/publications_list/lists/list_types'
-    import {watch}       from 'vue'
     import {PageLoading} from 'saffarid-ui-kit'
     import NotFound      from "@/components/commons/NotFound";
     import List          from "@/components/commons/publications_list/lists/List";
@@ -30,6 +30,11 @@
             NotFound
         },
         props: {
+            d: {
+                type: String,
+                required: false,
+                default: 'publ'
+            },
             edit: {
                 type: Function,
                 required: true

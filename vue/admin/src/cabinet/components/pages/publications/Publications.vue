@@ -22,6 +22,7 @@
                     </Tab>
                     <Tab :name="'Черновики'">
                         <P_D_Lists
+                                :d="'draft'"
                                 :list="lists.drafts"
                                 :remove="removeDraft"
                                 :edit="updateDraft"
@@ -46,6 +47,7 @@
 
 <script>
     import {
+        onDeactivated,
         reactive,
         ref,
         inject,
@@ -154,6 +156,10 @@
                 '--opacity_p': '0',
             })
 
+            onDeactivated(() => {
+                closeEdit(0)
+            })
+
             /**
              * Функция запускает этап создания новой публикации
              * */
@@ -194,11 +200,9 @@
             }
 
             const startWatchDraft = () => {
-                console.log(publication)
                 stopWatchDraft = watch(publication, () => {
                     const t = new Date().getSeconds() - lastWatchingDraft.getSeconds()
 
-                    console.log(publication)
                     if (Math.abs(t) > 0) {
                         saveDraft()
                         lastWatchingDraft = new Date()
@@ -285,8 +289,7 @@
                         .catch(err => {
                             console.log(err)
                         })
-                }
-                else {
+                } else {
                     asyncRequest(
                         api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish),
                         JSON.stringify(publication)
@@ -315,7 +318,7 @@
             /**
              * Функция закрывает блок с редактированием/созданием публикации
              * */
-            const closeEdit = () => {
+            const closeEdit = (timeout = 2000) => {
                 if (stopWatchDraft != undefined) stopWatchDraft()
 
                 styleVars['--main_width'] = '100%'
@@ -329,7 +332,7 @@
                     for (const key of Object.keys(draft)) {
                         delete draft[key]
                     }
-                }, 2000)
+                }, timeout)
 
             }
 
@@ -403,6 +406,12 @@
                 styleVars['--opacity_list'] = '0'
                 styleVars['--opacity_p'] = '1'
             }
+
+            /**Наблюдатель изменения списка публикаций.
+             * При срабатывании проиходит сортировка публикаций.*/
+            watch(lists.publications, () => {
+
+            })
 
             return {
                 amountLoad,

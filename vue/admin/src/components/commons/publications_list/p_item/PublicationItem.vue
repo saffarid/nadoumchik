@@ -8,9 +8,6 @@
         ref
     } from 'vue'
 
-    import {
-        p_item_types
-    } from './p_item_types'
 
     export default {
         name: "PublicationItem",

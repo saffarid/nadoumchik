@@ -4,26 +4,28 @@
             <Header :type="header_types.main"/>
         </template>
         <template v-slot:center>
-            <Content/>
+            <div class="content_viewport">
+                <Content/>
+            </div>
         </template>
     </BorderPane>
 </template>
 
 <script>
-    import Header         from "@/components/commons/header/Header";
+    import Header from "@/components/commons/header/Header";
     import {header_types} from "@/components/commons/header/header_types";
     import {
         provide,
         ref,
         inject,
         reactive
-    }                     from "vue";
+    } from "vue";
     import {
         BorderPane,
-    }                     from 'saffarid-ui-kit'
+    } from 'saffarid-ui-kit'
     import {asyncRequest} from "@/js/web";
-    import {list_types}   from '@/components/commons/publications_list/lists/list_types'
-    import Content        from "@/nadoumchik/components/Content";
+    import {list_types} from '@/components/commons/publications_list/lists/list_types'
+    import Content from "@/nadoumchik/components/Content";
 
     export default {
         name: "Nadoumchik",
@@ -58,7 +60,7 @@
 
 <style lang="scss">
 
-    .n>.center_line{
+    .n > .center_line {
         justify-self: stretch;
         justify-content: center;
     }

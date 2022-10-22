@@ -25,6 +25,11 @@ body {
         .workspace {
             height: var(--workspace_h);
         }
+
+        .content_viewport{
+            height: var(--workspace_h);
+            overflow-y: auto;
+        }
     }
 }
 

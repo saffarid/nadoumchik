@@ -4,7 +4,7 @@
             :style="styleTitleVar"
     >
         <div class="caption">
-            <h1>{{publication.content.title.toUpperCase()}}</h1>
+            <h1>{{publication.content.title}}</h1>
         </div>
         <div class="subcaption">
             <div class="author"><span>{{publication.author.personal.nickname}}</span></div>
@@ -40,17 +40,18 @@
             })
 
             const refreshContentView = () => {
-                styleTitleVar['--text-title-color'] = props.publication.view.title.text.textColor
-                styleTitleVar['--position-y'] = props.publication.view.title.image.position_y + '%'
-                styleTitleVar['--font-family'] = fonts[props.publication.view.title.text.fontFamily]
-                styleTitleVar['--font-weight'] = props.publication.view.title.text.fontWeight
-                styleTitleVar['--font-style'] = props.publication.view.title.text.fontStyle
+                if (props.publication.view != undefined) {
+                    styleTitleVar['--text-title-color'] = props.publication.view.title.text.textColor
+                    styleTitleVar['--position-y'] = props.publication.view.title.image.position_y + '%'
+                    styleTitleVar['--font-family'] = fonts[props.publication.view.title.text.fontFamily]
+                    styleTitleVar['--font-weight'] = props.publication.view.title.text.fontWeight
+                    styleTitleVar['--font-style'] = props.publication.view.title.text.fontStyle
 
-                if (props.publication.view.title.image.src !== undefined && props.publication.view.title.useImage) {
-                    styleTitleVar['--img'] = `url(${props.publication.view.title.image.src})`
-                }
-                else {
-                    styleTitleVar['--img'] = `${props.publication.view.title.image.src}`
+                    if (props.publication.view.title.image.src !== undefined && props.publication.view.title.useImage) {
+                        styleTitleVar['--img'] = `url(${props.publication.view.title.image.src})`
+                    } else {
+                        styleTitleVar['--img'] = `${props.publication.view.title.image.src}`
+                    }
                 }
             };
 
@@ -77,7 +78,9 @@
         grid-template-rows: auto 50px;
 
         height: 250px;
-        border-radius: $border_radius;
+        border-top-left-radius: $border_radius;
+        border-top-right-radius: $border_radius;
+
 
         background: var(--img);
         background-position-y: var(--position-y);
@@ -98,7 +101,7 @@
                 font-family: var(--font-family);
                 font-weight: var(--font-weight);
                 font-style: var(--font-style);
-                font-size: 50px;
+                font-size: 30px;
                 text-align: center;
                 color: var(--text-title-color);
                 word-break: break-word;

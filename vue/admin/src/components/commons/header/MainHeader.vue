@@ -8,7 +8,7 @@
             <div class="nav-menu">
                 <Button v-for="(btn, index) of buttons" :key="index" @click="btn.action">
                     <template v-if="btn.img != null">
-                        <component :is="btn.img" :width="40" :height="40"/>
+                        <component :is="btn.img" :width="30" :height="30"/>
                     </template>
                     <span>{{btn.text}}</span>
                 </Button>
@@ -21,10 +21,10 @@
     import Logo from "@/assets/img/logo";
     import {
         Button
-    }           from 'saffarid-ui-kit'
+    } from 'saffarid-ui-kit'
     import {
         defineAsyncComponent
-    }           from 'vue'
+    } from 'vue'
 
     export default {
         name: "MainHeader",
@@ -55,37 +55,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .w_bgr {
-        background-color: var(--background);
-        width: calc(100vw - 10px);
-        padding: 5px;
-        position: sticky;
-        top: 0px;
-        z-index: 50;
-    }
-
     .top-header {
-        height: 65px;
-        display: flex;
-        background-color: var(--primary_color);
-        border-radius: 5px;
-        align-items: center;
-        align-content: center;
-        align-self: stretch;
-        column-gap: 5px;
-
-        .logo {
-            display: flex;
-            align-items: center;
-
-            h1 {
-                margin: 0;
-                font-size: 25px;
-                font-weight: normal;
-                letter-spacing: .1em;
-            }
-        }
-
         .nav-menu {
             display: flex;
             align-items: center;
@@ -100,19 +70,19 @@
                 padding: 10px;
 
                 span {
-                    font-size: 25px;
+                    letter-spacing: .05em;
+                    font-size: 20px;
                     font-weight: normal;
+                    line-height: 20px;
                 }
             }
-
         }
     }
 
     @media (max-width: 600px) {
-        .top-header {
-            height: auto;
-            display: block;
-            row-gap: 2px;
+        .top-header .logo h1 {
+            display: none;
         }
+
     }
 </style>

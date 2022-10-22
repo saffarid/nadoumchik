@@ -7,7 +7,6 @@
          :style="styleVars">
         <div :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse_leave':!isAnimFrom && isAnimFrom !== null}"
              class="image">
-            <!--            <img :src="data.publication.preview.image" :height="140" :width="140"/>-->
         </div>
         <div class="desc">
 
@@ -34,7 +33,9 @@
 
 <script>
     import {
+        reactive,
         ref,
+        watch
     } from 'vue'
 
     export default {
@@ -49,14 +50,25 @@
             const isAnimFrom = ref(null)
             let date = new Date(props.data.publication.dateStamp)
 
-            const styleVars = {
+            const styleVars = reactive({
                 '--img': `url(${props.data.publication.preview.image})`,
                 '--background': props.data.publication.preview.backgroundColor,
                 '--color': props.data.publication.preview.textColor,
                 '--scale_to': 1.075,
                 '--scale_from': 1,
                 '--scale_time': '0.5s',
-            }
+            })
+
+            watch(props, () => {
+                if(props.data.publication.preview != undefined) {
+                    styleVars['--img'] = `url(${props.data.publication.preview.image})`
+                    styleVars['--background'] = props.data.publication.preview.backgroundColor
+                    styleVars['--color'] = props.data.publication.preview.textColor
+                }
+                styleVars['--scale_to'] = 1.075
+                styleVars['--scale_from'] = 1
+                styleVars['--scale_time'] = '0.5s'
+            })
 
             return {
                 datePublication: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
@@ -175,8 +187,12 @@
                 right: 10px;
                 height: 20px;
             }
-
         }
+    }
 
+    @media (max-width: 600px) {
+        h1 {
+            font-size: 15px;
+        }
     }
 </style>
