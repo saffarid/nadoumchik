@@ -1,15 +1,13 @@
 <template>
-
-    <BorderPane>
-        <template v-slot:top>
-            <div class="tool-bar" style="padding-left:2px">
-                <Button class="text-button" :text="user._id == null ? 'ОТПРАВИТЬ' : 'ОБНОВИТЬ'" @click="send"/>
+    <Popup class="user_description" @close="$emit('dismiss')">
+        <template v-slot:header>
+            <div class="title">
+                <span>Создание нового пользователя</span>
             </div>
         </template>
-
-        <template v-slot:center>
+        <template v-slot:content>
             <div>
-                <Card title="Аутентификация">
+                <TitlePane title="Аутентификация">
                     <Row>
                         <span>Логин</span>
                         <TextField v-model="user.auth.name"/>
@@ -18,8 +16,8 @@
                         <span>Пароль</span>
                         <TextField v-model="user.auth.pass"/>
                     </Row>
-                </Card>
-                <Card title="Персональные настройки">
+                </TitlePane>
+                <TitlePane title="Персональные настройки">
                     <Row>
                         <span>Псевдоним</span>
                         <TextField v-model="user.personal.nickname"/>
@@ -27,14 +25,18 @@
 
                     <Row>
                         <span>Группа пользователей</span>
-                        <ComboBox :options="_groups" :modelValue="user.group._id" @update:modelValue="changeGroup"/>
+                        <ComboBox :options="_groups" :modelValue="user.group._id"
+                                  @update:modelValue="changeGroup"/>
                     </Row>
-                </Card>
+                </TitlePane>
             </div>
         </template>
-
-    </BorderPane>
-
+        <template v-slot:footer>
+            <div class="tool-bar" style="padding-left:2px">
+                <Button class="text-button" :text="user._id == null ? 'ОТПРАВИТЬ' : 'ОБНОВИТЬ'" @click="send"/>
+            </div>
+        </template>
+    </Popup>
 
 </template>
 
@@ -42,26 +44,25 @@
     import {
         inject,
         reactive
-    } from 'vue'
+    }          from 'vue'
     import {
         Button,
-        BorderPane,
-        Card,
+        TitlePane,
         ComboBox,
-        TextField
-    } from 'saffarid-ui-kit'
-
+        TextField,
+        Popup
+    }          from 'saffarid-ui-kit'
     import Row from "@/components/commons/Row";
 
     export default {
         name: "UserDescription",
         components: {
             Button,
-            BorderPane,
-            Card,
+            TitlePane,
             ComboBox,
             Row,
-            TextField
+            TextField,
+            Popup
         },
         props: {
             user: {
@@ -113,6 +114,39 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
+
+    .user_description {
+        z-index: 60;
+
+        .popup {
+            grid-template-rows: 30px auto var(--toolbar_h);
+
+            height: 50vh !important;
+            width: 50vw !important;
+            border-radius: 10px;
+
+            padding: 5px;
+
+            .title {
+                display: flex;
+                align-items: center;
+                align-content: center;
+            }
+
+            .title_pane .content {
+                row-gap: 2px;
+                .row {
+                    grid-template-columns: repeat(2, minmax(150px, 300px));
+                }
+            }
+
+
+
+            .tool-bar {
+                height: var(--toolbar_h);
+            }
+        }
+    }
 
 </style>

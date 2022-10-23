@@ -177,11 +177,13 @@
         <template v-slot:bottom>
             <div class="tool-bar">
                 <Button class="text-button preview"
+                        :disabled="activeSettings == 0b10"
                         @click="showSettings"
-                        text="НАЗАД"/>
+                        text="НАСТРОЙКИ"/>
                 <Button class="text-button preview"
+                        :disabled="activeSettings == 0b01"
                         @click="showEditor"
-                        text="ВПЕРЕД"/>
+                        text="РЕДАКТОР"/>
             </div>
         </template>
     </BorderPane>
@@ -268,6 +270,8 @@
                 title: 1
             }
             const imgOnLeft = ref(false)
+
+            const activeSettings = ref(0b10)
 
             const imgFromWeb = reactive({
                 preview: false,
@@ -382,17 +386,20 @@
             convertFonts()
 
             const showEditor = () => {
+                activeSettings.value = 0b01
                 styleVars['--shift'] = '-100%'
                 styleVars['--opacity_wysiwyg'] = '1'
                 styleVars['--opacity_settings'] = '0'
             }
             const showSettings = () => {
+                activeSettings.value = 0b10
                 styleVars['--shift'] = '0%'
                 styleVars['--opacity_wysiwyg'] = '0'
                 styleVars['--opacity_settings'] = '1'
             }
 
             return {
+                activeSettings,
                 canSendPublication,
                 font,
                 fontIndex,

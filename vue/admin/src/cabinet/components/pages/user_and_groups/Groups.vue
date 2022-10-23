@@ -14,16 +14,12 @@
 
         </BorderPane>
 
-        <Popup
+        <GroupDescription
                 v-if="showingGroupShow"
-                @close="showingGroupShow = false">
-            <template v-slot:content>
-                <GroupDescription
-                        :group="showingGroup"
-                        :send="send"
-                />
-            </template>
-        </Popup>
+                @dismiss="showingGroupShow = false"
+                :group="showingGroup"
+                :send="send"
+        />
     </div>
 </template>
 
@@ -36,7 +32,6 @@
     import {
         BorderPane,
         Button,
-        Popup
     }                       from 'saffarid-ui-kit'
     import ListGroups       from "./ListGroups";
     import GroupDescription from "./GroupDescription";
@@ -47,7 +42,6 @@
         components: {
             BorderPane,
             Button,
-            Popup,
             ListGroups,
             GroupDescription
         },
@@ -70,18 +64,18 @@
             }
 
             const send = () => {
-                if(showingGroup._id){
+                if (showingGroup._id) {
                     //Редактируем
                     asyncRequest(
                         api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.edit),
                         JSON.stringify(showingGroup)
                     )
-                    .then(data => {
-                        if(data.responseCode == api.CODES_RESPONSE.updated.responseCode){
+                        .then(data => {
+                            if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
 
-                        }
-                    })
-                    .catch(err => console.log(err))
+                            }
+                        })
+                        .catch(err => console.log(err))
                 }
                 //Добавляем
                 asyncRequest(
@@ -89,7 +83,7 @@
                     JSON.stringify(showingGroup)
                 )
                     .then(data => {
-                        if(data.responseCode == api.CODES_RESPONSE.created.responseCode){
+                        if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
                             groups.value.push(data.datas)
                             showingGroupShow.value = false
                         }

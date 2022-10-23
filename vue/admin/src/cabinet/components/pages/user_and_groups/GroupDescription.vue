@@ -1,16 +1,16 @@
 <template>
-    <BorderPane>
-
-        <template v-slot:top>
-            <div class="tool-bar" style="padding-left:2px">
-                <Button class="text-button" :text="group._id == null ? 'ОТПРАВИТЬ' : 'ОБНОВИТЬ'" @click="send"/>
+    <Popup class="group_description" @close="$emit('dismiss')">
+        <template v-slot:header>
+            <div class="title">
+                <span>Создание новой группы</span>
             </div>
         </template>
 
-        <template v-if="group._id != null" v-slot:center>
+
+        <template v-if="group._id != null" v-slot:content>
             <Tabs :options="{ useUrlFragment: false }">
                 <Tab name="Настройка группы">
-                    <Card title="Описание">
+                    <TitlePane title="Описание">
                         <Row>
                             <span>Наименование</span>
                             <TextField v-model="group.name"/>
@@ -19,8 +19,8 @@
                             <span>Описание</span>
                             <TextField v-model="group.description"/>
                         </Row>
-                    </Card>
-                    <Card title="Права доступа">
+                    </TitlePane>
+                    <TitlePane title="Права доступа">
                         <Row>
                             <span>Пользователи</span>
                             <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
@@ -41,16 +41,16 @@
                             <span>Система</span>
                             <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                         </Row>
-                    </Card>
+                    </TitlePane>
                 </Tab>
                 <Tab name="Пользователи">
                     <Users :users="groupsUsers"/>
                 </Tab>
             </Tabs>
         </template>
-        <template v-else v-slot:center>
+        <template v-else v-slot:content>
             <div>
-                <Card title="Описание">
+                <TitlePane title="Описание">
                     <Row>
                         <span>Наименование</span>
                         <TextField v-model="group.name"/>
@@ -59,8 +59,8 @@
                         <span>Описание</span>
                         <TextField v-model="group.description"/>
                     </Row>
-                </Card>
-                <Card title="Права доступа">
+                </TitlePane>
+                <TitlePane title="Права доступа">
                     <Row>
                         <span>Пользователи</span>
                         <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
@@ -81,11 +81,17 @@
                         <span>Система</span>
                         <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                     </Row>
-                </Card>
+                </TitlePane>
             </div>
         </template>
 
-    </BorderPane>
+
+        <template v-slot:footer>
+            <div class="tool-bar" style="padding-left:2px">
+                <Button class="text-button" :text="group._id == null ? 'ОТПРАВИТЬ' : 'ОБНОВИТЬ'" @click="send"/>
+            </div>
+        </template>
+    </Popup>
 </template>
 
 <script>
@@ -93,34 +99,33 @@
         reactive,
         inject,
         computed
-    }                     from 'vue'
+    }            from 'vue'
     import {
         Tabs,
         Tab
-    }                     from 'vue3-tabs-component'
+    }            from 'vue3-tabs-component'
     import {
-        BorderPane,
         Button,
-        Card,
+        TitlePane,
         ComboBox,
         TextField,
-        Row
-    }                     from 'saffarid-ui-kit'
-    import Users          from "@/cabinet/components/pages/user_and_groups/ListUsers";
-    import {asyncRequest} from "@/js/web";
+        Popup
+    }            from 'saffarid-ui-kit'
+    import Users from "@/cabinet/components/pages/user_and_groups/ListUsers";
+    import Row   from "@/components/commons/Row";
 
     export default {
         name: "GroupDescription",
         components: {
-            BorderPane,
             Button,
             Users,
-            Card,
+            TitlePane,
             ComboBox,
             Tabs,
             Tab,
             TextField,
-            Row
+            Row,
+            Popup
         },
         props: {
             group: {
@@ -174,3 +179,38 @@
         }
     }
 </script>
+
+<style lang="scss">
+
+    .group_description {
+        z-index: 60;
+
+        .popup {
+            grid-template-rows: 30px auto var(--toolbar_h);
+
+            height: 50vh !important;
+            width: 50vw !important;
+            border-radius: 10px;
+
+            padding: 5px;
+
+            .title {
+                display: flex;
+                align-items: center;
+                align-content: center;
+            }
+
+            .title_pane .content {
+                row-gap: 2px;
+
+                .row {
+                    grid-template-columns: repeat(2, minmax(150px, 300px));
+                }
+            }
+
+            .tool-bar {
+            }
+        }
+    }
+
+</style>

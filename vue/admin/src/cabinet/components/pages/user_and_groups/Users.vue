@@ -11,14 +11,13 @@
             <template v-slot:center>
                 <ListUsers :users="users" :click-user="clickUser"/>
             </template>
-
         </BorderPane>
 
-        <Popup @close="hasShowingUser = false" v-if="hasShowingUser">
-            <template v-slot:content>
-                <UserDescription :user="showingUser" :send="send"/>
-            </template>
-        </Popup>
+        <UserDescription
+                @dismiss="hasShowingUser = false"
+                v-if="hasShowingUser"
+                :user="showingUser"
+                :send="send"/>
     </div>
 </template>
 
@@ -31,7 +30,6 @@
     import {
         BorderPane,
         Button,
-        Popup
     }                      from 'saffarid-ui-kit'
     import ListUsers       from "./ListUsers";
     import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
@@ -44,7 +42,6 @@
             BorderPane,
             Button,
             ListUsers,
-            Popup
         },
         setup() {
             const api = inject('$api')
@@ -77,8 +74,7 @@
                             }
                         })
                         .catch(err => console.log(err))
-                }
-                else {
+                } else {
                     //Добавляем
                     asyncRequest(
                         api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew),
@@ -110,3 +106,7 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+
+</style>

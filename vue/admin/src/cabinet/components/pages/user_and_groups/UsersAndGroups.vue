@@ -1,13 +1,14 @@
 <template>
-    <Tabs :options="{ useUrlFragment: false }">
-        <Tab name="Пользователи">
-            <Users/>
-        </Tab>
-
-        <Tab name="Группы">
-            <Groups/>
-        </Tab>
-    </Tabs>
+<!--    <div class="user_groups">-->
+        <Tabs class="viewer_user_groups" :options="{ useUrlFragment: false }">
+            <Tab name="Пользователи">
+                <Users/>
+            </Tab>
+            <Tab name="Группы">
+                <Groups/>
+            </Tab>
+        </Tabs>
+<!--    </div>-->
 </template>
 
 <script>
