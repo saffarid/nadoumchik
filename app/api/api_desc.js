@@ -581,32 +581,48 @@ module.exports = {
                         },
                     },
                     /**
-                     * Персональные данные
-                     * */
-                    personal: {
-                        nickname: {
-                            type: String,
-                            required: true
-                        },
-                        f_name: {
-                            type: String,
-                            required: false,
-                            default: ''
-                        },
-                        s_name: {
-                            type: String,
-                            required: false,
-                            default: ''
-                        }
-                    },
-                    /**
                      * Идентификатор роли пользователя
                      * */
                     group: {
                         type: String,
                         ref: collectionsName.groups,
                         required: true,
-                    }
+                    },
+                    /**
+                     * Дата регистрации на ресурсе
+                     * */
+                    registrationDate: {
+                        type: Date,
+                        required: true
+                    },
+                    /**
+                     * Персональные данные
+                     * */
+                    personal: {
+                        avatar: {
+                            type: String,
+                            required: false,
+                            default: ''
+                        },
+                        f_name: {
+                            type: String,
+                            required: true,
+                        },
+                        s_name: {
+                            type: String,
+                            required: true,
+                        },
+                        mail: {
+                            type: String,
+                            required: false,
+                            default: ''
+                        },
+                        aboutSelf: {
+                            type: String,
+                            required: false,
+                            default: ''
+                        }
+                    },
                 }
             },
 
@@ -793,8 +809,8 @@ module.exports = {
             },
             personal: {
                 nickname: '',
-                f_name:'',
-                s_name:''
+                f_name: '',
+                s_name: ''
             },
             group: ''
         }

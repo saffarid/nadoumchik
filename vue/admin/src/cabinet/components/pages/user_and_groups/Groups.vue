@@ -15,8 +15,8 @@
         </BorderPane>
 
         <GroupDescription
-                v-if="showingGroupShow"
-                @dismiss="showingGroupShow = false"
+                v-if="showGroupDescription"
+                @dismiss="closeGroupDescription"
                 :group="showingGroup"
                 :send="send"
         />
@@ -50,17 +50,24 @@
             const workObject = inject('workObject')
             const groups = inject('groups')
 
-            const showingGroupShow = ref(false)
+            const showGroupDescription = ref(false)
             const showingGroup = reactive({})
 
             const updateGroup = (group) => {
                 workObject.objectCopy(group, showingGroup)
-                showingGroupShow.value = true
+                showGroupDescription.value = true
             }
 
             const newGroup = () => {
                 workObject.objectCopy(api.NEW_OBJECTS.group, showingGroup)
-                showingGroupShow.value = true
+                showGroupDescription.value = true
+            }
+
+            const closeGroupDescription = () => {
+                showGroupDescription.value = false
+                for(const key of Object.keys(showingGroup)){
+                    delete showingGroup[key]
+                }
             }
 
             const send = () => {
@@ -94,7 +101,8 @@
             return {
                 groups,
                 showingGroup,
-                showingGroupShow,
+                showGroupDescription,
+                closeGroupDescription,
                 updateGroup,
                 newGroup,
                 send,

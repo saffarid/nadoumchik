@@ -1,6 +1,5 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
-const HtmlWebpackPlugin = require("html-webpack-plugin")
 const webpack = require('webpack')
 const os = require('os')
 const p = require('path')

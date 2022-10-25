@@ -1,4 +1,3 @@
-
 const api = require('./api/api_desc')
 const fs = require("fs")
 const path = require('path')
@@ -79,18 +78,6 @@ app
     .post(/\/db(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         database.execute(req.url, req.body)
-            .then(data => {
-                res.json(data)
-            })
-            .catch((err) => {
-                logger.warn([`Error with`, req.url, req.body])
-                logger.warn(err)
-                res.json(err)
-            })
-    })
-    .post(/\/work(\/.+)?/, (req, res) => {
-        if (!req.body) res.sendStatus(400)
-        work.execute(req.url, req.body)
                 .then(data => {
                     res.json(data)
                 })
@@ -99,4 +86,16 @@ app
                     logger.warn(err)
                     res.json(err)
                 })
+    })
+    .post(/\/work(\/.+)?/, (req, res) => {
+        if (!req.body) res.sendStatus(400)
+        work.execute(req.url, req.body)
+            .then(data => {
+                res.json(data)
+            })
+            .catch((err) => {
+                logger.warn([`Error with`, req.url, req.body])
+                logger.warn(err)
+                res.json(err)
+            })
     })

@@ -63,7 +63,7 @@ const checkAuth = (user) => {
                   reject(api.CODES_RESPONSE.unauthorized)
               }
               else {
-                  user[0].auth.pass = null
+                  delete user[0].auth
                   resolve({
                           ...api.CODES_RESPONSE.ok,
                           datas: {

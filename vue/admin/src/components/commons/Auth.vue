@@ -19,7 +19,7 @@
             </div>
             <div class="buttons-bar">
                 <Button
-                        :disabled="user.name.localeCompare('') === 0 && user.pass.localeCompare('') === 0"
+                        :disabled="enterIsDisabled"
                         @click="auth"
                         class="text-button enter"
                         text="ВОЙТИ"/>
@@ -36,19 +36,21 @@
     import {
         Button,
         TextField,
-    }                     from 'saffarid-ui-kit'
-    import Logo           from "@/assets/img/logo";
+    }           from 'saffarid-ui-kit'
+    import Logo from "@/assets/img/logo";
     import {
+        computed,
         ref,
         inject,
-        reactive
-    }                     from 'vue'
+        reactive,
+        watch
+    }           from 'vue'
     import {
         asyncRequest,
         getUser,
         setUser,
         storages
-    } from "@/js/web";
+    }           from "@/js/web";
 
     const hash = require('jshashes')
 
@@ -64,7 +66,6 @@
             const api = inject('$api')
             const workObject = inject('workObject')
             const isShow = ref(false)
-            let userFromStorage = false
             const user = reactive({
                 name: '',
                 pass: ''
@@ -72,10 +73,11 @@
 
             let hasSessionUser = false
             let hasStorageUser = false
+            let authStorageUser = false
 
             const checkUser = () => {
                 const gettingUser = JSON.parse(getUser(storages.session))
-                if(gettingUser == null) {
+                if (gettingUser == null) {
                     hasSessionUser = false
 
                     isShow.value = true
@@ -86,22 +88,30 @@
                         return
                     }
                     hasStorageUser = true
-                    workObject.objectCopy(localUser, user)
-                } else {
-                    hasSessionUser = true
-                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(gettingUser))
-                        .then(authSuccess)
 
+                    workObject.objectCopy(localUser, user)
+                    authStorageUser = true
+                }
+                else {
+                    hasSessionUser = true
+                    sendUserAuth(gettingUser)
                 }
             }
 
             const auth = () => {
-                if(user.name.localeCompare('') == 0 && user.pass.localeCompare('') == 0) return
-
-                if(!hasStorageUser){
-                    user.pass = new hash.SHA1().b64(user.pass)
+                if (!authStorageUser) {
+                    sendUserAuth(
+                        {
+                            name: user.name,
+                            pass: new hash.SHA1().b64(user.pass)
+                        })
                 }
+                else {
+                    sendUserAuth(user)
+                }
+            }
 
+            const sendUserAuth = (user) => {
                 asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(user))
                     .then(authSuccess)
             }
@@ -109,13 +119,18 @@
             const authSuccess = (value) => {
                 if (value.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                     const findingUser = value.datas.findings
-                    if(!hasSessionUser) setUser(storages.session, JSON.stringify(user))
-                    // const u = user
-
-                    // setUser(storages.local, JSON.stringify(user))
+                    if (!hasSessionUser) setUser(storages.session, JSON.stringify({
+                        name: user.name,
+                        pass: new hash.SHA1().b64(user.pass)
+                    }))
+                    if (!hasStorageUser) setUser(storages.local, JSON.stringify({
+                        name: user.name,
+                        pass: new hash.SHA1().b64(user.pass)
+                    }))
 
                     context.emit('successful', findingUser)
-                } else {
+                }
+                else {
                     isShow.value = true
                 }
             }
@@ -125,11 +140,22 @@
                 user.pass = ''
             }
 
+            watch(user, () => {
+                authStorageUser = false
+            })
+
             checkUser()
+
+            const hasValueTextField = (field) => field != undefined && field != null && field != ''
+
+            const enterIsDisabled = computed(() => {
+                return !(hasValueTextField(user.name) && hasValueTextField(user.pass))
+            })
 
             return {
                 auth,
                 clear,
+                enterIsDisabled,
                 user,
                 isShow
             }

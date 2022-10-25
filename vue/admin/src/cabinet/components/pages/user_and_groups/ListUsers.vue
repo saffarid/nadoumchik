@@ -7,7 +7,7 @@
                :items="users">
         <template #row="{item}">
             <tr @click="clickUser(item)">
-                <td>{{item.personal.nickname}}</td>
+                <td>{{`${item.personal.f_name} ${item.personal.s_name}`}}</td>
                 <td>{{item.group.name}}</td>
             </tr>
         </template>

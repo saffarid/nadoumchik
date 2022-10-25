@@ -407,12 +407,6 @@
                 styleVars['--opacity_p'] = '1'
             }
 
-            /**Наблюдатель изменения списка публикаций.
-             * При срабатывании проиходит сортировка публикаций.*/
-            watch(lists.publications, () => {
-
-            })
-
             return {
                 amountLoad,
                 closeEdit,

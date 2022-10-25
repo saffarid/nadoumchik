@@ -14,8 +14,8 @@
         </BorderPane>
 
         <UserDescription
-                @dismiss="hasShowingUser = false"
-                v-if="hasShowingUser"
+                @dismiss="closeUserDescription"
+                v-if="showUserDescription"
                 :user="showingUser"
                 :send="send"/>
     </div>
@@ -30,29 +30,38 @@
     import {
         BorderPane,
         Button,
+        TableView
     }                      from 'saffarid-ui-kit'
-    import ListUsers       from "./ListUsers";
     import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
     import {asyncRequest}  from "@/js/web";
+    import ListUsers       from "@/cabinet/components/pages/user_and_groups/ListUsers";
 
     export default {
         name: "Users",
         components: {
+            ListUsers,
             UserDescription,
             BorderPane,
             Button,
-            ListUsers,
+            TableView
         },
         setup() {
             const api = inject('$api')
             const users = inject('users')
             const workObject = inject('workObject')
             const showingUser = reactive({})
-            const hasShowingUser = ref(false)
+            const showUserDescription = ref(false)
 
             const clickUser = (user) => {
                 workObject.objectCopy(user, showingUser)
-                hasShowingUser.value = true
+                showUserDescription.value = true
+            }
+
+            const closeUserDescription = () => {
+                showUserDescription.value = false
+                for (const key of Object.keys(showingUser)) {
+                    delete showingUser[key]
+                }
             }
 
             const send = () => {
@@ -74,7 +83,8 @@
                             }
                         })
                         .catch(err => console.log(err))
-                } else {
+                }
+                else {
                     //Добавляем
                     asyncRequest(
                         api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew),
@@ -92,12 +102,13 @@
 
             const create = () => {
                 workObject.objectCopy(api.NEW_OBJECTS.user, showingUser)
-                hasShowingUser.value = true
+                showUserDescription.value = true
             }
 
             return {
                 showingUser,
-                hasShowingUser,
+                showUserDescription,
+                closeUserDescription,
                 clickUser,
                 create,
                 send,

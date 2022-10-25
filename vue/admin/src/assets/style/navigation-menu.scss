@@ -32,3 +32,11 @@
         }
     }
 }
+
+@media (max-width: 1100px) {
+    .navigation-menu .button {
+        span {
+            display: none;
+        }
+    }
+}

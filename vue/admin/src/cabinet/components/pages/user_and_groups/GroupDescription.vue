@@ -10,6 +10,7 @@
         <template v-if="group._id != null" v-slot:content>
             <Tabs :options="{ useUrlFragment: false }">
                 <Tab name="Настройка группы">
+                    <div class="popup_content">
                     <TitlePane title="Описание">
                         <Row>
                             <span>Наименование</span>
@@ -42,6 +43,7 @@
                             <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                         </Row>
                     </TitlePane>
+                    </div>
                 </Tab>
                 <Tab name="Пользователи">
                     <Users :users="groupsUsers"/>
@@ -49,7 +51,7 @@
             </Tabs>
         </template>
         <template v-else v-slot:content>
-            <div>
+            <div class="popup_content">
                 <TitlePane title="Описание">
                     <Row>
                         <span>Наименование</span>
@@ -87,8 +89,11 @@
 
 
         <template v-slot:footer>
-            <div class="tool-bar" style="padding-left:2px">
-                <Button class="text-button" :text="group._id == null ? 'ОТПРАВИТЬ' : 'ОБНОВИТЬ'" @click="send"/>
+            <div class="tool-bar">
+                <Button class="text-button"
+                        :disabled="group.name == ''"
+                        :text="group._id == null ? 'СОЗДАТЬ' : 'ОБНОВИТЬ'"
+                        @click="send"/>
             </div>
         </template>
     </Popup>
@@ -188,7 +193,7 @@
         .popup {
             grid-template-rows: 30px auto var(--toolbar_h);
 
-            height: 50vh !important;
+            height: min-content !important;
             width: 50vw !important;
             border-radius: 10px;
 
@@ -200,15 +205,22 @@
                 align-content: center;
             }
 
-            .title_pane .content {
-                row-gap: 2px;
+            .popup_content {
+                display: grid;
+                row-gap: 5px;
+                align-content: start;
 
-                .row {
-                    grid-template-columns: repeat(2, minmax(150px, 300px));
+                .title_pane .content {
+                    row-gap: 2px;
+                    padding: 2px;
+                    .row {
+                        grid-template-columns: repeat(2, minmax(150px, 300px));
+                    }
                 }
             }
 
             .tool-bar {
+                height: var(--toolbar_h);
             }
         }
     }
