@@ -54,7 +54,8 @@ module.exports = {
                 pass: new hash.SHA1().b64('admin'),
             },
             personal:{
-              nickname:"admin",
+              f_name:"admin",
+              s_name:"admin",
             },
             group: {
                 name: 'administrators',
@@ -66,7 +67,9 @@ module.exports = {
                 pass: new hash.SHA1().b64('PnO030994'),
             },
             personal:{
-                nickname:"saffarid",
+                f_name:"Никита",
+                s_name:"Павлов",
+                mail: 'pavlov.nikita@mail.ru',
             },
             group: {
                 name: 'reader',

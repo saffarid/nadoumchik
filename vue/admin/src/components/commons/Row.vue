@@ -1,5 +1,5 @@
 <template>
-    <div class="row" >
+    <div class="row">
         <slot></slot>
     </div>
 </template>
@@ -20,7 +20,7 @@
 
     .row {
         display: grid;
-        grid-template-columns: 60% 40%;
+        grid-template-columns: repeat(2, minmax(150px, 300px));
         column-gap: 5px;
         align-content: center;
         align-items: center;

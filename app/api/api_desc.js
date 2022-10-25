@@ -459,6 +459,14 @@ module.exports = {
             responseCode: 404,
             message: "Не найдено"
         },
+        notAcceptable: {
+            responseCode: 406,
+            message: "Неприемлемо"
+        },
+        notImplemented: {
+            responseCode: 501,
+            message: "Не выполнено"
+        }
     },
     /**
      * Объект описание БД
@@ -808,9 +816,10 @@ module.exports = {
                 pass: ''
             },
             personal: {
-                nickname: '',
                 f_name: '',
-                s_name: ''
+                s_name: '',
+                mail: '',
+                aboutSelf: ''
             },
             group: ''
         }

@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLoading"
          class="system_settings">
-        <TitlePane title="Рекламные блоки">
+        <TitlePane class="ads" title="Рекламные блоки">
             <Row>
                 <span>Показ рекламы</span>
                 <Toggle
@@ -84,6 +84,10 @@
     .system_settings {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(1fr, 500px));
+
+        .ads {
+            width: max-content;
+        }
 
     }
 </style>

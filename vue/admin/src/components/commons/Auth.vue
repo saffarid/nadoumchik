@@ -36,21 +36,22 @@
     import {
         Button,
         TextField,
-    }           from 'saffarid-ui-kit'
-    import Logo from "@/assets/img/logo";
+    }                          from 'saffarid-ui-kit'
+    import Logo                from "@/assets/img/logo";
     import {
         computed,
         ref,
         inject,
         reactive,
         watch
-    }           from 'vue'
+    }                          from 'vue'
     import {
         asyncRequest,
         getUser,
         setUser,
         storages
-    }           from "@/js/web";
+    }                          from "@/js/web";
+    import {hasValueTextField} from "@/js/checker";
 
     const hash = require('jshashes')
 
@@ -121,7 +122,7 @@
                             storages.session,
                             JSON.stringify({
                                 name: user.name,
-                                pass: new hash.SHA1().b64(user.pass)
+                                pass: (authLocalUser) ? (user.pass) : (new hash.SHA1().b64(user.pass))
                             }))
                     }
                     if (!hasLocalUser) {
@@ -150,8 +151,6 @@
             })
 
             checkUser()
-
-            const hasValueTextField = (field) => field != undefined && field != null && field != ''
 
             const enterIsDisabled = computed(() => {
                 return !(hasValueTextField(user.name) && hasValueTextField(user.pass))

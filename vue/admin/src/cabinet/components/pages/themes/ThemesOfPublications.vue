@@ -48,6 +48,7 @@
     }                     from 'saffarid-ui-kit'
     import {
         // onMounted,
+        onDeactivated,
         inject,
         ref,
         reactive,
@@ -78,6 +79,10 @@
             const localTheme = reactive({
                 _id: undefined,
                 value: '',
+            })
+
+            onDeactivated(() => {
+                clearLocalTheme()
             })
 
             const response = ref('')
@@ -114,7 +119,7 @@
                 localTheme.value = ''
 
                 if (editedItem.value !== null) {
-                    editedItem.value.classList.remove('edit')
+                    editedItem.value.classList.toggle('edit')
                     editedItem.value = null
                 }
             }
@@ -158,7 +163,7 @@
                 localTheme._id = theme._id
                 localTheme.value = theme.value
                 editedItem.value = themesList.value.childNodes[index + 1]
-                editedItem.value.classList.add('edit')
+                editedItem.value.classList.toggle('edit')
             }
 
             const removeTheme = (theme) => {

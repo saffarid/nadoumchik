@@ -5,7 +5,10 @@ const addNew = (user) => {
     return new Promise((resolve, reject) => {
         db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.insert),
-            user
+            {
+                registrationDate: new Date(),
+                ...user
+            }
         )
           .then(value => {
               resolve({
@@ -51,7 +54,44 @@ const edit = (user) => {
 
 const changePass = (data) => {
     return new Promise((resolve, reject) => {
+        db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), {_id: data._id})
+          .then(response => {
 
+              //Определяем существование пользователя с переданным _id
+              if (response.length == 0) {
+                  //Условыие выполняется если пользователь не найден
+                  resolve({
+                      ...api.CODES_RESPONSE.notFound,
+                  })
+                  return
+              }
+
+              const user = response[0]
+              //Проверяем совпадение старых паролей
+              if (data.oldPass.localeCompare(user.auth.pass) != 0) {
+                  resolve({
+                      ...api.CODES_RESPONSE.notAcceptable,
+                  })
+                  return
+              }
+
+              user.auth.pass = data.newPass
+
+              db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.update), user)
+                  .then(response => {
+                      if(response[0].auth.pass.localeCompare(data.newPass) == 0) {
+                          resolve(
+                              ...api.CODES_RESPONSE.updated
+                          )
+                      } else {
+                          resolve(
+                              ...api.CODES_RESPONSE.notImplemented
+                          )
+                      }
+                  })
+
+          })
+          .catch(err => reject(err))
     })
 }
 
@@ -113,6 +153,9 @@ const execute = (url, data) => {
         }
         case api.ESSENCE.user.actions.edit : {
             return edit(data)
+        }
+        case api.ESSENCE.user.actions.changePass : {
+            return changePass(data)
         }
         case api.ESSENCE.user.actions.getAllUsers : {
             return getAllUsers(data)

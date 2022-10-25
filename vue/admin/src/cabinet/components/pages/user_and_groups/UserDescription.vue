@@ -49,7 +49,7 @@
             <div class="tool-bar">
                 <Button class="text-button"
                         :disabled="sendIsDisabled"
-                        :text="user._id != null ? 'СОЗДАТЬ' : 'ОБНОВИТЬ'"
+                        :text="user._id == null ? 'СОЗДАТЬ' : 'ОБНОВИТЬ'"
                         @click="send"/>
             </div>
         </template>
@@ -62,15 +62,17 @@
         computed,
         inject,
         reactive
-    }          from 'vue'
+    }                          from 'vue'
     import {
         Button,
         TitlePane,
         ComboBox,
         TextField,
         Popup
-    }          from 'saffarid-ui-kit'
-    import Row from "@/components/commons/Row";
+    }                          from 'saffarid-ui-kit'
+    import Row                 from "@/components/commons/Row";
+    import {hasValueTextField} from "@/js/checker";
+
 
     export default {
         name: "UserDescription",
@@ -125,8 +127,6 @@
 
             formGroups()
 
-            const hasValueTextField = (field) =>  field != undefined && field != null && field != ''
-
             const sendIsDisabled = computed(() => {
                 let isEnabled = (hasValueTextField(props.user.personal.f_name) && hasValueTextField(props.user.personal.s_name))
 
@@ -156,9 +156,7 @@
 
             height: min-content !important;
             width: 50vw !important;
-            border-radius: 10px;
 
-            padding: 5px;
 
             .title {
                 display: flex;
