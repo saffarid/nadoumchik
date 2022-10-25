@@ -72,34 +72,31 @@
             })
 
             let hasSessionUser = false
-            let hasStorageUser = false
-            let authStorageUser = false
+            let hasLocalUser = false
+            let authLocalUser = false
 
             const checkUser = () => {
-                const gettingUser = JSON.parse(getUser(storages.session))
-                if (gettingUser == null) {
-                    hasSessionUser = false
+                const sessionUser = JSON.parse(getUser(storages.session))
+                const localUser = JSON.parse(getUser(storages.local))
 
-                    isShow.value = true
-                    const localUser = JSON.parse(getUser(storages.local))
+                hasSessionUser = sessionUser != null
+                hasLocalUser = localUser != null
 
-                    if (localUser == null) {
-                        hasStorageUser = false
-                        return
-                    }
-                    hasStorageUser = true
-
-                    workObject.objectCopy(localUser, user)
-                    authStorageUser = true
+                if (hasSessionUser) {
+                    sendUserAuth(sessionUser)
                 }
                 else {
-                    hasSessionUser = true
-                    sendUserAuth(gettingUser)
+                    if (hasLocalUser) {
+                        workObject.objectCopy(localUser, user)
+                    }
+
+                    authLocalUser = true
+                    isShow.value = true
                 }
             }
 
             const auth = () => {
-                if (!authStorageUser) {
+                if (!authLocalUser) {
                     sendUserAuth(
                         {
                             name: user.name,
@@ -119,14 +116,22 @@
             const authSuccess = (value) => {
                 if (value.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                     const findingUser = value.datas.findings
-                    if (!hasSessionUser) setUser(storages.session, JSON.stringify({
-                        name: user.name,
-                        pass: new hash.SHA1().b64(user.pass)
-                    }))
-                    if (!hasStorageUser) setUser(storages.local, JSON.stringify({
-                        name: user.name,
-                        pass: new hash.SHA1().b64(user.pass)
-                    }))
+                    if (!hasSessionUser) {
+                        setUser(
+                            storages.session,
+                            JSON.stringify({
+                                name: user.name,
+                                pass: new hash.SHA1().b64(user.pass)
+                            }))
+                    }
+                    if (!hasLocalUser) {
+                        setUser(
+                            storages.local,
+                            JSON.stringify({
+                                name: user.name,
+                                pass: new hash.SHA1().b64(user.pass)
+                            }))
+                    }
 
                     context.emit('successful', findingUser)
                 }
@@ -141,7 +146,7 @@
             }
 
             watch(user, () => {
-                authStorageUser = false
+                authLocalUser = false
             })
 
             checkUser()

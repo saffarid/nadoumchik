@@ -63,11 +63,12 @@ const checkAuth = (user) => {
                   reject(api.CODES_RESPONSE.unauthorized)
               }
               else {
-                  delete user[0].auth
+                  const _user = user[0]
+                  _user.auth = undefined
                   resolve({
                           ...api.CODES_RESPONSE.ok,
                           datas: {
-                              findings: user[0]
+                              findings: _user
                           }
                       }
                   )
