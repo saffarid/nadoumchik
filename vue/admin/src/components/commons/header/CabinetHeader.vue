@@ -5,11 +5,18 @@
                 <Logo :height="65" :width="65"/>
                 <h1>#НАДОУМЧИК</h1>
             </div>
+
+            <div class="welcome_user">
+                <span>{{`Здравствуйте, ${user.personal.s_name} ${user.personal.f_name}`}}</span>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import {
+        inject
+    }           from 'vue'
     import Logo from "@/assets/img/logo";
 
     export default {
@@ -18,20 +25,19 @@
             Logo
         },
         setup() {
+            const user = inject('user')
 
-            return {}
+            return {
+                user
+            }
         }
     }
 </script>
 
 <style lang="scss" scoped>
 
+    .welcome_user {
+        margin-left: 10px;
+    }
 
-    /*@media (max-width: 600px) {*/
-    /*    .top-header {*/
-    /*        height: auto;*/
-    /*        display: block;*/
-    /*        row-gap: 2px;*/
-    /*    }*/
-    /*}*/
 </style>

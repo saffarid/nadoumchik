@@ -8,7 +8,7 @@
         </div>
         <div class="p_desc">
             <div class="p_author">
-                <span>{{data.publication.author.personal.nickname}}</span>
+                <span>{{`${data.publication.author.personal.s_name} ${data.publication.author.personal.f_name}`}}</span>
             </div>
             <div class="p_theme_date">
                 <div class="p_theme">

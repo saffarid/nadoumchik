@@ -8,7 +8,7 @@
             <h1>{{publication.content.title}}</h1>
         </div>
         <div class="subcaption">
-            <div class="author"><span>{{publication.author.personal.nickname}}</span></div>
+            <div class="author"><span>{{`${publication.author.personal.s_name} ${publication.author.personal.f_name}`}}</span></div>
             <div></div>
             <div class="theme"><span>{{publication.theme.value}}</span></div>
             <div class="date"><span>{{datePublication}}</span></div>
@@ -78,6 +78,8 @@
         justify-content: stretch;
 
         grid-template-rows: auto 50px;
+
+        width: 800px;
 
         height: 250px;
         border-top-left-radius: $border_radius;
@@ -161,10 +163,17 @@
 
     }
 
+    @media (max-width: 810px) {
+
+        .title {
+            width: 98.765vw;
+        }
+    }
+
     @media (max-width: 768px) {
         .title {
             height: 200px;
-
+            width: 100vw;
             h1 {
                 font-size: 20px;
             }
@@ -174,8 +183,8 @@
     @media (max-width: 425px) {
         .title {
             .title_clear_image {
-                background-size: auto 100%;
-                background-position-y: center;
+                /*background-size: auto 100%;*/
+                /*background-position-y: center;*/
                 background-position-x: center;
             }
 

@@ -58,4 +58,15 @@
             }
         }
     }
+
+    @media (max-width: 600px) {
+        .top-header {
+            height: 30px;
+            .logo svg {
+                height: 30px;
+                width: 30px;
+            }
+        }
+
+    }
 </style>

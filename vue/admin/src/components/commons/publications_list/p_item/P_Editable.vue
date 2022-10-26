@@ -32,9 +32,9 @@
     } from 'vue'
     import {
         Button,
-    } from 'saffarid-ui-kit'
-    import ArticleLogo from "@/assets/img/ArticleLogo";
-    import trash from "@/assets/img/trash";
+    }                  from 'saffarid-ui-kit'
+    import ArticleLogo from "@/assets/img/SvgArticleLogo";
+    import trash       from "@/assets/img/trash";
     import edit from "@/assets/img/edit";
 
     export default {

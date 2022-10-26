@@ -21,7 +21,7 @@
                     <span>{{data.publication.theme.value}}</span>
                 </div>
                 <div class="author">
-                    <span>{{data.publication.author.personal.nickname}}</span>
+                    <span>{{`${data.publication.author.personal.s_name} ${data.publication.author.personal.f_name}`}}</span>
                 </div>
             </div>
             <div class="date">

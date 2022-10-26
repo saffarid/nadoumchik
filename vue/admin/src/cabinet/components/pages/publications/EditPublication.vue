@@ -486,10 +486,11 @@
                 overflow-y: auto;
 
                 textarea {
-                    width: 100%;
+                    width: 800px;
                 }
 
                 .tox {
+                    width: 800px;
                     height: 100% !important;
                 }
             }

@@ -14,11 +14,7 @@
     import Svg from "@/components/mixins/Svg";
 
     export default {
-        name: "settings",
+        name: "SvgSettings",
         mixins: [Svg]
     }
 </script>
-
-<style scoped>
-
-</style>

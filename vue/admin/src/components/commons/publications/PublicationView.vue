@@ -1,4 +1,5 @@
 <template>
+
     <Popup
             class="publication"
             @close="close"
@@ -7,7 +8,7 @@
             <Title :publication="publication"/>
         </template>
         <template v-slot:content>
-            <div ref="articleView">
+            <div class="publication_content" ref="articleView">
             </div>
         </template>
     </Popup>
@@ -19,6 +20,7 @@
                 :width="40"
         />
     </div>
+
 </template>
 
 <script>
@@ -49,7 +51,6 @@
         setup(props, context) {
             const articleView = ref(null)
 
-
             const refreshContentView = () => {
                 if (articleView.value !== null) {
                     articleView.value.innerHTML = props.publication.content.content
@@ -73,14 +74,12 @@
 
 <style lang="scss">
 
-    @import "@/assets/style/popup.scss";
-
     .close {
         display: none;
         position: absolute;
         top: 5px;
         right: 5px;
-        z-index: 200;
+        z-index: 101;
         border-radius: 50%;
         border: 2px #a5a5a5 solid;
     }
@@ -93,14 +92,19 @@
         position: fixed !important;
         background-color: rgba(64, 64, 64, 0.95) !important;
 
+        .closer {
+            z-index: 1;
+        }
+
         .popup {
             margin: 0 5px;
             width: 800px;
             min-height: 98vh;
-            /*height: min-content;*/
+            height: min-content;
             max-height: 100%;
             grid-template-rows: min-content auto 50px;
             padding: 0;
+            z-index: 2;
 
             .popup_header {
                 font-size: 30px;
@@ -114,6 +118,11 @@
                 padding: 0;
             }
 
+            .publication_content {
+                padding: 0 5px;
+                width: 790px;
+            }
+
             .content {
                 margin-top: 5px;
                 padding-right: 5px;
@@ -121,6 +130,7 @@
                 padding-left: 5px;
                 max-height: 100%;
             }
+
         }
     }
 
@@ -131,7 +141,11 @@
 
         .publication .popup {
             width: 98.765vw;
-            margin: 0 5px;
+            margin: 5px;
+
+            .publication_content {
+                width: calc(98.765vw - 10px);
+            }
         }
     }
 
@@ -139,9 +153,12 @@
 
         .publication .popup {
             margin: 0;
-            height: 100vh;
             width: 100vw;
             border-radius: 0;
+
+            .publication_content {
+                width: calc(100vw - 10px);
+            }
 
             .blur {
                 border-radius: 0;
@@ -149,6 +166,15 @@
                 .clear {
                     border-radius: 0;
                 }
+            }
+        }
+    }
+
+    @media (max-width: 610px) {
+        .publication_content {
+            img {
+                height: auto;
+                width: 100%;
             }
         }
     }
