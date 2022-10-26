@@ -100,6 +100,7 @@
             /*height: min-content;*/
             max-height: 100%;
             grid-template-rows: min-content auto 50px;
+            padding: 0;
 
             .popup_header {
                 font-size: 30px;

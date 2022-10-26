@@ -3,6 +3,7 @@
             class="title"
             :style="styleTitleVar"
     >
+        <div class="title_clear_image"></div>
         <div class="caption">
             <h1>{{publication.content.title}}</h1>
         </div>
@@ -49,7 +50,8 @@
 
                     if (props.publication.view.title.image.src !== undefined && props.publication.view.title.useImage) {
                         styleTitleVar['--img'] = `url(${props.publication.view.title.image.src})`
-                    } else {
+                    }
+                    else {
                         styleTitleVar['--img'] = `${props.publication.view.title.image.src}`
                     }
                 }
@@ -81,19 +83,34 @@
         border-top-left-radius: $border_radius;
         border-top-right-radius: $border_radius;
 
-
         background: var(--img);
-        background-position-y: var(--position-y);
         background-repeat: no-repeat;
-        background-position-x: center;
-        background-size: 100% auto;
+
+        background-size: 100% 100%;
 
         row-gap: 2px;
+
+        position: relative;
+
+        .title_clear_image {
+            position: absolute;
+
+            backdrop-filter: blur(10px);
+
+            height: 100%;
+            width: 100%;
+
+            background: var(--img);
+            background-position-y: var(--position-y);
+            background-repeat: no-repeat;
+            background-size: 100% auto;
+        }
 
         .caption {
             display: grid;
             justify-content: center;
             align-content: center;
+            z-index: 1;
 
             h1 {
                 margin: 0;
@@ -111,6 +128,7 @@
         }
 
         .subcaption {
+            z-index: 1;
             display: grid;
             grid-template-areas: 'author author' 'theme date';
             grid-template-columns: repeat(2, minmax(190px, 1fr));
@@ -155,8 +173,11 @@
 
     @media (max-width: 425px) {
         .title {
-            background-size: auto 100%;
-            background-position-y: center;
+            .title_clear_image {
+                background-size: auto 100%;
+                background-position-y: center;
+                background-position-x: center;
+            }
 
             h1 {
                 font-size: 20px;
