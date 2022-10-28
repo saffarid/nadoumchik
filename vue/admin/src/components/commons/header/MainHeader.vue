@@ -6,12 +6,12 @@
                 <h1>#НАДОУМЧИК</h1>
             </div>
             <div class="nav-menu">
-                <Button v-for="(btn, index) of buttons" :key="index" @click="btn.action">
-                    <template v-if="btn.img != null">
-                        <component :is="btn.img" :width="30" :height="30"/>
-                    </template>
-                    <span>{{btn.text}}</span>
-                </Button>
+<!--                <Button v-for="(btn, index) of buttons" :key="index" @click="btn.action">-->
+<!--                    <template v-if="btn.img != null">-->
+<!--                        <component :is="btn.img" :width="30" :height="30"/>-->
+<!--                    </template>-->
+<!--                    <span>{{btn.text}}</span>-->
+<!--                </Button>-->
             </div>
         </div>
     </div>
