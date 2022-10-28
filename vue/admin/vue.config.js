@@ -1,6 +1,7 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const os = require('os')
 const p = require('path')
 
@@ -11,14 +12,14 @@ const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 module.exports = {
 
     outputDir: p.resolve(__dirname, './../../www'),
-    // publicPath: '\./',
+    publicPath: '\./',
 
     pages: {
         index: {
             entry: './src/nadoumchik/main.js',
             template: './public/index.html',
             filename: 'index.html',
-            title: 'Надоумчик',
+            title: '#Надоумчик',
             // chunks: ["index", "chunk-vendors", "chunk-common", ],
         },
         cabinet: {
@@ -44,10 +45,20 @@ module.exports = {
         config.plugins.delete('prefetch')
     },
     configureWebpack: {
-
         plugins: [
             // new BundleAnalyzerPlugin(),
-            // new HtmlWebpackPlugin(),
+            new HtmlWebpackPlugin({
+                title: '#Надоумчик',
+                filename: 'index.html',
+                meta: {
+                    title: '#Надоумчик',
+                    description: 'Надоумчик - сайт для интеллектуалов. Головоломки, факты и интересные статьи только для тех, чей мозг любит развиваться.'
+                }
+            }),
+            new HtmlWebpackPlugin({
+                title: 'Кабинет',
+                filename: 'cabinet.html',
+            }),
             // new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно меняться
             // new SpeedMeasurePlugin(),
             // new HappyPack({
