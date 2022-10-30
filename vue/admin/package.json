@@ -14,7 +14,7 @@
     "node-sass": "6.0.0",
     "nouislider": "14.6.3",
     "wnumb": "1.2.0",
-    "saffarid-ui-kit": "0.3.0-b",
+    "saffarid-ui-kit": "0.3.2",
     "@vue/reactivity": "3.2.2",
     "sass-loader": "10.2.1",
     "vue": "3.2.41",

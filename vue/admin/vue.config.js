@@ -12,7 +12,7 @@ const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 module.exports = {
 
     outputDir: p.resolve(__dirname, './../../www'),
-    publicPath: '\./',
+    // publicPath: '\./',
 
     pages: {
         index: {
@@ -20,14 +20,18 @@ module.exports = {
             template: './public/index.html',
             filename: 'index.html',
             title: '#Надоумчик',
-            // chunks: ["index", "chunk-vendors", "chunk-common", ],
+            chunks: ['index', 'chunk-vendors', 'chunk-common', 'chunk-index-vendors'],
+            meta: {
+                title: '#Надоумчик',
+                description: 'Надоумчик - сайт для интеллектуалов. Головоломки, факты и интересные статьи только для тех, чей мозг любит развиваться.'
+            },
         },
         cabinet: {
             entry: './src/cabinet/main.js',
             template: './public/index.html',
             filename: 'cabinet.html',
             title: 'Кабинет',
-            // chunks: ["cabinet"],
+            chunks: ['cabinet', 'chunk-vendors', 'chunk-common', 'chunk-cabinet-vendors'],
         },
     },
 
@@ -43,74 +47,63 @@ module.exports = {
     chainWebpack: config => {
         config.plugins.delete('preload')
         config.plugins.delete('prefetch')
-    },
-    configureWebpack: {
-        plugins: [
-            // new BundleAnalyzerPlugin(),
-            new HtmlWebpackPlugin({
-                title: '#Надоумчик',
-                filename: 'index.html',
-                meta: {
-                    title: '#Надоумчик',
-                    description: 'Надоумчик - сайт для интеллектуалов. Головоломки, факты и интересные статьи только для тех, чей мозг любит развиваться.'
-                }
-            }),
-            new HtmlWebpackPlugin({
-                title: 'Кабинет',
-                filename: 'cabinet.html',
-            }),
-            // new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно меняться
-            // new SpeedMeasurePlugin(),
-            // new HappyPack({
-            //     id: 'vue',
-            //     loaders: [
-            //         'sass-loader',
-            //         'vue-loader',
-            //         "css-loader"
-            //     ],
-            //     threadPool: happyThreadPool,
-            //     cache: true,
-            //     verbose: true
-            // })
-        ],
-        // cache: {
-        //     type: 'memory',
-        //     cacheUnaffected: true,
-        // },
-        optimization: {
-            // runtimeChunk: 'single',
-            splitChunks: {
+
+        const options = module.exports
+        const pages = options.pages
+        const pageKeys = Object.keys(pages)
+
+        // Long-term caching
+
+        const IS_VENDOR = /[\\/]node_modules[\\/]/
+
+        config.optimization
+            .splitChunks({
                 cacheGroups: {
                     vendors: {
                         name: 'chunk-vendors',
                         priority: -10,
                         chunks: 'initial',
-                        // minSize: 20000,
-                        // maxSize: 40000,
-                        minChunks: 1,
-                        test: /[\\/]node_modules[\\/]/,
+                        minChunks: 2,
+                        test: IS_VENDOR,
                         enforce: true,
-                        // name(module) {
-                        //     // получает имя, то есть node_modules/packageName/not/this/part.js
-                        //     // или node_modules/packageName
-                        //     const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
-                        //
-                        //     // имена npm-пакетов можно, не опасаясь проблем, использовать
-                        //     // в URL, но некоторые серверы не любят символы наподобие @
-                        //     return `npm.${packageName.replace('@', '')}`
                     },
+                    ...pageKeys.map(key => ({
+                        name: `chunk-${key}-vendors`,
+                        priority: -11,
+                        chunks: chunk => chunk.name === key,
+                        test: IS_VENDOR,
+                        enforce: true,
+                    })),
                     common: {
                         name: 'chunk-common',
                         priority: -20,
                         chunks: 'initial',
-                        // minSize: 2000,
-                        // maxSize: 4000,
-                        minChunks: 1,
+                        minChunks: 2,
                         reuseExistingChunk: true,
                         enforce: true,
                     },
                 },
-            },
+            })
+    },
+
+    configureWebpack: {
+
+        plugins: [
+            // new BundleAnalyzerPlugin(),
+            // new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно
+            new SpeedMeasurePlugin(),
+            new HappyPack({
+                id: 'vue',
+                loaders: ['sass-loader', 'vue-loader', "css-loader"],
+                threadPool: happyThreadPool,
+                cache: true,
+                verbose: true
+            })
+        ],
+
+        cache: {
+            type: 'memory',
+            cacheUnaffected: true,
         },
     },
 
