@@ -1,6 +1,6 @@
 <template>
     <div @click="$emit('read')"
-         class="n_p_item"
+         class="n-p-item"
          :style="styleVars">
         <div class="p-image"></div>
         <div class="p-title">

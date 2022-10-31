@@ -2,7 +2,9 @@
     <div class="w-bgr">
         <div class="top-header">
             <div class="logo">
-                <Logo :height="65" :width="65"/>
+                <a :href="originUrl">
+                    <Logo :height="65" :width="65"/>
+                </a>
                 <h1>#НАДОУМЧИК</h1>
             </div>
 
@@ -28,6 +30,7 @@
             const user = inject('user')
 
             return {
+                originUrl: location.origin,
                 user
             }
         }
