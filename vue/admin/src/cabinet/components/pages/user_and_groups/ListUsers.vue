@@ -40,11 +40,3 @@
         }
     }
 </script>
-
-<style lang="scss" scoped>
-
-    .toolbar {
-        display: inline-grid;
-    }
-
-</style>

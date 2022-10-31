@@ -39,6 +39,7 @@
                 :publication="publication"
                 @publish="publish"
                 :saveDraft="saveDraft"
+                :message="message"
                 @cancel="closeEdit"
         />
     </div>
@@ -147,6 +148,10 @@
              * */
             const message = ref('')
 
+            const clearMessage = () => {
+                setTimeout(() => message.value = '', 5000)
+            }
+
             let stopWatchDraft
 
             const styleVars = reactive({
@@ -167,7 +172,10 @@
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
                 workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
 
+                // workObject.objectCopy(user.value, publication.author)
+                // workObject.objectCopy(user.value, draft.author)
                 publication.author = user.value
+                draft.author = user.value
                 publication.dateStamp = new Date()
 
                 startWatchDraft()
@@ -234,7 +242,7 @@
                                 break
                             }
                         }
-                        setTimeout(() => message.value = '', 5000)
+                        clearMessage()
                     })
                     .catch(err => console.log(err))
             }
@@ -244,13 +252,17 @@
              * */
             const updateDraft = (editDraft) => {
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
-                publication.author = user
+                // workObject.objectCopy(user.value, publication.author)
                 publication.dateStamp = new Date()
 
                 updatePublication(editDraft)
                 delete publication['_id']
 
                 workObject.objectCopy(editDraft, draft)
+                // workObject.objectCopy(user.value, draft.author)
+
+                publication.author = user.value
+                draft.author = user.value
 
                 startWatchDraft()
             }
@@ -284,6 +296,7 @@
                             if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
                                 workObject.objectCopy(publication, lists.publications[data.datas._id])
                             }
+                            alert('Публикация обновлена')
                             closeEdit()
                         })
                         .catch(err => {
@@ -307,6 +320,7 @@
                                     delete lists.drafts[draft._id]
                                 }
                             }
+                            alert('Публикация опубликована')
                             closeEdit()
                         })
                         .catch(err => {
@@ -401,6 +415,7 @@
 
 
             const showEditor = () => {
+                console.log(publication)
                 styleVars['--main_width'] = '200%'
                 styleVars['--shift'] = '-100%'
                 styleVars['--opacity_list'] = '0'

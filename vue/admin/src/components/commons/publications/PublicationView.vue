@@ -8,7 +8,7 @@
             <Title :publication="publication"/>
         </template>
         <template v-slot:content>
-            <div class="publication_content" ref="articleView">
+            <div class="publication-content" ref="articleView">
             </div>
         </template>
     </Popup>
@@ -118,7 +118,7 @@
                 padding: 0;
             }
 
-            .publication_content {
+            .publication-content {
                 padding: 0 5px;
                 width: 790px;
             }
@@ -143,7 +143,7 @@
             width: 98.765vw;
             margin: 5px;
 
-            .publication_content {
+            .publication-content {
                 width: calc(98.765vw - 10px);
             }
         }
@@ -156,7 +156,7 @@
             width: 100vw;
             border-radius: 0;
 
-            .publication_content {
+            .publication-content {
                 width: calc(100vw - 10px);
             }
 
@@ -171,7 +171,7 @@
     }
 
     @media (max-width: 610px) {
-        .publication_content {
+        .publication-content {
             img {
                 height: auto;
                 width: 100%;

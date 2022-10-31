@@ -3,7 +3,7 @@
             class="title"
             :style="styleTitleVar"
     >
-        <div class="title_clear_image"></div>
+        <div class="title-clear-image"></div>
         <div class="caption">
             <h1>{{publication.content.title}}</h1>
         </div>
@@ -94,7 +94,7 @@
 
         position: relative;
 
-        .title_clear_image {
+        .title-clear-image {
             position: absolute;
 
             backdrop-filter: blur(10px);
@@ -106,6 +106,9 @@
             background-position-y: var(--position-y);
             background-repeat: no-repeat;
             background-size: 100% auto;
+
+            border-top-left-radius: $border_radius;
+            border-top-right-radius: $border_radius;
         }
 
         .caption {
@@ -182,7 +185,7 @@
 
     @media (max-width: 425px) {
         .title {
-            .title_clear_image {
+            .title-clear-image {
                 /*background-size: auto 100%;*/
                 /*background-position-y: center;*/
                 background-position-x: center;

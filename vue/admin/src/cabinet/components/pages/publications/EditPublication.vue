@@ -25,7 +25,7 @@
         </template>
         <template v-slot:center>
             <div class="editor">
-                <div class="main_settings">
+                <div class="main-settings">
                     <Row>
                         <span>Тема публикации</span>
                         <ComboBox :options="themesOptions"
@@ -81,7 +81,7 @@
                         <input type="file" @change="loadImage($event,imageKeys.preview)">
                     </Row>
 
-                    <div class="phantom_title"><Title :publication="publication"/></div>
+                    <div class="phantom-title"><Title :publication="publication"/></div>
                     <Row>
                         <span>Цвет текста</span>
                         <input type="color" v-model="publication.view.title.text.textColor"/>
@@ -430,7 +430,7 @@
 
         height: var(--workspace_h);
 
-        .center_line {
+        .center-line {
             height: $height_editor !important;
             overflow-y: auto;
         }
@@ -442,7 +442,7 @@
             left: var(--shift);
             transition: left 1s;
 
-            .main_settings {
+            .main-settings {
                 position: relative;
                 width: 100%;
                 display: grid;
@@ -452,11 +452,11 @@
                 height: $height_editor !important;
                 overflow-y: auto;
 
-                .p_item {
+                .p-item {
                     max-width: 650px;
                 }
 
-                .phantom_title {
+                .phantom-title {
                     width: 800px;
                     background: var(--primary_color);
                     height: 250px;

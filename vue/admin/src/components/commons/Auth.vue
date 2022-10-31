@@ -1,7 +1,7 @@
 <template>
     <div v-if="isShow" class="auth-screen" @keyup.enter="auth">
         <div class="auth-form">
-            <div class="header-auth">
+            <div class="auth-header">
                 <Logo :x="0" :y="0" :height="50" :width="50"/>
                 <span>#НАДОУМЧИК</span>
             </div>
@@ -89,9 +89,9 @@
                 else {
                     if (hasLocalUser) {
                         workObject.objectCopy(localUser, user)
+                        authLocalUser = true
                     }
 
-                    authLocalUser = true
                     isShow.value = true
                 }
             }

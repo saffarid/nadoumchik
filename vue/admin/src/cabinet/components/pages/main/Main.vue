@@ -1,6 +1,6 @@
 <template>
     <div v-if="isLoading">
-        <TextLabel :label="`Добро пожаловать ${user.personal.nickname}`"/>
+        <span>{{`Добро пожаловать ${user.personal.s_name} ${user.personal.f_name}`}}</span>
     </div>
     <PageLoading v-else/>
 </template>

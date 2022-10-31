@@ -1,13 +1,13 @@
 <template>
-    <div class="content_container">
+    <div class="content-container">
 
-        <div class="new_content">
+        <div class="new-content">
             <List :type="list_types.new"
                   :list="publList.newP"
                   @read="showPublication"
             />
         </div>
-        <div class="other_content">
+        <div class="other-content">
             <List :type="list_types.zigzag"
                   :list="publList.otherP"
                   @read="showPublication"
@@ -123,13 +123,13 @@
 
 <style lang="scss" scoped>
 
-    .content_container {
+    .content-container {
         background-color: var(--primary_color);
         border-radius: 10px;
         padding: 5px;
         width: 1330px;
 
-        .new_content {
+        .new-content {
 
             display: grid;
             align-self: stretch;
@@ -138,7 +138,7 @@
 
         }
 
-        .other_content {
+        .other-content {
             display: grid;
             align-self: stretch;
             justify-self: stretch;
@@ -148,7 +148,7 @@
     }
 
     @media (max-width: 1350px) {
-        .content_container {
+        .content-container {
             width: calc(100vw - 20px);
             margin: 0 5px;
         }

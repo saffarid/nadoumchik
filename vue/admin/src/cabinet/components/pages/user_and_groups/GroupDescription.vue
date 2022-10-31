@@ -1,5 +1,5 @@
 <template>
-    <Popup class="group_description" @close="$emit('dismiss')">
+    <Popup class="group-description" @close="$emit('dismiss')">
         <template v-slot:header>
             <div class="title">
                 <span>Создание новой группы</span>
@@ -10,7 +10,7 @@
         <template v-if="group._id != null" v-slot:content>
             <Tabs :options="{ useUrlFragment: false }">
                 <Tab name="Настройка группы">
-                    <div class="popup_content">
+                    <div class="popup-content">
                     <TitlePane title="Описание">
                         <Row>
                             <span>Наименование</span>
@@ -51,7 +51,7 @@
             </Tabs>
         </template>
         <template v-else v-slot:content>
-            <div class="popup_content">
+            <div class="popup-content">
                 <TitlePane title="Описание">
                     <Row>
                         <span>Наименование</span>
@@ -187,7 +187,7 @@
 
 <style lang="scss">
 
-    .group_description {
+    .group-description {
         z-index: 60;
 
         .popup {
@@ -205,12 +205,12 @@
                 align-content: center;
             }
 
-            .popup_content {
+            .popup-content {
                 display: grid;
                 row-gap: 5px;
                 align-content: start;
 
-                .title_pane .content {
+                .title-pane .content {
                     row-gap: 2px;
                     padding: 2px;
                     .row {

@@ -27,7 +27,7 @@
 </script>
 
 <style lang="scss">
-    .w_bgr {
+    .w-bgr {
         background-color: var(--background);
         width: calc(100vw - 10px);
         padding: 5px;

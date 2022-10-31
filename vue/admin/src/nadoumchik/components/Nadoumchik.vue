@@ -4,7 +4,7 @@
             <Header :type="header_types.main"/>
         </template>
         <template v-slot:center>
-            <div class="content_viewport">
+            <div class="content-viewport">
                 <Content/>
             </div>
         </template>
@@ -60,7 +60,7 @@
 
 <style lang="scss">
 
-    .n > .center_line {
+    .n > .center-line {
         justify-self: stretch;
         justify-content: center;
     }

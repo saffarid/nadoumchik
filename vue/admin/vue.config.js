@@ -90,7 +90,7 @@ module.exports = {
 
         plugins: [
             // new BundleAnalyzerPlugin(),
-            // new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно
+            new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно
             new SpeedMeasurePlugin(),
             new HappyPack({
                 id: 'vue',

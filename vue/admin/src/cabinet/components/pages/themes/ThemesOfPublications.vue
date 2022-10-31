@@ -1,6 +1,6 @@
 <template>
 
-    <Card title="ТЕМЫ ПУБЛИКАЦИЙ" style="height: 100%">
+    <TitlePane title="ТЕМЫ ПУБЛИКАЦИЙ" style="height: 100%">
         <BorderPane class="themes-of-publications">
             <template v-slot:top>
                 <div class="tool-bar">
@@ -34,13 +34,13 @@
                 </div>
             </template>
         </BorderPane>
-    </Card>
+    </TitlePane>
 </template>
 
 <script>
     import {asyncRequest} from "@/js/web";
     import {
-        Card,
+        TitlePane,
         BorderPane,
         Button,
         PageLoading,
@@ -60,7 +60,7 @@
     export default {
         name: "ThemesOfPublications",
         components: {
-            Card,
+            TitlePane,
             Cancel,
             Checkmark,
             ThemeItem,

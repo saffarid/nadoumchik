@@ -1,6 +1,6 @@
 <template>
 <!--    <div class="user_groups">-->
-        <Tabs class="viewer_user_groups" :options="{ useUrlFragment: false }">
+        <Tabs class="viewer-user-groups" :options="{ useUrlFragment: false }">
             <Tab name="Пользователи">
                 <Users/>
             </Tab>

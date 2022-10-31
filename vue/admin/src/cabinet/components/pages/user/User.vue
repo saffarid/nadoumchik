@@ -1,6 +1,6 @@
 <template>
-    <div class="user_config">
-        <div class="password title_pane">
+    <div class="user-config">
+        <div class="password title-pane">
             <Button class="text-button"
                     text="Сменить пароль"
                     @click="showChangePassPopup"/>
@@ -30,7 +30,7 @@
                     @click="updateUser"/>
         </TitlePane>
 
-        <Popup class="change_pass"
+        <Popup class="change-pass"
                v-if="isShowChangePass"
                @close="closeChangePassPopup">
             <template v-slot:header>
@@ -39,7 +39,7 @@
                 </div>
             </template>
             <template v-slot:content>
-                <div class="change_pass_form">
+                <div class="change-pass-form">
                     <Row>
                         <span>Текущий пароль</span>
                         <TextField v-model="newOldPass.oldPass"/>
@@ -192,7 +192,7 @@
 
     $row_columns: repeat(2, minmax(150px, 300px));
 
-    .user_config {
+    .user-config {
         display: flex;
         gap: 5px;
 
@@ -201,7 +201,7 @@
             max-width: 300px;
         }
 
-        .title_pane {
+        .title-pane {
             max-width: 604px;
 
             .content {
@@ -229,7 +229,7 @@
             padding: 5px;
         }
 
-        .change_pass {
+        .change-pass {
             height: 100vh;
             width: 100vw;
             z-index: 60;
@@ -243,7 +243,7 @@
                     margin: 2px 0;
                 }
 
-                .change_pass_form {
+                .change-pass-form {
                     display: grid;
                     row-gap: 2px;
                 }

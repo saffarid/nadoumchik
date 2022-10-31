@@ -2,16 +2,16 @@
     <div @click="$emit('read')"
          @mouseenter="isAnimFrom = true"
          @mouseleave="isAnimFrom = false"
-         :class="{'image_left':data.onLeft, 'image_right':!data.onLeft}"
-         class="p_item"
+         :class="{'image-left':data.onLeft, 'image-right':!data.onLeft}"
+         class="p-item"
          :style="styleVars">
-        <div :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse_leave':!isAnimFrom && isAnimFrom !== null}"
+        <div :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null, 'mouse-leave':!isAnimFrom && isAnimFrom !== null}"
              class="image">
         </div>
         <div class="desc">
 
             <div class="caption">
-                <h1 :class="{'mouse_enter':isAnimFrom && isAnimFrom !== null, 'mouse-leave':!isAnimFrom && isAnimFrom !== null}">
+                <h1 :class="{'mouse-enter':isAnimFrom && isAnimFrom !== null, 'mouse-leave':!isAnimFrom && isAnimFrom !== null}">
                     {{data.publication.content.title}}
                 </h1>
             </div>
@@ -80,12 +80,12 @@
 </script>
 
 <style lang="scss">
-    .image_left {
+    .image-left {
         grid-template-areas: "image desc";
         grid-template-columns: var(--publication_item_h) calc(100% - var(--publication_item_h));
     }
 
-    .image_right {
+    .image-right {
         grid-template-areas: "desc image";
         grid-template-columns: calc(100% - var(--publication_item_h)) var(--publication_item_h);
     }
@@ -108,17 +108,17 @@
         }
     }
 
-    .mouse_leave {
+    .mouse-leave {
         animation: transform-scale-from var(--scale_time);
         transform: scale(var(--scale_from));
     }
 
-    .mouse_enter {
+    .mouse-enter {
         animation: transform-scale-to var(--scale_time);
         transform: scale(var(--scale_to));
     }
 
-    .p_item {
+    .p-item {
         display: grid;
         padding: 0;
         margin: 0;

@@ -2,19 +2,19 @@
     <div @click="$emit('read')"
          class="n_p_item"
          :style="styleVars">
-        <div class="p_image"></div>
-        <div class="p_title">
+        <div class="p-image"></div>
+        <div class="p-title">
             <h1>{{data.publication.content.title}}</h1>
         </div>
-        <div class="p_desc">
-            <div class="p_author">
+        <div class="p-desc">
+            <div class="p-author">
                 <span>{{`${data.publication.author.personal.s_name} ${data.publication.author.personal.f_name}`}}</span>
             </div>
-            <div class="p_theme_date">
-                <div class="p_theme">
+            <div class="p-theme-date">
+                <div class="p-theme">
                     <span>{{data.publication.theme.value}}</span>
                 </div>
-                <div class="p_date">
+                <div class="p-date">
                     <span>{{datePublication}}</span>
                 </div>
             </div>
@@ -56,8 +56,7 @@
 
 <style lang="scss">
 
-
-    .n_p_item {
+    .n-p-item {
         display: grid;
         min-height: 350px;
         height: 100%;
@@ -72,7 +71,7 @@
             cursor: default;
         }
 
-        .p_image {
+        .p-image {
             display: grid;
             align-self: stretch;
             justify-self: stretch;
@@ -85,7 +84,7 @@
             border-radius: 5px;
         }
 
-        .p_title {
+        .p-title {
             display: grid;
             justify-content: center;
             justify-items: center;
@@ -103,7 +102,7 @@
 
         }
 
-        .p_desc {
+        .p-desc {
             display: grid;
 
             justify-self: stretch;
@@ -116,14 +115,11 @@
 
             padding: 0 10px 10px 10px;
 
-            .p_theme_date {
+            .p-theme-date {
                 display: flex;
                 justify-content: space-between;
             }
-
-
         }
-
     }
 
 </style>

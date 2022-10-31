@@ -1,5 +1,5 @@
 <template>
-    <div class="w_bgr">
+    <div class="w-bgr">
         <div class="top-header">
             <div class="logo">
                 <Logo :height="65" :width="65"/>

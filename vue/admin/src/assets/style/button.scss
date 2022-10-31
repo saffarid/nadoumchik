@@ -2,7 +2,7 @@
   display: grid;
   border: var(--action_component) var(--button_border) solid;
   height: auto;
-  border-radius: 50%;
+  border-radius: 50% !important;
   padding:  var(--button_padding);
   align-self: center;
   justify-self: center;
@@ -24,7 +24,7 @@
 .text-button{
   border: var(--action_component) var(--button_border) solid;
   font-size: var(--button-font);
-  border-radius: var(--button_radius);
+  border-radius: var(--button_radius) !important;
   padding:  var(--button_padding);
   min-width: 100px;
   &:hover{

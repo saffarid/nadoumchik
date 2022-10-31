@@ -1,12 +1,12 @@
 <template>
-    <Popup class="user_description" @close="$emit('dismiss')">
+    <Popup class="user-description" @close="$emit('dismiss')">
         <template v-slot:header>
             <div class="title">
                 <span>Новый пользователь</span>
             </div>
         </template>
         <template v-slot:content>
-            <div class="popup_content">
+            <div class="popup-content">
                 <TitlePane title="Аутентификация" v-if="user._id == null">
                     <Row>
                         <span>Логин</span>
@@ -148,7 +148,7 @@
 
 <style lang="scss">
 
-    .user_description {
+    .user-description {
         z-index: 60;
 
         .popup {
@@ -164,12 +164,12 @@
                 align-content: center;
             }
 
-            .popup_content {
+            .popup-content {
                 display: grid;
                 row-gap: 5px;
                 align-content: start;
 
-                .title_pane .content {
+                .title-pane .content {
                     row-gap: 2px;
                     padding: 2px;
                     .row {
