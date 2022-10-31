@@ -1,5 +1,6 @@
 .image-button{
   display: grid;
+  background-color: transparent;
   border: var(--action_component) var(--button_border) solid;
   height: auto;
   border-radius: 50% !important;
@@ -15,13 +16,14 @@
       fill: var(--action_component_content_hover);
     }
   }
-  &[disabled = true]{
+  &[disabled]{
     background-color: var(--action_component_disable);
     opacity: 0.5;
   }
 }
 
 .text-button{
+  background-color: transparent;
   border: var(--action_component) var(--button_border) solid;
   font-size: var(--button-font);
   border-radius: var(--button_radius) !important;
@@ -31,7 +33,7 @@
     background-color: var(--action_component);
     color: var(--action_component_content_hover);
   }
-  &[disabled = true]{
+  &[disabled]{
     background-color: var(--action_component_disable);
     opacity: 0.5;
   }

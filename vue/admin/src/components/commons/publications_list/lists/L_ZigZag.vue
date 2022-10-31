@@ -63,7 +63,7 @@
 
         justify-self: center;
 
-        .p_item {
+        .p-item {
             width: calc(100% - var(--publication_item_h));
         }
     }
@@ -73,7 +73,7 @@
             justify-self: start;
         }
 
-        .zigzag .p_item {
+        .zigzag .p-item {
             width: 100%;
         }
     }

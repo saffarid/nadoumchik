@@ -2,14 +2,12 @@
     <div v-if="isLoading">
         <span>{{`Добро пожаловать ${user.personal.s_name} ${user.personal.f_name}`}}</span>
     </div>
-    <PageLoading v-else/>
+    <Loading v-else/>
 </template>
 
 <script>
     import {
-        Card,
-        PageLoading,
-        TextLabel,
+        Loading,
     }                     from "saffarid-ui-kit"
     import {
         ref,
@@ -19,9 +17,7 @@
     export default {
         name: "Main",
         components: {
-            // Card,
-            PageLoading,
-            TextLabel,
+            Loading,
         },
         setup() {
             const api = inject('$api')

@@ -13,13 +13,13 @@
             </Row>
         </TitlePane>
     </div>
-    <PageLoading v-else/>
+    <Loading v-else/>
 </template>
 
 <script>
     import {
         TitlePane,
-        PageLoading,
+        Loading,
         Toggle
     }                     from "saffarid-ui-kit"
     import Row            from "@/components/commons/Row";
@@ -35,7 +35,7 @@
         name: "System",
         components: {
             TitlePane,
-            PageLoading,
+            Loading,
             Row,
             Toggle
         },
@@ -88,6 +88,5 @@
         .ads {
             width: max-content;
         }
-
     }
 </style>

@@ -13,7 +13,6 @@
 <script>
     import {
         Button,
-        TextLabel
     }            from 'saffarid-ui-kit'
     import Edit  from "@/assets/img/edit";
     import Trash from "@/assets/img/trash";
@@ -24,7 +23,6 @@
             Trash,
             Edit,
             Button,
-            TextLabel
         },
         props:{
             theme:{
@@ -52,7 +50,7 @@
         }
 
         &:hover{
-            background-color: #888888;
+            background-color: var(--primary_color);
             .image-button{
                 opacity: 1;
             }

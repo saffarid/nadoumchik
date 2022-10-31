@@ -2,8 +2,10 @@
     width: 100%;
     background-color: var(--primary_color);
     border-radius: 5px;
-
+    color: var(--text_color);
     .title{
+        font-weight: 500;
+        letter-spacing: .025em;
         padding: 5px;
         border-bottom: 1px grey solid;
     }
@@ -12,5 +14,6 @@
         display: grid;
         align-items: stretch;
         justify-items: stretch;
+        row-gap: 2px;
     }
 }

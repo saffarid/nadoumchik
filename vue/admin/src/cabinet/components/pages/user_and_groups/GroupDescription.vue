@@ -1,16 +1,60 @@
 <template>
     <Popup class="group-description" @close="$emit('dismiss')">
-        <template v-slot:header>
-            <div class="title">
-                <span>Создание новой группы</span>
-            </div>
+
+        <template v-if="group._id != null" v-slot:default>
+            <TitlePane :title="`Группа ${group.name}`">
+                <Tabs :options="{ useUrlFragment: false }">
+                    <Tab name="Настройка группы">
+                        <div class="popup-content">
+                            <TitlePane title="Описание">
+                                <Row>
+                                    <span>Наименование</span>
+                                    <TextField v-model="group.name"/>
+                                </Row>
+                                <Row>
+                                    <span>Описание</span>
+                                    <TextField v-model="group.description"/>
+                                </Row>
+                            </TitlePane>
+                            <TitlePane title="Права доступа">
+                                <Row>
+                                    <span>Пользователи</span>
+                                    <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
+                                </Row>
+                                <Row>
+                                    <span>Группы</span>
+                                    <ComboBox :options="accessRights" v-model="group.rights.groups.value"/>
+                                </Row>
+                                <Row>
+                                    <span>Публикации</span>
+                                    <ComboBox :options="accessRights" v-model="group.rights.publications.value"/>
+                                </Row>
+                                <Row>
+                                    <span>Темы публикаций</span>
+                                    <ComboBox :options="accessRights" v-model="group.rights.themesOfPublication.value"/>
+                                </Row>
+                                <Row>
+                                    <span>Система</span>
+                                    <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
+                                </Row>
+                            </TitlePane>
+                        </div>
+                    </Tab>
+                    <Tab name="Пользователи">
+                        <Users :users="groupsUsers"/>
+                    </Tab>
+                </Tabs>
+                <div class="tool-bar">
+                    <Button class="text-button"
+                            :disabled="group.name == ''"
+                            :text="'ОБНОВИТЬ'"
+                            @click="send"/>
+                </div>
+            </TitlePane>
         </template>
-
-
-        <template v-if="group._id != null" v-slot:content>
-            <Tabs :options="{ useUrlFragment: false }">
-                <Tab name="Настройка группы">
-                    <div class="popup-content">
+        <template v-else v-slot:default>
+            <TitlePane title="Новая группа">
+                <div class="popup-content">
                     <TitlePane title="Описание">
                         <Row>
                             <span>Наименование</span>
@@ -43,58 +87,14 @@
                             <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
                         </Row>
                     </TitlePane>
-                    </div>
-                </Tab>
-                <Tab name="Пользователи">
-                    <Users :users="groupsUsers"/>
-                </Tab>
-            </Tabs>
-        </template>
-        <template v-else v-slot:content>
-            <div class="popup-content">
-                <TitlePane title="Описание">
-                    <Row>
-                        <span>Наименование</span>
-                        <TextField v-model="group.name"/>
-                    </Row>
-                    <Row>
-                        <span>Описание</span>
-                        <TextField v-model="group.description"/>
-                    </Row>
-                </TitlePane>
-                <TitlePane title="Права доступа">
-                    <Row>
-                        <span>Пользователи</span>
-                        <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
-                    </Row>
-                    <Row>
-                        <span>Группы</span>
-                        <ComboBox :options="accessRights" v-model="group.rights.groups.value"/>
-                    </Row>
-                    <Row>
-                        <span>Публикации</span>
-                        <ComboBox :options="accessRights" v-model="group.rights.publications.value"/>
-                    </Row>
-                    <Row>
-                        <span>Темы публикаций</span>
-                        <ComboBox :options="accessRights" v-model="group.rights.themesOfPublication.value"/>
-                    </Row>
-                    <Row>
-                        <span>Система</span>
-                        <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
-                    </Row>
-                </TitlePane>
-            </div>
-        </template>
-
-
-        <template v-slot:footer>
-            <div class="tool-bar">
-                <Button class="text-button"
-                        :disabled="group.name == ''"
-                        :text="group._id == null ? 'СОЗДАТЬ' : 'ОБНОВИТЬ'"
-                        @click="send"/>
-            </div>
+                </div>
+                <div class="tool-bar">
+                    <Button class="text-button"
+                            :disabled="group.name == ''"
+                            :text="'СОЗДАТЬ'"
+                            @click="send"/>
+                </div>
+            </TitlePane>
         </template>
     </Popup>
 </template>
@@ -190,39 +190,29 @@
     .group-description {
         z-index: 60;
 
-        .popup {
-            grid-template-rows: 30px auto var(--toolbar_h);
-
-            height: min-content !important;
+        .popup-body {
             width: 50vw !important;
             border-radius: 10px;
-
-            padding: 5px;
-
-            .title {
-                display: flex;
-                align-items: center;
-                align-content: center;
-            }
 
             .popup-content {
                 display: grid;
                 row-gap: 5px;
-                align-content: start;
 
-                .title-pane .content {
-                    row-gap: 2px;
-                    padding: 2px;
-                    .row {
-                        grid-template-columns: repeat(2, minmax(150px, 300px));
+                .title-pane {
+                    padding-left: 10px !important;
+                    width: calc(100% - 10px) !important;
+
+                    .content {
+                        padding: 2px;
+
+                        .row {
+                            grid-template-columns: repeat(2, minmax(150px, 300px));
+                        }
                     }
                 }
             }
-
-            .tool-bar {
-                height: var(--toolbar_h);
-            }
         }
     }
+
 
 </style>

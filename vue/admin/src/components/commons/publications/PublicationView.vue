@@ -1,13 +1,10 @@
 <template>
-
     <Popup
             class="publication"
             @close="close"
             @keypress.esc="close">
-        <template v-slot:header>
+        <template v-slot:default>
             <Title :publication="publication"/>
-        </template>
-        <template v-slot:content>
             <div class="publication-content" ref="articleView">
             </div>
         </template>
@@ -96,7 +93,7 @@
             z-index: 1;
         }
 
-        .popup {
+        .popup-body {
             margin: 0 5px;
             width: 800px;
             min-height: 98vh;
@@ -106,7 +103,7 @@
             padding: 0;
             z-index: 2;
 
-            .popup_header {
+            .header {
                 font-size: 30px;
                 display: grid;
                 align-self: stretch;
@@ -139,7 +136,7 @@
             display: grid;
         }
 
-        .publication .popup {
+        .publication .popup-body {
             width: 98.765vw;
             margin: 5px;
 
@@ -151,7 +148,7 @@
 
     @media (max-width: 768px) {
 
-        .publication .popup {
+        .publication .popup-body {
             margin: 0;
             width: 100vw;
             border-radius: 0;

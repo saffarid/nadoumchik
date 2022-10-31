@@ -1,7 +1,6 @@
 <template>
-
-    <TitlePane title="ТЕМЫ ПУБЛИКАЦИЙ" style="height: 100%">
-        <BorderPane class="themes-of-publications">
+    <TitlePane class="themes-of-publications" title="ТЕМЫ ПУБЛИКАЦИЙ">
+        <BorderPane>
             <template v-slot:top>
                 <div class="tool-bar">
                     <TextField v-model="localTheme.value"/>
@@ -30,7 +29,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <PageLoading/>
+                    <Loading/>
                 </div>
             </template>
         </BorderPane>
@@ -43,7 +42,7 @@
         TitlePane,
         BorderPane,
         Button,
-        PageLoading,
+        Loading,
         TextField,
     }                     from 'saffarid-ui-kit'
     import {
@@ -67,7 +66,7 @@
             BorderPane,
             Button,
             TextField,
-            PageLoading
+            Loading
         },
 
         setup() {
@@ -191,9 +190,12 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
     .themes-of-publications {
+        background-color: transparent;
+        height: 100%;
+
         .tool-bar {
             input {
                 min-width: 250px;

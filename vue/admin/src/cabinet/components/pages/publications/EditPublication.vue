@@ -201,7 +201,6 @@
         computed,
         reactive
     }                      from 'vue'
-    import {Tabs, Tab}     from 'vue3-tabs-component'
     import editor          from '@tinymce/tinymce-vue'
     import {fonts}         from "@/js/fonts";
     import {
@@ -210,10 +209,8 @@
         BorderPane,
         TextField,
         Toggle,
-        TextLabel,
         Slider
     }                      from 'saffarid-ui-kit'
-    import Eye             from "@/assets/img/eye";
     import PublicationItem from "@/components/commons/publications_list/p_item/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
     import Title           from "@/components/commons/publications/Title";
@@ -230,16 +227,12 @@
             Title,
             PublicationView,
             PublicationItem,
-            Eye,
             editor,
             Button,
             BorderPane,
             TextField,
-            TextLabel,
             Toggle,
             Row,
-            Tab,
-            Tabs,
             Slider
         },
         props: {

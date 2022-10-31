@@ -58,35 +58,21 @@
     import {
         Button,
         BorderPane,
-        Card,
-        TextLabel,
-        PageLoading,
     }                      from 'saffarid-ui-kit'
     import {
         Tabs,
         Tab
     }                      from 'vue3-tabs-component'
-    import AmountUpload    from "@/components/commons/publications_list/AmountUpload";
-    import Plus            from "@/assets/img/plus";
     import EditPublication from "@/cabinet/components/pages/publications/EditPublication";
-    import NotFound        from "@/components/commons/NotFound";
-    import List            from "@/components/commons/publications_list/lists/List";
     import P_D_Lists       from "@/cabinet/components/pages/publications/P_D_Lists";
 
     export default {
         name: "Publications",
         components: {
             P_D_Lists,
-            AmountUpload,
-            List,
-            Card,
             EditPublication,
             Button,
-            PageLoading,
-            NotFound,
-            Plus,
             BorderPane,
-            TextLabel,
             Tabs,
             Tab
         },
@@ -415,7 +401,6 @@
 
 
             const showEditor = () => {
-                console.log(publication)
                 styleVars['--main_width'] = '200%'
                 styleVars['--shift'] = '-100%'
                 styleVars['--opacity_list'] = '0'

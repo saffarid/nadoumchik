@@ -1,6 +1,7 @@
 .tool-bar{
     padding: 2px 0;
     display: flex;
+    height: var(--toolbar_h);
     align-content: center;
     justify-content: start;
     align-self: stretch;

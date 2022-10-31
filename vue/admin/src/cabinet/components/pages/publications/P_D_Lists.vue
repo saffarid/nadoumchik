@@ -1,5 +1,4 @@
 <template>
-
     <List class="list"
           @edit="edit"
           @remove="remove"
@@ -9,24 +8,23 @@
           v-show="isReady"
     />
 
-    <PageLoading v-if="isLoading || !isReady"/>
+    <Loading v-if="isLoading || !isReady"/>
 
     <NotFound
             v-if="isReady && Object.keys(list).length == 0 && !thereIsMore && !isLoading"/>
 </template>
 
 <script>
-    import {list_types}  from '@/components/commons/publications_list/lists/list_types'
-    import {PageLoading} from 'saffarid-ui-kit'
-    import NotFound      from "@/components/commons/NotFound";
-    import List          from "@/components/commons/publications_list/lists/List";
-
+    import {list_types} from '@/components/commons/publications_list/lists/list_types'
+    import {Loading}    from 'saffarid-ui-kit'
+    import NotFound     from "@/components/commons/NotFound";
+    import List         from "@/components/commons/publications_list/lists/List";
 
     export default {
         name: "P_D_Lists",
         components: {
             List,
-            PageLoading,
+            Loading,
             NotFound
         },
         props: {

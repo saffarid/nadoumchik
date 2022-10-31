@@ -30,7 +30,6 @@
     import {
         BorderPane,
         Button,
-        TableView
     }                      from 'saffarid-ui-kit'
     import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
     import {asyncRequest}  from "@/js/web";
@@ -43,7 +42,6 @@
             UserDescription,
             BorderPane,
             Button,
-            TableView
         },
         setup() {
             const api = inject('$api')

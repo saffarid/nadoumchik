@@ -33,34 +33,29 @@
         <Popup class="change-pass"
                v-if="isShowChangePass"
                @close="closeChangePassPopup">
-            <template v-slot:header>
-                <div class="header">
-                    <span>Смена пароля</span>
-                </div>
-            </template>
-            <template v-slot:content>
-                <div class="change-pass-form">
-                    <Row>
-                        <span>Текущий пароль</span>
-                        <TextField v-model="newOldPass.oldPass"/>
-                    </Row>
-                    <Row>
-                        <span>Новый пароль</span>
-                        <TextField v-model="newOldPass.newPass"/>
-                    </Row>
-                    <Row>
-                        <span>Повторите новый пароль</span>
-                        <TextField v-model="newOldPass.checkNewPass"/>
-                    </Row>
-                </div>
-            </template>
-            <template v-slot:footer>
-                <div class="tool-bar">
-                    <Button class="text-button"
-                            text="ОБНОВИТЬ"
-                            :disabled="isDisabledChangePassBtn"
-                            @click="changePass"/>
-                </div>
+            <template v-slot:default>
+                <TitlePane title="Смена пароля">
+                    <div class="change-pass-form">
+                        <Row>
+                            <span>Текущий пароль</span>
+                            <TextField v-model="newOldPass.oldPass"/>
+                        </Row>
+                        <Row>
+                            <span>Новый пароль</span>
+                            <TextField v-model="newOldPass.newPass"/>
+                        </Row>
+                        <Row>
+                            <span>Повторите новый пароль</span>
+                            <TextField v-model="newOldPass.checkNewPass"/>
+                        </Row>
+                    </div>
+                    <div class="tool-bar">
+                        <Button class="text-button"
+                                text="ОБНОВИТЬ"
+                                :disabled="isDisabledChangePassBtn"
+                                @click="changePass"/>
+                    </div>
+                </TitlePane>
             </template>
         </Popup>
     </div>
@@ -234,22 +229,22 @@
             width: 100vw;
             z-index: 60;
 
-            .popup {
+            .popup-body {
                 height: min-content !important;
                 width: 50vw !important;
                 row-gap: 2px;
 
-                .header {
-                    margin: 2px 0;
-                }
+                .title-pane {
+                    max-width: 100%;
 
-                .change-pass-form {
-                    display: grid;
-                    row-gap: 2px;
-                }
+                    .change-pass-form {
+                        display: grid;
+                        row-gap: 2px;
+                    }
 
-                .row {
-                    grid-template-columns: $row_columns;
+                    .row {
+                        grid-template-columns: $row_columns;
+                    }
                 }
             }
         }
