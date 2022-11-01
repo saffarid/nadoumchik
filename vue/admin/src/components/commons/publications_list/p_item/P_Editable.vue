@@ -9,7 +9,7 @@
             <img v-else :src="data.publication.preview.image" :height="140" :width="140"/>
         </div>
         <div class="text">
-            <span>{{data.publication.content.title.toUpperCase()}}</span>
+            <span>{{data.publication.content.title}}</span>
             <span>{{datePublication}}</span>
         </div>
         <div class="buttons">

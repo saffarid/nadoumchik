@@ -10,7 +10,7 @@
         <div class="subcaption">
             <div class="author"><span>{{`${publication.author.personal.s_name} ${publication.author.personal.f_name}`}}</span></div>
             <div></div>
-            <div class="theme"><span>{{publication.theme.value}}</span></div>
+            <div class="theme"><span>{{`${publication.theme.major.value} ${publication.theme.minor.value ? '/ '+ publication.theme.minor.value : ''}`}}</span></div>
             <div class="date"><span>{{datePublication}}</span></div>
         </div>
     </div>

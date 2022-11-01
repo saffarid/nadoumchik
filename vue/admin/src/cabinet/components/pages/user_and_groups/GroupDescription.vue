@@ -2,7 +2,8 @@
     <Popup class="group-description" @close="$emit('dismiss')">
 
         <template v-if="group._id != null" v-slot:default>
-            <TitlePane :title="`Группа ${group.name}`">
+            <TitlePane class="group-description-title-pane"
+                       :title="`Группа ${group.name}`">
                 <Tabs :options="{ useUrlFragment: false }">
                     <Tab name="Настройка группы">
                         <div class="popup-content">
@@ -41,7 +42,7 @@
                         </div>
                     </Tab>
                     <Tab name="Пользователи">
-                        <Users :users="groupsUsers"/>
+                        <Users class="popup-content" :users="groupsUsers"/>
                     </Tab>
                 </Tabs>
                 <div class="tool-bar">
@@ -53,7 +54,8 @@
             </TitlePane>
         </template>
         <template v-else v-slot:default>
-            <TitlePane title="Новая группа">
+            <TitlePane class="group-description-title-pane"
+                       title="Новая группа">
                 <div class="popup-content">
                     <TitlePane title="Описание">
                         <Row>
@@ -194,22 +196,33 @@
             width: 50vw !important;
             border-radius: 10px;
 
-            .popup-content {
-                display: grid;
-                row-gap: 5px;
+            .group-description-title-pane {
+                background-color: white !important;
 
-                .title-pane {
-                    padding-left: 10px !important;
-                    width: calc(100% - 10px) !important;
+                .content {
+                    padding: 2px 2px 2px 10px;
 
-                    .content {
-                        padding: 2px;
+                    .popup-content {
+                        display: grid;
+                        row-gap: 5px;
 
-                        .row {
-                            grid-template-columns: repeat(2, minmax(150px, 300px));
+                        min-height: 230px;
+                        overflow-y: auto;
+                        .title-pane {
+                            width: calc(100% - 12px) !important;
+
+                            .content {
+                                padding: 2px;
+
+                                .row {
+                                    grid-template-columns: repeat(2, minmax(150px, 300px));
+                                }
+                            }
                         }
                     }
                 }
+
+
             }
         }
     }

@@ -44,9 +44,16 @@ const schemas = {
          * Тема публикации
          * */
         theme: {
-            type: String,
-            ref: 'themesOfPublication',
-            required: true
+            major: {
+                type: String,
+                ref: 'themesOfPublication',
+                required: true
+            },
+            minor: {
+                type: String,
+                ref: 'themesOfPublication',
+                required: false
+            }
         },
         /**
          * Содержимое публикации
@@ -187,9 +194,16 @@ const schemas = {
          * Тема публикации
          * */
         theme: {
-            type: String,
-            ref: 'themesOfPublication',
-            required: false
+            major: {
+                type: String,
+                ref: 'themesOfPublication',
+                required: true
+            },
+            minor: {
+                type: String,
+                ref: 'themesOfPublication',
+                required: false
+            }
         },
         /**
          * Содержимое публикации
@@ -779,7 +793,8 @@ module.exports = {
             author: undefined,
             dateStamp: new Date(),
             theme: {
-                _id: '-1'
+                major: {_id: '-1'},
+                minor: {_id: '-1'}
             },
             content: {
                 title: 'Your title is here',

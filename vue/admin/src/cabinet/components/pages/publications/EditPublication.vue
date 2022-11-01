@@ -27,10 +27,17 @@
             <div class="editor">
                 <div class="main-settings">
                     <Row>
-                        <span>Тема публикации</span>
+                        <span>Главная тема публикации</span>
                         <ComboBox :options="themesOptions"
-                                  :modelValue=publication.theme._id
+                                  :modelValue=publication.theme.major._id
                                   @update:modelValue="setTheme"
+                        />
+                    </Row>
+                    <Row>
+                        <span>Второстепенная тема публикации</span>
+                        <ComboBox :options="themesOptions"
+                                  :modelValue=publication.theme.minor._id
+                                  @update:modelValue="setTheme($event,false)"
                         />
                     </Row>
                     <Row>
@@ -266,6 +273,8 @@
 
             const activeSettings = ref(0b10)
 
+            console.log(props.publication)
+
             const imgFromWeb = reactive({
                 preview: false,
                 title: false,
@@ -299,10 +308,16 @@
                     themesOptions.value = res
                 })
 
-            const setTheme = (newTheme) => {
+            const setTheme = (newTheme, isMajor = true) => {
+                console.log(newTheme)
                 themes.value.forEach(theme => {
                     if (theme._id == newTheme) {
-                        props.publication.theme = theme
+                        if(isMajor){
+                            props.publication.theme.major = theme
+                        } else {
+                            props.publication.theme.minor = theme
+                        }
+
                     }
                 })
             }
@@ -355,7 +370,7 @@
                 const hasContentTitle = props.publication.content.title.localeCompare('') !== 0
                 const hasContent = props.publication.content.content.localeCompare('') !== 0
                 const hasViewImage = props.publication.view.title.image.src.localeCompare('') !== 0
-                const hasTheme = props.publication.theme !== null && props.publication.theme !== undefined && props.publication.theme._id !== '-1'
+                const hasTheme = props.publication.theme.major != null && props.publication.theme.major != undefined && props.publication.theme.major._id != '-1'
 
                 return hasPreviewImage && hasContentTitle && hasContent && hasViewImage && hasTheme
             })

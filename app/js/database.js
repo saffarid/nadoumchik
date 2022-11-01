@@ -61,7 +61,7 @@ const isById = (data) => {
  * Функция проверяет наличие параметров кол-ва выборки
  * */
 const isSampling = (data) => {
-    return (work_object.isObject(data) &&  ('shift' in data) && ('count' in data))
+    return (work_object.isObject(data) && ('shift' in data) && ('count' in data))
 }
 
 /**
@@ -83,16 +83,12 @@ const convertRefsToClearObj = (schema, obj) => {
                     if (!('ref' in desc)) {
                         continue
                     }
-                    /*
-                    * Тот объект, который получим из obj по ключу key, является условием выборки.
-                    * Проверим его на наличие поля _id.
-                    * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
-                    * */
+
                     const term = {
                         _id: obj[key]
                     }
-                    const finded = ((await find(schema[key].ref, term)).length != 0)?((await find(schema[key].ref, term))[0]):({})
-                    obj[key] = finded
+                    const finded = await find(schema[key].ref, term)
+                    obj[key] = finded.length != 0 ? finded[0] : {}
 
                 }
                 else {
@@ -100,7 +96,8 @@ const convertRefsToClearObj = (schema, obj) => {
                 }
             }
             resolve(obj)
-        } catch (e) {
+        }
+        catch (e) {
             logger.error([`convertRefsToClearObj`, e])
         }
     })
@@ -134,7 +131,6 @@ const convertClearToRefsObj = (schema, obj) => {
                         obj[key] = obj[key]['_id']
                     }
                     else {
-
                         obj[key] = (await find(schema[key].ref, obj[key]))[0]
                     }
                 }
@@ -143,7 +139,8 @@ const convertClearToRefsObj = (schema, obj) => {
                 }
             }
             resolve(obj)
-        }catch (e) {
+        }
+        catch (e) {
             logger.error(['convertClearToRefsObj', e])
         }
     })

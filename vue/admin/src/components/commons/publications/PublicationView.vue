@@ -89,10 +89,6 @@
         position: fixed !important;
         background-color: rgba(64, 64, 64, 0.95) !important;
 
-        .closer {
-            z-index: 1;
-        }
-
         .popup-body {
             margin: 0 5px;
             width: 800px;

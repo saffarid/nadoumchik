@@ -1,7 +1,7 @@
 <template>
     <Popup class="user-description" @close="$emit('dismiss')">
         <template v-slot:default>
-            <TitlePane
+            <TitlePane class="user-description-title-pane"
                     :title="user._id == null ? 'Новый пользователь' : `Пользователь ${user.personal.s_name} ${user.personal.f_name}`">
                 <div class="popup-content">
                     <TitlePane title="Аутентификация" v-if="user._id == null">
@@ -149,33 +149,40 @@
             height: min-content !important;
             width: 50vw !important;
 
-            .popup-content {
-                display: grid;
-                row-gap: 5px;
-                align-content: start;
+            .user-description-title-pane {
+                background-color: white !important;
 
-                .title-pane {
-                    padding-left: 10px !important;
-                    width: calc(100% - 10px) !important;
-                    .content {
-                        padding: 2px;
+                .content {
+                    padding: 2px 2px 2px 10px;
 
-                        .row {
-                            grid-template-columns: repeat(2, minmax(150px, 300px));
+                    .popup-content {
+                        display: grid;
+                        row-gap: 5px;
+                        align-content: start;
 
-                            textarea {
-                                resize: none;
-                                min-height: 100px;
-                                max-height: 100px;
-                                width: calc(100% - 6px);
-                                min-width: 150px;
-                                max-width: 294px;
+                        .title-pane {
+                            width: calc(100% - 12px) !important;
+
+                            .content {
+                                padding: 2px;
+
+                                .row {
+                                    grid-template-columns: repeat(2, minmax(150px, 300px));
+
+                                    textarea {
+                                        resize: none;
+                                        min-height: 100px;
+                                        max-height: 100px;
+                                        width: calc(100% - 6px);
+                                        min-width: 150px;
+                                        max-width: 294px;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-
         }
     }
 
