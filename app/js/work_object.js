@@ -10,15 +10,14 @@ const isObject = (arg) => {
  * */
 const objectCopy = (copied, target) => {
 
-    Object.keys(copied).forEach(key => {
+    for(const key of Object.keys(copied)) {
         if (isObject(copied[key])){
             target[key] = {}
             objectCopy(copied[key], target[key])
         } else {
             target[key] = copied[key]
         }
-    })
-
+    }
 }
 
 module.exports = {

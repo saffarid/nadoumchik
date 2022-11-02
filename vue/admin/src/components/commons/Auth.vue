@@ -89,9 +89,9 @@
                 else {
                     if (hasLocalUser) {
                         workObject.objectCopy(localUser, user)
-                        authLocalUser = true
                     }
 
+                    authLocalUser = true
                     isShow.value = true
                 }
             }

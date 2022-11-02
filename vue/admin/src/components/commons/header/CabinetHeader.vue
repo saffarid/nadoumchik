@@ -39,6 +39,10 @@
 
 <style lang="scss" scoped>
 
+    a {
+        height: 65px;
+    }
+
     .welcome-user {
         margin-left: 10px;
     }
