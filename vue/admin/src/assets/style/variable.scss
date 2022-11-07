@@ -14,7 +14,9 @@
   --tab_h: 34px;
   --toolbar_h: 38px;
 
-  --workspace_h: calc(100vh - 75px)
+  --header_h: 75px;
+
+  --workspace_h: calc(100 * var(--height_per) - var(--header_h))
 }
 
 .light {
@@ -33,4 +35,11 @@
 
   --text_color: black;
   --btn_text_color: black;
+}
+
+
+@media (max-width: 600px) {
+  .dimension {
+    --header_h: 40px;
+  }
 }

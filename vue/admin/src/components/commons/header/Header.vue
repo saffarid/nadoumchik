@@ -37,7 +37,7 @@
     }
 
     .top-header {
-        height: 65px;
+        height: calc(var(--header_h) - 10px);
         display: flex;
         background-color: var(--primary_color);
         border-radius: 5px;
@@ -61,7 +61,7 @@
 
     @media (max-width: 600px) {
         .top-header {
-            height: 30px;
+            /*height: 30px;*/
             .logo svg {
                 height: 30px;
                 width: 30px;

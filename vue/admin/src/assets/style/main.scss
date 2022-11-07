@@ -8,29 +8,31 @@
 
 body {
     margin: 0;
-    height: 100vh;
+    height: calc(100 * var(--height_per));
     width: 100vw;
     background-color: var(--background);
     overflow-y: hidden;
 }
 
 #app {
-    height: 100vh;
+    height: calc(100 * var(--height_per));
     width: 100vw;
     font-family: "Yandex Sans Text";
     background-color: var(--background);
 
     .site {
-        height: 100vh;
+        height: calc(100 * var(--height_per));
         width: 100vw;
+
         .workspace {
             height: var(--workspace_h);
         }
 
-        .content-viewport{
-            height: var(--workspace_h);
+        .content-container {
+            height: calc(var(--height_per) * 100 - var(--header_h) - 15px);
             overflow-y: auto;
         }
+
     }
 }
 

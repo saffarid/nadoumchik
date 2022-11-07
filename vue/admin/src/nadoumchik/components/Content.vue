@@ -40,9 +40,7 @@
             PublicationView
         },
         setup() {
-
             const api = inject('$api')
-
             const showedPublication = ref(null)
 
             /**
@@ -112,7 +110,6 @@
 
             return {
                 publList,
-
                 list_types,
                 showPublication,
                 showedPublication,

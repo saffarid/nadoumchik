@@ -60,7 +60,7 @@
             })
 
             watch(props, () => {
-                if(props.data.publication.preview != undefined) {
+                if (props.data.publication.preview != undefined) {
                     styleVars['--img'] = `url(${props.data.publication.preview.image})`
                     styleVars['--background'] = props.data.publication.preview.backgroundColor
                     styleVars['--color'] = props.data.publication.preview.textColor
@@ -155,6 +155,7 @@
                 letter-spacing: .1em;
                 text-align: center;
             }
+
             span {
                 color: var(--color);
                 font-size: 12px;
@@ -193,6 +194,29 @@
     @media (max-width: 600px) {
         h1 {
             font-size: 15px;
+        }
+    }
+
+    @media (max-width: 425px) {
+        .p-item {
+            .desc {
+                span {
+                    font-size: 10px;
+                }
+                .caption {
+                    position: absolute;
+                    h1 {
+                        font-size: 3vw;
+                    }
+                }
+                .subcaption {
+                    bottom: 10px;
+                    left: 10px;
+                    right: auto;
+                }
+                .date {
+                }
+            }
         }
     }
 </style>
