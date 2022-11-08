@@ -25,10 +25,11 @@
 .text-button{
   background-color: transparent;
   border: var(--action_component) var(--button_border) solid;
-  font-size: var(--button-font);
+  font-size: var(--button_font);
   border-radius: var(--button_radius) !important;
   padding:  var(--button_padding);
   min-width: 100px;
+  font-family: "Yandex Sans Text";
   &:hover{
     background-color: var(--action_component);
     color: var(--action_component_content_hover);

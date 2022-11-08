@@ -80,16 +80,14 @@ const convertRefsToClearObj = (schema, obj) => {
 
                 //Определяем содержит описание тип объектаили нет
                 if ('type' in desc) {
-                    if (!('ref' in desc)) {
-                        continue
-                    }
+                    if (!('ref' in desc)) continue
+
 
                     const term = {
                         _id: obj[key]
                     }
                     const finded = await find(schema[key].ref, term)
-                    obj[key] = finded.length != 0 ? finded[0] : {}
-
+                    obj[key] = (finded.length != 0) ? (finded[0]) : (term)
                 }
                 else {
                     obj[key] = await convertRefsToClearObj(schema[key], obj[key])
@@ -266,6 +264,7 @@ const insertOne = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data['_id'] = uuid()
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
+        console.log(data)
         models[collection].create(data)
                           .then(value => resolve(value))
                           .catch(err => {

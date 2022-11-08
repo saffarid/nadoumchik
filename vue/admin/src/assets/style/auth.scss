@@ -8,6 +8,7 @@
 
     align-content: center;
     justify-content: center;
+    font-family: "Yandex Sans Text";
 
     .auth-form {
         background-color: #adacac;
@@ -47,9 +48,7 @@
             column-gap: 2px;
 
             .button {
-                padding: 2px;
-                padding-left: 5px;
-                padding-right: 5px;
+                padding: 2px 5px;
             }
 
             .enter{

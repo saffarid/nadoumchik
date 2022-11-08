@@ -29,14 +29,14 @@
                     <Row>
                         <span>Главная тема публикации</span>
                         <ComboBox :options="themesOptions"
-                                  :modelValue=publication.theme.major._id
+                                  :modelValue="(publication.theme.major._id) ?? ('-1')"
                                   @update:modelValue="setTheme"
                         />
                     </Row>
                     <Row>
                         <span>Второстепенная тема публикации</span>
                         <ComboBox :options="themesOptions"
-                                  :modelValue=publication.theme.minor._id
+                                  :modelValue="(publication.theme.minor._id) ?? ('-1')"
                                   @update:modelValue="setTheme($event,false)"
                         />
                     </Row>

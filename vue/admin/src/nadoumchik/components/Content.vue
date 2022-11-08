@@ -77,6 +77,7 @@
                                     }
                                 }
 
+                                console.log(data.datas.findings)
                                 for (let i = 0; i < data.datas.findings.length; i++) {
                                     const obj = data.datas.findings[i]
                                     if (i < 4) {
