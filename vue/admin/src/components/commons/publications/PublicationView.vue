@@ -1,30 +1,33 @@
 <template>
-    <Popup
-            class="publication"
-            @close="close"
-            @keypress.esc="close">
-        <template v-slot:default>
-            <Title :publication="publication"/>
-            <div class="publication-content" ref="articleView">
-            </div>
-        </template>
-    </Popup>
-    <div class="close">
-        <SvgClose
-                @click="close"
-                :fill="'#a5a5a5'"
-                :height="40"
-                :width="40"
-        />
-    </div>
+    <div class="publication-view">
+        <div class="close">
+            <SvgClose
+                    @click="close"
+                    :fill="'#a5a5a5'"
+                    :height="40"
+                    :width="40"
+            />
+        </div>
+        <Popup
+                class="publication"
+                @close="close"
+                @keypress.esc="close">
+            <template v-slot:default>
+                <Title :publication="publication"/>
+                <div class="publication-content" ref="articleView">
+                </div>
+            </template>
+        </Popup>
 
+    </div>
 </template>
 
 <script>
     import {
         onMounted,
+        onUnmounted,
         ref,
-        watch
+        watch,
     }               from "vue";
     import {
         Popup,
@@ -54,7 +57,13 @@
                 }
             };
 
-            onMounted(refreshContentView)
+            onMounted(() => {
+                document.body.classList.toggle('no-scroll')
+                refreshContentView()
+            })
+            onUnmounted(() => {
+                document.body.classList.toggle('no-scroll')
+            })
             watch(props, refreshContentView)
 
             const close = () => {
@@ -71,9 +80,12 @@
 
 <style lang="scss">
 
+    .publication-view {
+    }
+
     .close {
         display: none;
-        position: absolute;
+        position: fixed;
         top: 5px;
         right: 5px;
         z-index: 101;

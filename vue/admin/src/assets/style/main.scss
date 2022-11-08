@@ -11,7 +11,7 @@ body {
     height: calc(100 * var(--height_per));
     width: 100vw;
     background-color: var(--background);
-    overflow-y: hidden;
+    //overflow-y: hidden;
 }
 
 #app {
@@ -28,12 +28,23 @@ body {
             height: var(--workspace_h);
         }
 
-        .content-container {
-            height: calc(var(--height_per) * 100 - var(--header_h) - 15px);
-            overflow-y: auto;
+        .content-viewport {
+
+            top: 100px;
+            margin: 0 auto;
+            width: max-content;
+
+            .content-container {
+                //height: calc(var(--height_per) * 100 - var(--header_h) - 15px);
+                //overflow-y: auto;
+            }
         }
 
     }
+}
+
+.no-scroll {
+    overflow-y: hidden;
 }
 
 ::-webkit-scrollbar {
