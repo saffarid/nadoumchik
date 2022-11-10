@@ -5,6 +5,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const os = require('os')
 const p = require('path')
 
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
@@ -20,7 +23,7 @@ module.exports = {
             template: './public/index.html',
             filename: 'index.html',
             title: '#Надоумчик - для интеллектуалов',
-            chunks: ['index', 'chunk-vendors', 'chunk-common', 'chunk-index-vendors'],
+            chunks: ['index', 'chunk-vendors', 'chunk-common', 'chunk-index-vendors', 'runtime~index'],
             meta: {
                 'og:title': '#Надоумчик - для интеллектуалов',
                 title: '#Надоумчик - для интеллектуалов',
@@ -35,7 +38,7 @@ module.exports = {
             template: './public/index.html',
             filename: 'cabinet.html',
             title: 'Кабинет',
-            chunks: ['cabinet', 'chunk-vendors', 'chunk-common', 'chunk-cabinet-vendors'],
+            chunks: ['cabinet', 'chunk-vendors', 'chunk-common', 'chunk-cabinet-vendors', 'runtime~cabinet'],
             meta: {
                 robots: 'noindex'
             }
@@ -111,6 +114,37 @@ module.exports = {
         cache: {
             type: 'memory',
             cacheUnaffected: true,
+        },
+
+        optimization: {
+            runtimeChunk: true,
+            minimize: true,
+            minimizer: [
+                // new TerserPlugin({
+                //    test: /\.js(\?.*)?$/i,
+                // }),
+                new UglifyJsPlugin({
+                    uglifyOptions: {
+                        compress: {
+                            unsafe: true,
+                            inline: true,
+                            passes: 2,
+                            keep_fargs: false,
+                        },
+                        output: {
+                            beautify: false,
+                        },
+                        mangle: true,
+                    },
+                }),
+                new OptimizeCSSPlugin({
+                    cssProcessorOptions: {
+                        "preset": "advanced",
+                        "safe": true,
+                        "map": { "inline": false },
+                    },
+                }),
+            ],
         },
     },
 

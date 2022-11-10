@@ -1,0 +1,3 @@
+User-agent: Yandex
+Sitemap: https://nadoumchik.ru/Sitemap
+Disallow: /cabinet
