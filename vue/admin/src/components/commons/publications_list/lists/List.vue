@@ -36,7 +36,6 @@
             const l = reactive([])
 
             watch(props, () => {
-                console.log(['list', props.list])
                 l.length = 0
                 for (const v of Object.values(props.list)) {
                     l.push(v)

@@ -14,6 +14,10 @@ export const store = new Vuex.Store({
         },
         publications: (state) => (terms) => {
             if (state.publications.length == 0) {
+                terms = {
+                    shift: 0,
+                    count: 10,
+                }
                 store.dispatch('loadPublication', terms)
             }
 
@@ -31,10 +35,7 @@ export const store = new Vuex.Store({
     },
     mutations: {
         addPublications: (state, payload) => {
-            console.log(['addPublications', state.publications])
             state.publications.push(...payload)
-            console.log(['addPublications', payload])
-            console.log(['addPublications', state.publications])
         }
     },
     actions: {
