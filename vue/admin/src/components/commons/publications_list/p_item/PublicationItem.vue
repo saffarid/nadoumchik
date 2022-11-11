@@ -33,6 +33,8 @@
         setup(props) {
             const c = ref(null)
 
+            console.log(['item', props.data])
+
             c.value = defineAsyncComponent(() => import(`./${props.type}.vue`))
 
             return {c}
