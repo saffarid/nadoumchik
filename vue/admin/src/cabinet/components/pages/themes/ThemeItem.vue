@@ -4,9 +4,9 @@
         <Button class="image-button" @click="$emit('edit')">
             <edit :width="20" :height="20"/>
         </Button>
-        <Button class="image-button" @click="$emit('remove')">
-            <trash :width="20" :height="20"/>
-        </Button>
+<!--        <Button class="image-button" @click="$emit('remove')">-->
+<!--            <trash :width="20" :height="20"/>-->
+<!--        </Button>-->
     </div>
 </template>
 
@@ -33,7 +33,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
     .theme-item {
         align-content: center;

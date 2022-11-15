@@ -20,7 +20,7 @@
                         class="text-button publish"
                         :text="'В ЧЕРНОВИКИ'"
                         @click="saveDraft"/>
-                <span>{{message}}</span>
+                <span>{{responseMessage}}</span>
             </div>
         </template>
         <template v-slot:center>
@@ -218,6 +218,7 @@
         Toggle,
         Slider
     }                      from 'saffarid-ui-kit'
+    import {useStore}      from 'vuex'
     import PublicationItem from "@/components/commons/publications_list/p_item/PublicationItem";
     import PublicationView from "@/components/commons/publications/PublicationView";
     import Title           from "@/components/commons/publications/Title";
@@ -247,11 +248,6 @@
                 type: Object,
                 required: true
             },
-            message: {
-                type: String,
-                required: false,
-                default: ''
-            },
             saveDraft: {
                 type: Function,
                 required: false,
@@ -261,19 +257,39 @@
         },
         setup(props, context) {
             const api = inject('$api')
+            const store = useStore()
             const popupIsShow = ref(false)
             const font = {}
-            const themesOptions = ref({})
-            const themes = ref([])
             const imageKeys = {
                 preview: 0,
                 title: 1
             }
             const imgOnLeft = ref(false)
-
+            const responseMessage = computed(() => store.getters.responseMessage)
             const activeSettings = ref(0b10)
 
-            console.log(props.publication)
+            const themesOptions = computed(() => {
+                const res = {}
+
+                const themes = store.getters.themesOfPublication
+
+                res['-1'] = {
+                    disabled: true,
+                    value: '-1',
+                    selected: true,
+                    label: 'Выберите тему'
+                }
+                for (const theme of Object.values(themes)) {
+                    res[theme._id] = {
+                        disabled: false,
+                        value: theme._id,
+                        selected: false,
+                        label: theme.value
+                    }
+                }
+                return res
+            })
+
 
             const imgFromWeb = reactive({
                 preview: false,
@@ -286,41 +302,15 @@
                 '--opacity_wysiwyg': '0',
             })
 
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.getThemes), JSON.stringify(api.BODY_REQUEST.termsSampling))
-                .then(gettingData => {
-                    const res = {}
-
-                    themes.value = gettingData.datas.findings
-                    res['-1'] = {
-                        disabled: true,
-                        value: '-1',
-                        selected: true,
-                        label: 'Выберите тему'
-                    }
-                    for (let i = 0; i < themes.value.length; i++) {
-                        res[themes.value[i]._id] = {
-                            disabled: false,
-                            value: themes.value[i]._id,
-                            selected: false,
-                            label: themes.value[i].value
-                        }
-                    }
-                    themesOptions.value = res
-                })
-
             const setTheme = (newTheme, isMajor = true) => {
-                console.log(newTheme)
-                themes.value.forEach(theme => {
-                    if (theme._id == newTheme) {
-                        if(isMajor){
-                            props.publication.theme.major = theme
-                        } else {
-                            props.publication.theme.minor = theme
-                        }
-
-                    }
-                })
+                if (isMajor) {
+                    props.publication.theme.major = store.getters.themesOfPublication[newTheme]
+                }
+                else {
+                    props.publication.theme.minor = store.getters.themesOfPublication[newTheme]
+                }
             }
+
 
             const setFont = (value) => {
                 props.publication.view.title.text.fontFamily = value
@@ -423,7 +413,8 @@
                 p_item_types,
                 styleVars,
                 showEditor,
-                showSettings
+                showSettings,
+                responseMessage
             }
         }
     }

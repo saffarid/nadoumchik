@@ -40,8 +40,6 @@
                 for (const v of Object.values(props.list)) {
                     l.push(v)
                 }
-
-                // l.sort((a, b) => new Date(a.dateStamp).getMilliseconds() - (new Date(b.dateStamp)).getMilliseconds())
             })
 
 

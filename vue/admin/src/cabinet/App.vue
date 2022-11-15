@@ -3,20 +3,19 @@
             class="light dimension site"
             :style="styleVars"/>
     <Auth v-else
-          @successful="login"
           class="light dimension site"
           :style="styleVars"/>
 </template>
 
 <script>
-
-    import Studio from "./components/Studio";
-    import Auth   from "@/components/commons/Auth";
+    import {useStore} from 'vuex'
+    import Studio     from "./components/Studio";
+    import Auth       from "@/components/commons/Auth";
     import {
-        ref,
+        computed,
         provide,
         reactive
-    }             from 'vue'
+    }                 from 'vue'
 
     export default {
         name: 'App',
@@ -25,7 +24,8 @@
             Studio
         },
         setup() {
-            const user = ref(null)
+            const store = useStore()
+            const user = computed(() => store.getters.user)
             provide('user', user)
 
             const styleVars = reactive({
@@ -35,12 +35,7 @@
                 styleVars['--height_per'] = window.innerHeight * 0.01 + 'px'
             })
 
-            const login = value => {
-                user.value = value
-            }
-
             return {
-                login,
                 user,
                 styleVars
             }

@@ -13,7 +13,7 @@
                         <cancel :height="20" :width="20"/>
                     </Button>
                     <div class="response">
-                        {{response.toUpperCase()}}
+                        {{response}}
                     </div>
                 </div>
             </template>
@@ -24,7 +24,6 @@
                                 v-for="(theme, index) in themes" :key="index"
                                 :theme="theme"
                                 @edit="updateTheme(theme, index)"
-                                @remove="removeTheme(theme)"
                         />
                     </div>
                 </div>
@@ -37,7 +36,6 @@
 </template>
 
 <script>
-    import {asyncRequest} from "@/js/web";
     import {
         TitlePane,
         BorderPane,
@@ -46,12 +44,12 @@
         TextField,
     }                     from 'saffarid-ui-kit'
     import {
-        // onMounted,
+        computed,
         onDeactivated,
-        inject,
         ref,
         reactive,
     }                     from 'vue'
+    import {useStore}     from 'vuex'
     import ThemeItem      from "@/cabinet/components/pages/themes/ThemeItem";
     import Checkmark      from "@/assets/img/checkmark";
     import Cancel         from "@/assets/img/cancel";
@@ -70,91 +68,36 @@
         },
 
         setup() {
-            const api = inject('$api')
-            const isReady = ref(false)
+            const store = useStore()
+            const isReady = ref(true)
             const themesList = ref(null)
-            const themes = reactive([])
+            const themes = computed(() => store.getters.themesOfPublication)
             const editedItem = ref(null)
             const localTheme = reactive({
                 _id: undefined,
                 value: '',
             })
 
+            const response = computed(() => store.getters.responseMessage)
+
             onDeactivated(() => {
                 clearLocalTheme()
             })
 
-            const response = ref('')
-
-            const setResponseMessage = (message) => {
-                response.value = message
-                if (message != '') {
-                    setTimeout(() => {
-                        response.value = ''
-                    }, 3000)
-                }
-            }
-
-            const loadThemes = () => {
-                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.getThemes), JSON.stringify(api.BODY_REQUEST.termsSampling))
-                    .then(data => {
-                        themes.length = 0
-                        data.datas.findings.forEach((category) => {
-                            themes.push(category)
-                        })
-                        themes.sort((theme1, theme2) => {
-                            return theme1.value.localeCompare(theme2.value)
-                        })
-                        isReady.value = true
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            }
-            loadThemes()
-
             const clearLocalTheme = () => {
                 localTheme._id = undefined
                 localTheme.value = ''
-
                 if (editedItem.value !== null) {
                     editedItem.value.classList.toggle('edit')
                     editedItem.value = null
                 }
             }
-
             const sendTheme = () => {
-                if (localTheme.value.localeCompare('') === 0) return
-                if (localTheme._id) {
-                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme), JSON.stringify(localTheme))
-                        .then((data) => {
-                            if (data.responseCode === api.CODES_RESPONSE.updated.responseCode) {
-                                clearLocalTheme()
-                                loadThemes()
-                            }
-                            else {
-                                setResponseMessage(data.message)
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                }
-                else {
-                    asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme), JSON.stringify(localTheme))
-                        .then((data) => {
-                            if (data.responseCode === api.CODES_RESPONSE.created.responseCode) {
-                                clearLocalTheme()
-                                loadThemes()
-                            }
-                            else {
-                                setResponseMessage(data.message)
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                }
+                if (localTheme.value.localeCompare('') == 0) return
+                store.dispatch('sendTheme', {
+                    theme: localTheme,
+                    customThen: clearLocalTheme
+                })
             }
 
             const updateTheme = (theme, index) => {
@@ -165,22 +108,11 @@
                 editedItem.value.classList.toggle('edit')
             }
 
-            const removeTheme = (theme) => {
-                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeTheme), JSON.stringify(theme))
-                    .then(() => loadThemes())
-                    .catch(err => {
-                        console.log(err)
-                    })
-            }
-
-            // onMounted(clearLocalTheme())
-
             return {
                 themes,
                 isReady,
                 localTheme,
                 sendTheme,
-                removeTheme,
                 updateTheme,
                 clearLocalTheme,
                 themesList,

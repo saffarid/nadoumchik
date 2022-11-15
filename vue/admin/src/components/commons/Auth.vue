@@ -46,12 +46,13 @@
         watch
     }                          from 'vue'
     import {
-        asyncRequest,
+        // asyncRequest,
         getUser,
         setUser,
         storages
     }                          from "@/js/web";
     import {hasValueTextField} from "@/js/checker";
+    import {useStore}          from 'vuex'
 
     const hash = require('jshashes')
 
@@ -67,6 +68,8 @@
             const api = inject('$api')
             const workObject = inject('workObject')
             const isShow = ref(false)
+            const store = useStore()
+
             const user = reactive({
                 name: '',
                 pass: ''
@@ -84,7 +87,7 @@
                 hasLocalUser = localUser != null
 
                 if (hasSessionUser) {
-                    sendUserAuth(sessionUser)
+                    store.dispatch('auth', {user: sessionUser, customThen: authSuccess})
                 }
                 else {
                     if (hasLocalUser) {
@@ -97,26 +100,19 @@
             }
 
             const auth = () => {
+                let u = user
                 if (!authLocalUser) {
-                    sendUserAuth(
-                        {
-                            name: user.name,
-                            pass: new hash.SHA1().b64(user.pass)
-                        })
+                    u = {
+                        name: user.name,
+                        pass: new hash.SHA1().b64(user.pass)
+                    }
                 }
-                else {
-                    sendUserAuth(user)
-                }
+                store.dispatch('auth', {user: u, customThen: authSuccess})
             }
 
-            const sendUserAuth = (user) => {
-                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(user))
-                    .then(authSuccess)
-            }
 
             const authSuccess = (value) => {
                 if (value.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                    const findingUser = value.datas.findings
                     if (!hasSessionUser) {
                         setUser(
                             storages.session,
@@ -133,8 +129,6 @@
                                 pass: new hash.SHA1().b64(user.pass)
                             }))
                     }
-
-                    context.emit('successful', findingUser)
                 }
                 else {
                     isShow.value = true

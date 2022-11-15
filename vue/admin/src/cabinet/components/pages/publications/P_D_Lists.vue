@@ -3,15 +3,14 @@
           @edit="edit"
           @remove="remove"
           :type="list_types.simple"
-          :list="list"
+          :list="state.list"
           :d="d"
-          v-show="isReady"
     />
 
-    <Loading v-if="isLoading || !isReady"/>
+    <Loading v-if="state.isLoading || !state.isReady"/>
 
     <NotFound
-            v-if="isReady && Object.keys(list).length == 0 && !thereIsMore && !isLoading"/>
+            v-if="state.isReady && Object.keys(state.list).length == 0 && !state.thereIsMore && !state.isLoading"/>
 </template>
 
 <script>
@@ -41,21 +40,8 @@
                 type: Function,
                 required: true
             },
-            list: {
+            state: {
                 type: Object,
-                required: true
-            },
-            isLoading: {
-                type: Boolean,
-                required: true,
-            },
-            thereIsMore: {
-                type: Boolean,
-                required: false,
-                default: true
-            },
-            isReady: {
-                type: Boolean,
                 required: true
             }
         },

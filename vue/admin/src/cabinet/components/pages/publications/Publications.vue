@@ -12,23 +12,17 @@
                 <Tabs :options="{ useUrlFragment: false }">
                     <Tab :name="'Публикации'">
                         <P_D_Lists
-                                :list="lists.publications"
+                                :state="publicationsState"
                                 :remove="removePublication"
                                 :edit="updatePublication"
-                                :is-loading="isLoading.publication"
-                                :there-is-more="thereIsMore.publication"
-                                :is-ready="isReady.publication"
                         />
                     </Tab>
                     <Tab :name="'Черновики'">
                         <P_D_Lists
                                 :d="'draft'"
-                                :list="lists.drafts"
+                                :state="draftsState"
                                 :remove="removeDraft"
                                 :edit="updateDraft"
-                                :is-loading="isLoading.draft"
-                                :there-is-more="thereIsMore.draft"
-                                :is-ready="isReady.draft"
                         />
                     </Tab>
                 </Tabs>
@@ -39,7 +33,6 @@
                 :publication="publication"
                 @publish="publish"
                 :saveDraft="saveDraft"
-                :message="message"
                 @cancel="closeEdit"
         />
     </div>
@@ -48,6 +41,7 @@
 
 <script>
     import {
+        computed,
         onDeactivated,
         reactive,
         ref,
@@ -55,6 +49,7 @@
         watch
     }                      from 'vue'
     import {asyncRequest}  from "@/js/web";
+    import {useStore}      from 'vuex'
     import {
         Button,
         BorderPane,
@@ -80,37 +75,20 @@
             const user = inject('user')
             const api = inject('$api')
             const workObject = inject('workObject')
-
+            const store = useStore()
             let lastWatchingDraft = null
 
-            /**
-             * Флаг готовности отображать считанные публикации
-             * */
-            const isReady = reactive({
-                publication: false,
-                draft: false
+            const publicationsState = reactive({
+                list: computed(() => store.getters.publications({author: user.value})),
+                thereIsMore: false,
+                isLoading: false,
+                isReady: true
             })
-            /**
-             * Флаг окончания загрузкиновых публикаций
-             * */
-            const isLoading = reactive({
-                publication: false,
-                draft: false
-            })
-            /**
-             * Флаг считвания всех публикаций с сервера
-             * */
-            const thereIsMore = reactive({
-                publication: false,
-                draft: false
-            })
-
-            /**
-             * Списки публикаций и черновиков
-             * */
-            const lists = reactive({
-                publications: reactive({}),
-                drafts: reactive({})
+            const draftsState = reactive({
+                list: computed(() => store.getters.drafts({author: user.value})),
+                thereIsMore: false,
+                isLoading: false,
+                isReady: true
             })
 
             /**
@@ -120,23 +98,9 @@
             const publication = reactive({})
 
             /**
-             * Объект серновика публикации.
+             * Объект черновика публикации.
              * */
             const draft = reactive({})
-
-            /**
-             * Кол-во загружаемых публикаций
-             * */
-            const amountLoad = ref(10)
-
-            /**
-             * Сообщение-ответ от сервера
-             * */
-            const message = ref('')
-
-            const clearMessage = () => {
-                setTimeout(() => message.value = '', 5000)
-            }
 
             let stopWatchDraft
 
@@ -158,8 +122,6 @@
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
                 workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
 
-                // workObject.objectCopy(user.value, publication.author)
-                // workObject.objectCopy(user.value, draft.author)
                 publication.author = user.value
                 draft.author = user.value
                 publication.dateStamp = new Date()
@@ -180,18 +142,7 @@
             /**
              * Функция отправляет запрос на удаление публикации
              * */
-            const removePublication = (removedPublication) => {
-                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify({_id: removedPublication._id}))
-                    .then(data => {
-                        if (data.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                            delete lists.publications[data.datas._id]
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Объект успешно не удалён')
-                        console.log(err)
-                    })
-            }
+            const removePublication = (removedPublication) => store.dispatch('removePublication', {_id: removedPublication._id})
 
             const startWatchDraft = () => {
                 stopWatchDraft = watch(publication, () => {
@@ -208,29 +159,12 @@
 
             const saveDraft = () => {
                 workObject.objectCopy(publication, draft)
-                asyncRequest(
-                    api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
-                    JSON.stringify(draft)
-                )
-                    .then(data => {
-                        switch (data.responseCode) {
-                            case api.CODES_RESPONSE.created.responseCode: {
-                                message.value = 'Черновик сохранен'
-                                draft['_id'] = data.datas._id
-                                lists.drafts[draft._id] = data.datas
-                                // workObject.objectCopy(data.datas, draftList[data.datas._id])
-                                break
-                            }
-                            case api.CODES_RESPONSE.updated.responseCode: {
-                                message.value = 'Черновик сохранен'
-                                // draftList[draft._id] = data.datas
-                                workObject.objectCopy(data.datas, lists.drafts[data.datas._id])
-                                break
-                            }
-                        }
-                        clearMessage()
-                    })
-                    .catch(err => console.log(err))
+                store.dispatch('saveDraft', {
+                    draft: draft,
+                    customThen: response => {
+                        if (response.responseCode == api.CODES_RESPONSE.created.responseCode) draft['_id'] = response.datas._id
+                    }
+                })
             }
 
             /**
@@ -256,18 +190,7 @@
             /**
              * Функция отправляет запрос на удаление черновика
              * */
-            const removeDraft = (removedDraft) => {
-                asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(removedDraft))
-                    .then(data => {
-                        if (data.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                            delete lists.drafts[data.datas._id]
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Объект успешно не удалён')
-                        console.log(err)
-                    })
-            }
+            const removeDraft = (removedDraft) => store.dispatch('removeDraft', {_id: removedDraft._id})
 
             /**
              * Функция собирает объект публикации и отсылает его на сервер
@@ -288,7 +211,8 @@
                         .catch(err => {
                             console.log(err)
                         })
-                } else {
+                }
+                else {
                     asyncRequest(
                         api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish),
                         JSON.stringify(publication)
@@ -336,70 +260,6 @@
 
             }
 
-            /**
-             * Функция отправляет запрос на получение новой порции публикаций,
-             * если запрос проходит удачно, публикации добавляются в список для отображения
-             * */
-            const loadPublications = (shift, count, resolve) => {
-                if (resolve == undefined) {
-                    resolve = data => {
-
-                        if (data.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                            if (shift == 0) {
-                                for (const key of Object.keys(lists.publications)) {
-                                    delete lists.publications[key]
-                                }
-                            }
-
-                            for (const obj of data.datas.findings) {
-                                lists.publications[obj._id] = obj
-                            }
-
-                            thereIsMore.publication = data.datas.thereIsMore
-                        }
-                        isReady.publication = true
-                        isLoading.publication = false
-                    }
-                }
-
-                isLoading.publication = true
-
-                const samplingTerm = {
-                    shift: shift,
-                    count: count,
-                    author: user.value
-                }
-
-                const urlRequest = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.findSampleByAuthor)
-
-                asyncRequest(urlRequest, JSON.stringify(samplingTerm))
-                    .then(resolve)
-                    .catch(err => console.log(err))
-            }
-            loadPublications(
-                Object.keys(lists.publications).length,
-                amountLoad.value)
-
-            const loadDrafts = () => {
-                asyncRequest(
-                    api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.findDraftsByAuthor),
-                    JSON.stringify({author: user.value})
-                )
-                    .then(findingsDrafts => {
-                            if (findingsDrafts.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                                for (const draft of findingsDrafts.datas.findings) {
-                                    lists.drafts[draft._id] = draft
-                                }
-                                thereIsMore.draft = findingsDrafts.datas.thereIsMore
-                            }
-                            isReady.draft = true
-                            isLoading.draft = false
-                        }
-                    )
-            }
-            loadDrafts()
-
-
             const showEditor = () => {
                 styleVars['--main_width'] = '200%'
                 styleVars['--shift'] = '-100%'
@@ -408,15 +268,10 @@
             }
 
             return {
-                amountLoad,
                 closeEdit,
-                // draft,
-                message,
-                isReady,
-                isLoading,
-                thereIsMore,
-                loadPublications,
-                loadDrafts,
+                draftsState,
+                publicationsState,
+
                 newPublication,
                 saveDraft,
                 removeDraft,
@@ -425,8 +280,7 @@
                 updateDraft,
                 publish,
                 publication,
-                user,
-                lists,
+
                 styleVars
             }
         }

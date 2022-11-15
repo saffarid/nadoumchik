@@ -25,12 +25,12 @@
 </template>
 
 <script>
-    import List                      from "@/components/commons/publications_list/lists/List";
-    import {list_types}              from "@/components/commons/publications_list/lists/list_types";
+    import List                             from "@/components/commons/publications_list/lists/List";
+    import {list_types}                     from "@/components/commons/publications_list/lists/list_types";
     import {computed, ref, reactive, watch} from "vue";
-    import PublicationView           from "@/components/commons/publications/PublicationView";
-    import Loader                    from "@/components/Loader";
-    import {useStore}                from 'vuex'
+    import PublicationView                  from "@/components/commons/publications/PublicationView";
+    import Loader                           from "@/components/Loader";
+    import {useStore}                       from 'vuex'
 
     export default {
         name: "Content",
@@ -39,22 +39,20 @@
             List,
             PublicationView
         },
-        setup(props, context) {
+        setup( ) {
             const showedPublication = ref(null)
             const store = useStore()
 
-            const p = computed(() => {
-                return store.getters.publications()
-            })
+            const p = computed(() => store.getters.publications())
 
             const publications = reactive({
-                newP: p.value.slice(0, 4),
-                oldP: p.value.slice(4, p.length)
+                newP: store.getters.newPublications,
+                oldP: store.getters.otherPublications
             })
 
             watch(p.value, () => {
-                publications.newP = p.value.slice(0, 4)
-                publications.oldP = p.value.slice(4, p.length)
+                publications.newP = store.getters.newPublications
+                publications.oldP = store.getters.otherPublications
             })
 
             const showPublication = (publication) => {

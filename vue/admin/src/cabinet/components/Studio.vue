@@ -24,6 +24,7 @@
         inject,
         ref
     }                     from 'vue'
+    import {useStore}     from 'vuex'
     import {
         getPages
     }                     from './pages/pages.js'
@@ -42,10 +43,11 @@
             Header
         },
         setup() {
-            // const _pages = pages
-            const user = inject('user')
-            const _pages = getPages(user.value)
+            const store = useStore()
+            const _pages = getPages(inject('user').value)
             const showingPage = ref(_pages.Main)
+
+            // store.dispatch('cabinetInit')
 
             const setActivePage = (page) => {
                 showingPage.value = _pages[page].workspace
