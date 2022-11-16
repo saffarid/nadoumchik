@@ -256,7 +256,6 @@
             }
         },
         setup(props, context) {
-            const api = inject('$api')
             const store = useStore()
             const popupIsShow = ref(false)
             const font = {}
@@ -310,7 +309,6 @@
                     props.publication.theme.minor = store.getters.themesOfPublication[newTheme]
                 }
             }
-
 
             const setFont = (value) => {
                 props.publication.view.title.text.fontFamily = value
@@ -418,11 +416,9 @@
             }
         }
     }
-
 </script>
 
 <style lang="scss">
-
     $height_editor: calc(var(--workspace_h) - 2 * var(--toolbar_h));
 
     .new-publication {
@@ -473,6 +469,25 @@
 
                         column-gap: 5px;
                     }
+
+                    input[type="color"] {
+                        background-color: transparent;
+                        padding: 0;
+                        border: none;
+                        height: 30px;
+                        width: 30px;
+                        cursor: pointer;
+                    }
+
+                    input[type="color"]::-webkit-color-swatch {
+                        border-radius: 5px;
+                        border: none;
+                    }
+
+                    input[type=color]::-moz-color-swatch {
+                        border-radius: 5px;
+                        border: none;
+                    }
                 }
             }
 
@@ -495,5 +510,4 @@
             }
         }
     }
-
 </style>

@@ -48,7 +48,7 @@ export const store = new Vuex.Store({
         user: state => state.user,
 
         themesOfPublication: state => {
-            if(Object.keys(state.themesOfPublication).length == 0){
+            if (Object.keys(state.themesOfPublication).length == 0) {
                 store.dispatch('loadThemes')
             }
             return state.themesOfPublication
@@ -60,16 +60,17 @@ export const store = new Vuex.Store({
                 state.publications[p._id] = p
             }
         },
+        addPublication: (state, payload) => state.publications[payload._id] = payload,
+        removePublication: (state, payload) => {
+            delete state.publications[payload]
+        },
+
         addDrafts: (state, payload) => {
             for (const p of payload) {
                 state.drafts[p._id] = p
             }
         },
         addDraft: (state, payload) => state.drafts[payload._id] = payload,
-
-        removePublication: (state, payload) => {
-            delete state.publications[payload]
-        },
         removeDraft: (state, payload) => {
             delete state.drafts[payload]
         },
@@ -79,7 +80,7 @@ export const store = new Vuex.Store({
             themesOfPublication.sort((theme1, theme2) => {
                 return theme1.value.localeCompare(theme2.value)
             })
-            for(const themes of themesOfPublication){
+            for (const themes of themesOfPublication) {
                 state.themesOfPublication[themes._id] = themes
             }
         },
@@ -116,6 +117,7 @@ export const store = new Vuex.Store({
                     return response
                 })
                 .then(payload.customThen)
+                .catch(err => console.log(err))
         },
 
         /**
@@ -123,18 +125,19 @@ export const store = new Vuex.Store({
          * если запрос проходит удачно, публикации добавляются в список
          * @param terms Условие выборки публикаций
          * */
-        loadDraft: async (context, terms) => {
+        loadDraft: (context, terms) => {
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
                 api.ESSENCE.publication.actions.findDraftsByAuthor
             )
 
-            const response = await asyncRequest(urlRequest, JSON.stringify(terms))
-
-            if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                context.commit('addDrafts', response.datas.findings)
-            }
-
+            asyncRequest(urlRequest, JSON.stringify(terms))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
+                        context.commit('addDrafts', response.datas.findings)
+                    }
+                })
+                .catch(err => console.log(err))
         },
 
         /**
@@ -142,26 +145,26 @@ export const store = new Vuex.Store({
          * если запрос проходит удачно, публикации добавляются в список
          * @param terms Условие выборки публикаций
          * */
-        loadPublication: async (context, terms = {}) => {
+        loadPublication: (context, terms = {}) => {
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
                 ('user' in terms) ? (api.ESSENCE.publication.actions.findSampleByAuthor) : (api.ESSENCE.publication.actions.findSample)
             )
 
-            const response = await asyncRequest(urlRequest, JSON.stringify(terms))
-
-            if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                context.commit('addPublications', response.datas.findings)
-            }
-
+            asyncRequest(urlRequest, JSON.stringify(terms))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
+                        context.commit('addPublications', response.datas.findings)
+                    }
+                })
+                .catch(err => console.log(err))
         },
 
         /**
          * Функция отправляет запрос на получение тем публикаций,
          * если запрос проходит удачно, публикации добавляются в список
          * */
-        loadThemes: async (context) => {
-
+        loadThemes: (context) => {
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
                 api.ESSENCE.publication.actions.getThemes
@@ -172,20 +175,20 @@ export const store = new Vuex.Store({
                     context.commit('addThemes', response.datas.findings)
                 })
                 .catch((err) => console.log(err))
-
         },
 
         /**
          * Функция отправляет запрос на добавление новой темы для публикаций
          * */
         sendTheme: (context, payload) => {
-            const url =  (payload.theme._id) ? (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme)) : (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme))
+            const url = (payload.theme._id) ? (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme)) : (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme))
 
             asyncRequest(url, JSON.stringify(payload.theme))
-                .then( response => {
+                .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode || response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                       context.dispatch('loadThemes')
-                    } else {
+                        context.dispatch('loadThemes')
+                    }
+                    else {
                         context.commit('setResponseMessage', response.message)
                     }
                 })
@@ -199,7 +202,7 @@ export const store = new Vuex.Store({
          * */
         editTheme: (context, payload) => {
             asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme), JSON.stringify(payload.theme))
-                .then( response => {
+                .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
                         context.dispatch('loadThemes')
                     }
@@ -213,23 +216,27 @@ export const store = new Vuex.Store({
         /**
          * Функция отправляет запрос на удаление публикации из БД
          * */
-        removePublication: async (context, payload) => {
-            const response = await asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify(payload))
-
-            if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                context.commit('removePublication', response.datas._id)
-            }
+        removePublication: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify(payload))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                        context.commit('removePublication', response.datas._id)
+                    }
+                })
+                .catch(err => console.log(err))
         },
 
         /**
          * Функция отправляет запрос на удаление черновика из БД
          * */
-        removeDraft: async (context, payload) => {
-            const response = await asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(payload))
-
-            if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                context.commit('removeDraft', response.datas._id)
-            }
+        removeDraft: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(payload))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                        context.commit('removeDraft', response.datas._id)
+                    }
+                })
+                .catch(err => console.log(err))
         },
 
         /**
@@ -250,5 +257,37 @@ export const store = new Vuex.Store({
                 .then(payload.customThen)
                 .catch(err => console.log(err))
         },
+
+        /**
+         * Функция отправдяет запрос на публикацию/обновление публикации
+         * */
+        publish: (context, payload) => {
+            let url
+            if (payload.publication._id) {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit)
+            }
+            else {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish)
+            }
+            asyncRequest(
+                url,
+                JSON.stringify(payload.publication)
+            )
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                        context.commit('addPublication', payload.publication)
+                        context.commit('setResponseMessage', 'Публикация обновлена')
+                    }
+                    if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
+                        context.commit('addPublication', payload.publication)
+                        context.commit('setResponseMessage', 'Публикация опубликована')
+
+                        context.dispatch('removeDraft', payload.draft)
+                    }
+
+                })
+                .then(payload.customThen)
+                .catch(err => console.log(err))
+        }
     },
 });

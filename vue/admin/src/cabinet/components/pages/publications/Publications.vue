@@ -195,56 +195,17 @@
             /**
              * Функция собирает объект публикации и отсылает его на сервер
              * */
-            const publish = () => {
-                if (publication._id) {
-                    asyncRequest(
-                        api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit),
-                        JSON.stringify(publication)
-                    )
-                        .then(data => {
-                            if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                                workObject.objectCopy(publication, lists.publications[data.datas._id])
-                            }
-                            alert('Публикация обновлена')
-                            closeEdit()
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                }
-                else {
-                    asyncRequest(
-                        api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish),
-                        JSON.stringify(publication)
-                    )
-                        .then(async data => {
-                            if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                                lists.publications[data.datas._id] = data.datas
-
-                                const removedResponse = await asyncRequest(
-                                    api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft),
-                                    JSON.stringify(draft)
-                                )
-
-                                if (removedResponse.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                                    delete lists.drafts[draft._id]
-                                }
-                            }
-                            alert('Публикация опубликована')
-                            closeEdit()
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                }
-            }
+            const publish = () => store.dispatch('publish', {
+                draft: draft,
+                publication: publication,
+                customThen: closeEdit
+            })
 
             /**
              * Функция закрывает блок с редактированием/созданием публикации
              * */
-            const closeEdit = (timeout = 2000) => {
+            const closeEdit = (timeout = 1000) => {
                 if (stopWatchDraft != undefined) stopWatchDraft()
-
                 styleVars['--main_width'] = '100%'
                 styleVars['--shift'] = '0'
                 styleVars['--opacity_list'] = '1'
@@ -257,7 +218,6 @@
                         delete draft[key]
                     }
                 }, timeout)
-
             }
 
             const showEditor = () => {

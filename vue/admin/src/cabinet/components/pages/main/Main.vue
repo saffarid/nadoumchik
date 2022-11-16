@@ -8,11 +8,11 @@
 <script>
     import {
         Loading,
-    }                     from "saffarid-ui-kit"
+    } from "saffarid-ui-kit"
     import {
         ref,
         inject
-    }                     from 'vue'
+    } from 'vue'
 
     export default {
         name: "Main",
@@ -20,7 +20,6 @@
             Loading,
         },
         setup() {
-            const api = inject('$api')
             const user = inject('user')
             const isLoading = ref(true)
 
