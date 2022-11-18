@@ -9,15 +9,15 @@
         <TitlePane title="Редактировать профиль">
             <Row>
                 <span>Имя</span>
-                <TextField v-model="user.personal.f_name"/>
+                <input v-model="user.personal.f_name"/>
             </Row>
             <Row>
                 <span>Фамилия</span>
-                <TextField v-model="user.personal.s_name"/>
+                <input v-model="user.personal.s_name"/>
             </Row>
             <Row>
                 <span>Почта</span>
-                <TextField v-model="user.personal.mail"/>
+                <input v-model="user.personal.mail"/>
             </Row>
 
             <Row>
@@ -72,11 +72,13 @@
         computed,
         inject,
         ref,
-        reactive
+        reactive,
+        watch
     }                          from 'vue'
     import Row                 from "@/components/commons/Row";
-    import {asyncRequest}      from "@/js/web";
+    import {useStore}          from 'vuex'
     import {hasValueTextField} from "@/js/checker";
+
 
     export default {
         name: "User",
@@ -88,15 +90,15 @@
             Popup
         },
         setup() {
-            const user = inject('user')
-            const api = inject('$api')
+            const store = useStore()
             const workObject = inject('workObject')
+            const user = reactive({})
 
-            console.log(user)
+            workObject.objectCopy(store.getters.user, user)
 
             const isShowChangePass = ref(false)
             const newOldPass = reactive({
-                _id: user.value._id,
+                _id: user._id,
                 newPass: '',
                 checkNewPass: '',
                 oldPass: ''
@@ -105,22 +107,7 @@
             /**
              * Функция отправляет запрос на сервер о изменении профиля пользователя
              * */
-            const updateUser = () => {
-
-                asyncRequest(
-                    api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit),
-                    JSON.stringify(user.value)
-                )
-                    .then(response => {
-                        if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-
-                            alert('Профиль обновлен')
-
-                        }
-                    })
-                    .catch(err => console.error(err))
-
-            }
+            const updateUser = () => store.dispatch('editUser', user)
 
             const showChangePassPopup = () => {
                 isShowChangePass.value = true
@@ -129,38 +116,17 @@
             const closeChangePassPopup = () => {
                 isShowChangePass.value = false
                 newOldPass.newPass = ''
+                newOldPass.checkNewPass = ''
                 newOldPass.oldPass = ''
             }
 
             /**
              * Функция отправляет запрос на сервер об изменении пароля
              * */
-            const changePass = () => {
-                asyncRequest(
-                    api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.changePass),
-                    JSON.stringify(newOldPass))
-                    .then(response => {
-                        switch (response.responseCode) {
-                            case api.CODES_RESPONSE.notFound.responseCode : {
-                                alert('Не найден такой пользователь')
-                                break
-                            }
-                            case api.CODES_RESPONSE.notAcceptable.responseCode : {
-                                alert('Неверно введён текущий пароль')
-                                break
-                            }
-                            case api.CODES_RESPONSE.notImplemented.responseCode : {
-                                alert('Не удалось изменить ваш пароль')
-                                break
-                            }
-                            case api.CODES_RESPONSE.updated.responseCode : {
-                                alert('Ваш пароль изменен')
-                                closeChangePassPopup()
-                                break
-                            }
-                        }
-                    })
-            }
+            const changePass = () => store.dispatch('changePass', {
+                dataPass: newOldPass,
+                customThen: closeChangePassPopup()
+            })
 
             const isDisabledChangePassBtn = computed(() => {
                 return !(hasValueTextField(newOldPass.oldPass) &&
@@ -177,7 +143,7 @@
                 newOldPass,
                 showChangePassPopup,
                 updateUser,
-                user
+                user,
             }
         }
     }

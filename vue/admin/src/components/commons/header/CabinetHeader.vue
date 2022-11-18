@@ -16,10 +16,9 @@
 </template>
 
 <script>
-    import {
-        inject
-    }           from 'vue'
-    import Logo from "@/assets/img/logo";
+
+    import {useStore} from 'vuex'
+    import Logo       from "@/assets/img/logo";
 
     export default {
         name: "CabinetHeader",
@@ -27,7 +26,8 @@
             Logo
         },
         setup() {
-            const user = inject('user')
+            const store = useStore()
+            const user = store.getters.user
 
             return {
                 originUrl: location.origin,

@@ -146,9 +146,7 @@
         },
         setup(props, context) {
             const api = inject('$api')
-
             const _users = inject('users')
-
             const accessRights = reactive([])
 
             const formAccessRights = () => {

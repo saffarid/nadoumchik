@@ -4,13 +4,33 @@ import api                               from "../../../../app/api/api_desc.js"
 
 export const store = new Vuex.Store({
     state: {
+
         drafts: {},
         publications: {},
         themesOfPublication: {},
+
+        groups: {},
         user: null,
-        responseMessage: ''
+        responseMessage: '',
+
+        system: {}
     },
     getters: {
+
+        /* ---------- Draft ---------- */
+
+        drafts: state => terms => {
+            if (Object.keys(state.drafts).length == 0) {
+                store.dispatch('loadDraft', terms)
+            }
+            return state.drafts
+        },
+        draftsById: state => (id) => {
+            return state.publications[id]
+        },
+
+        /* ---------- Publications ---------- */
+
         newPublications: state => Object.values(state.publications).slice(0, 4),
         otherPublications: state => Object.values(state.publications).slice(4, Object.values(state.publications).length),
         publications: (state) => (terms = undefined) => {
@@ -33,37 +53,29 @@ export const store = new Vuex.Store({
             return state.publications[id]
         },
 
-        drafts: state => terms => {
-            if (Object.keys(state.drafts).length == 0) {
-                store.dispatch('loadDraft', terms)
-            }
-            return state.drafts
-        },
-        draftsById: state => (id) => {
-            return state.publications[id]
-        },
-
-        responseMessage: state => state.responseMessage,
-
-        user: state => state.user,
+        /* ---------- Themes ---------- */
 
         themesOfPublication: state => {
             if (Object.keys(state.themesOfPublication).length == 0) {
                 store.dispatch('loadThemes')
             }
             return state.themesOfPublication
-        }
+        },
+
+        /* ---------- System ---------- */
+
+        system: state => state.system,
+
+        /* ---------- Users ---------- */
+
+        group: state => state.groups,
+        user: state => state.user,
+
+
+        responseMessage: state => state.responseMessage,
     },
     mutations: {
-        addPublications: (state, payload) => {
-            for (const p of payload) {
-                state.publications[p._id] = p
-            }
-        },
-        addPublication: (state, payload) => state.publications[payload._id] = payload,
-        removePublication: (state, payload) => {
-            delete state.publications[payload]
-        },
+        /* ---------- Draft ---------- */
 
         addDrafts: (state, payload) => {
             for (const p of payload) {
@@ -71,9 +83,19 @@ export const store = new Vuex.Store({
             }
         },
         addDraft: (state, payload) => state.drafts[payload._id] = payload,
-        removeDraft: (state, payload) => {
-            delete state.drafts[payload]
+        removeDraft: (state, payload) => delete state.drafts[payload],
+
+        /* ---------- Publications ---------- */
+
+        addPublications: (state, payload) => {
+            for (const p of payload) {
+                state.publications[p._id] = p
+            }
         },
+        addPublication: (state, payload) => state.publications[payload._id] = payload,
+        removePublication: (state, payload) => delete state.publications[payload],
+
+        /* ---------- Themes ---------- */
 
         addThemes: (state, payload) => {
             let themesOfPublication = payload
@@ -85,16 +107,31 @@ export const store = new Vuex.Store({
             }
         },
 
-        setUser: (state, payload) => {
-            state.user = payload
+        /* ---------- Users ---------- */
+
+        addGroups: (state, payload) => {
+            for (const p of payload) {
+                state.groups[p._id] = p
+            }
         },
+
+        setGroup: (state, payload) => state.groups[payload._id] = payload,
+
+        setUser: (state, payload) => state.user = payload,
+
+        /* ---------- System ---------- */
+
+        setSystemData: (state, payload) => state.system = payload,
 
         setResponseMessage: (state, payload) => {
             state.responseMessage = payload
             setTimeout(() => state.responseMessage = '', 5000)
-        }
+        },
+
     },
     actions: {
+
+        /* ---------- Inits ---------- */
 
         /**
          * Функция загружает все нобходимые состояния для работы в кабинете
@@ -105,20 +142,7 @@ export const store = new Vuex.Store({
             context.dispatch('loadThemes')
         },
 
-        /**
-         * Функция отправляет запрос на авторизацию пользователя
-         * */
-        auth: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(payload.user))
-                .then(response => {
-                    if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                        context.commit('setUser', response.datas.findings)
-                    }
-                    return response
-                })
-                .then(payload.customThen)
-                .catch(err => console.log(err))
-        },
+        /* ---------- Draft ---------- */
 
         /**
          * Функция отправляет запрос на получение черновиков,
@@ -139,6 +163,38 @@ export const store = new Vuex.Store({
                 })
                 .catch(err => console.log(err))
         },
+        /**
+         * Функция отправляет запрос на удаление черновика из БД
+         * */
+        removeDraft: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(payload))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                        context.commit('removeDraft', response.datas._id)
+                    }
+                })
+                .catch(err => console.log(err))
+        },
+        /**
+         * Функция отправляет запрос на сохранение черновика в БД
+         * */
+        saveDraft: (context, payload) => {
+            asyncRequest(
+                api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
+                JSON.stringify(payload.draft)
+            )
+                .then(response => {
+                    if ((response.responseCode == api.CODES_RESPONSE.created.responseCode) || (response.responseCode == api.CODES_RESPONSE.updated.responseCode)) {
+                        context.commit('setResponseMessage', 'Черновик сохранен')
+                        context.commit('addDraft', response.datas)
+                    }
+                    return response
+                })
+                .then(payload.customThen)
+                .catch(err => console.log(err))
+        },
+
+        /* ---------- Publications ---------- */
 
         /**
          * Функция отправляет запрос на получение новой порции публикаций,
@@ -159,6 +215,51 @@ export const store = new Vuex.Store({
                 })
                 .catch(err => console.log(err))
         },
+        /**
+         * Функция отправляет запрос на удаление публикации из БД
+         * */
+        removePublication: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify(payload))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
+                        context.commit('removePublication', response.datas._id)
+                    }
+                })
+                .catch(err => console.log(err))
+        },
+        /**
+         * Функция отправдяет запрос на публикацию/обновление публикации
+         * */
+        publish: (context, payload) => {
+            let url
+            if (payload.publication._id) {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit)
+            }
+            else {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish)
+            }
+            asyncRequest(
+                url,
+                JSON.stringify(payload.publication)
+            )
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                        context.commit('addPublication', response.datas)
+                        context.commit('setResponseMessage', 'Публикация обновлена')
+                    }
+                    if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
+                        context.commit('addPublication', response.datas)
+                        context.commit('setResponseMessage', 'Публикация опубликована')
+
+                        context.dispatch('removeDraft', payload.draft)
+                    }
+
+                })
+                .then(payload.customThen)
+                .catch(err => console.log(err))
+        },
+
+        /* ---------- Themes ---------- */
 
         /**
          * Функция отправляет запрос на получение тем публикаций,
@@ -176,7 +277,6 @@ export const store = new Vuex.Store({
                 })
                 .catch((err) => console.log(err))
         },
-
         /**
          * Функция отправляет запрос на добавление новой темы для публикаций
          * */
@@ -213,44 +313,40 @@ export const store = new Vuex.Store({
                 })
         },
 
+        /* ---------- System ---------- */
+
         /**
-         * Функция отправляет запрос на удаление публикации из БД
+         * Функция отправляет запрос на получение системных данных.
          * */
-        removePublication: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify(payload))
+        getSystemData: context => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.system.name, api.ESSENCE.system.actions.get), JSON.stringify({}))
                 .then(response => {
-                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                        context.commit('removePublication', response.datas._id)
+                    if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
+                        context.commit('setSystemData', response.datas.findings[0])
                     }
                 })
                 .catch(err => console.log(err))
         },
 
         /**
-         * Функция отправляет запрос на удаление черновика из БД
+         * Функция отправляет запрос на установку новых системных данных.
          * */
-        removeDraft: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(payload))
-                .then(response => {
-                    if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
-                        context.commit('removeDraft', response.datas._id)
-                    }
-                })
-                .catch(err => console.log(err))
+        updateSystemData: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.system.name, api.ESSENCE.system.actions.edit), JSON.stringify(payload.data))
+                .then(payload.customThen)
+                .catch(err => console.error(err))
         },
 
+        /* ---------- Users ---------- */
+
         /**
-         * Функция отправляет запрос на сохранение черновика в БД
+         * Функция отправляет запрос на авторизацию пользователя
          * */
-        saveDraft: (context, payload) => {
-            asyncRequest(
-                api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
-                JSON.stringify(payload.draft)
-            )
+        auth: (context, payload) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(payload.user))
                 .then(response => {
-                    if ((response.responseCode == api.CODES_RESPONSE.created.responseCode) || (response.responseCode == api.CODES_RESPONSE.updated.responseCode)) {
-                        context.commit('setResponseMessage', 'Черновик сохранен')
-                        context.commit('addDraft', response.datas)
+                    if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
+                        context.commit('setUser', response.datas.findings)
                     }
                     return response
                 })
@@ -259,35 +355,80 @@ export const store = new Vuex.Store({
         },
 
         /**
-         * Функция отправдяет запрос на публикацию/обновление публикации
+         * Функция отправляет запрос на изменение пароля пользователя
          * */
-        publish: (context, payload) => {
-            let url
-            if (payload.publication._id) {
-                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit)
-            }
-            else {
-                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish)
-            }
+        changePass: (context, payload) => {
             asyncRequest(
-                url,
-                JSON.stringify(payload.publication)
+                api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.changePass),
+                JSON.stringify(payload.dataPass))
+                .then(response => {
+                    let message
+                    switch (response.responseCode) {
+                        case api.CODES_RESPONSE.notFound.responseCode : {
+                            message = 'Не найден такой пользователь'
+                            break
+                        }
+                        case api.CODES_RESPONSE.notAcceptable.responseCode : {
+                            message = 'Неверно введён текущий пароль'
+                            break
+                        }
+                        case api.CODES_RESPONSE.notImplemented.responseCode : {
+                            message = 'Не удалось изменить ваш пароль'
+                            break
+                        }
+                        case api.CODES_RESPONSE.updated.responseCode : {
+                            message = 'Ваш пароль изменен'
+                            payload.customThen()
+                            break
+                        }
+                    }
+                    context.commit('setResponseMessage', message)
+
+                })
+                .catch(err => console.log(err))
+        },
+
+        /**
+         * Функция отправляет запрос на редактирование профиля пользователя
+         * */
+        editUser: (context, payload) => {
+            asyncRequest(
+                api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit),
+                JSON.stringify(payload.user)
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                        context.commit('addPublication', payload.publication)
-                        context.commit('setResponseMessage', 'Публикация обновлена')
+                        context.commit('setResponseMessage', 'Профиль обновлен')
+                    }
+                })
+                .catch(err => console.error(err))
+        },
+
+        /**
+         * Функция отправляет запрос на вставку/обовление группы пользователей
+         * */
+        sendGroup: (context, payload) => {
+            let url
+            if (payload.group._id) {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.edit)
+            }
+            else {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.addNew)
+            }
+            asyncRequest(url, JSON.stringify(payload.group))
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                        context.commit('setGroup', response.datas.findings)
+                        context.commit('setResponseMessage', 'Группа пользователей обновлена')
                     }
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                        context.commit('addPublication', payload.publication)
-                        context.commit('setResponseMessage', 'Публикация опубликована')
-
-                        context.dispatch('removeDraft', payload.draft)
+                        context.commit('setGroup', response.datas.findings)
+                        context.commit('setResponseMessage', 'Группа пользователей создана')
                     }
-
+                    payload.customThen()
                 })
-                .then(payload.customThen)
                 .catch(err => console.log(err))
         }
+
     },
 });

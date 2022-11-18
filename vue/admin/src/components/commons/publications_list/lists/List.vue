@@ -40,8 +40,8 @@
                 for (const v of Object.values(props.list)) {
                     l.push(v)
                 }
+                l.sort( (p1, p2) => new Date(p2.dateStamp).getTime() - new Date(p1.dateStamp).getTime() )
             })
-
 
             return {
                 comp,
@@ -51,7 +51,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

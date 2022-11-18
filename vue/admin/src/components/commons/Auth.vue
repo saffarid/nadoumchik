@@ -94,6 +94,10 @@
                         workObject.objectCopy(localUser, user)
                     }
 
+                    watch(user, () => {
+                        authLocalUser = false
+                    })
+
                     authLocalUser = true
                     isShow.value = true
                 }
@@ -139,10 +143,6 @@
                 user.name = ''
                 user.pass = ''
             }
-
-            watch(user, () => {
-                authLocalUser = false
-            })
 
             checkUser()
 

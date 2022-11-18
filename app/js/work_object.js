@@ -9,7 +9,6 @@ const isObject = (arg) => {
  * Функция копирует один объект в другой
  * */
 const objectCopy = (copied, target) => {
-
     for(const key of Object.keys(copied)) {
         if (isObject(copied[key])){
             target[key] = {}
