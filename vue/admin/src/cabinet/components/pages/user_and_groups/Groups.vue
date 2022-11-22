@@ -9,7 +9,12 @@
             </template>
 
             <template v-slot:center>
-                <ListGroups :groups="groups" @clickGroup="updateGroup"/>
+                <List :headers="[
+                                    {name: 'Группа'},
+                                    {name: 'Описание'},
+                                ]"
+                      :items="groupsList"
+                      :click-item="updateGroup"/>
             </template>
 
         </BorderPane>
@@ -24,7 +29,11 @@
 
 <script>
     import {
+        computed,
         inject,
+        onActivated,
+        onBeforeUnmount,
+        onDeactivated,
         reactive,
         ref
     }                       from "vue";
@@ -32,26 +41,51 @@
         BorderPane,
         Button,
     }                       from 'saffarid-ui-kit'
-    import ListGroups       from "./ListGroups";
     import GroupDescription from "./GroupDescription";
-    import {useStore}       from 'vuex'
+    import List             from "@/cabinet/components/pages/user_and_groups/List";
+    import {useStore}       from 'vuex';
 
     export default {
         name: "Groups",
         components: {
             BorderPane,
             Button,
-            ListGroups,
+            List,
             GroupDescription
         },
         setup() {
-            const store = useStore
+            const store = useStore()
             const api = inject('$api')
             const workObject = inject('workObject')
-            const groups = inject('groups')
+
+            const groups = computed(() => Object.values(store.getters.groups))
 
             const showGroupDescription = ref(false)
             const showingGroup = reactive({})
+
+            onBeforeUnmount(() => {
+                groups.value = Object.values(store.getters.groups)
+            })
+
+            onActivated(() => {
+                groups.value = Object.values(store.getters.groups)
+            })
+
+            onDeactivated(() => {
+
+            })
+
+            const groupsList = computed(() => {
+                const res = []
+                for(const group of Object.values(groups.value)){
+                    res.push({
+                        _id: group._id,
+                        name: group.name,
+                        desc: group.desc
+                    })
+                }
+                return res
+            })
 
             const updateGroup = (group) => {
                 workObject.objectCopy(group, showingGroup)
@@ -72,7 +106,7 @@
 
             const send = () => store.dispatch('sendGroup', {
                 group: showingGroup,
-                customThen: () => showGroupDescription.value = false
+                customThen: closeGroupDescription
             })
 
             return {
@@ -83,6 +117,7 @@
                 updateGroup,
                 newGroup,
                 send,
+                groupsList
             }
         }
     }

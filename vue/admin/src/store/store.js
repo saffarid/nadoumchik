@@ -4,14 +4,15 @@ import api                               from "../../../../app/api/api_desc.js"
 
 export const store = new Vuex.Store({
     state: {
-
         drafts: {},
         publications: {},
         themesOfPublication: {},
 
-        groups: {},
         user: null,
         responseMessage: '',
+
+        users: {},
+        groups: {},
 
         system: {}
     },
@@ -68,8 +69,9 @@ export const store = new Vuex.Store({
 
         /* ---------- Users ---------- */
 
-        group: state => state.groups,
         user: state => state.user,
+        groups: state => state.groups,
+        users: state => state.users,
 
 
         responseMessage: state => state.responseMessage,
@@ -114,9 +116,13 @@ export const store = new Vuex.Store({
                 state.groups[p._id] = p
             }
         },
+        addUsers: (state, payload) => {
+            for (const p of payload) {
+                state.users[p._id] = p
+            }
+        },
 
         setGroup: (state, payload) => state.groups[payload._id] = payload,
-
         setUser: (state, payload) => state.user = payload,
 
         /* ---------- System ---------- */
@@ -140,6 +146,8 @@ export const store = new Vuex.Store({
             context.dispatch('loadDraft', {author: context.getters.user})
             context.dispatch('loadPublication', {author: context.getters.user})
             context.dispatch('loadThemes')
+            context.dispatch('getGroups')
+            context.dispatch('getUsers')
         },
 
         /* ---------- Draft ---------- */
@@ -424,6 +432,53 @@ export const store = new Vuex.Store({
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
                         context.commit('setGroup', response.datas.findings)
                         context.commit('setResponseMessage', 'Группа пользователей создана')
+                    }
+                    payload.customThen()
+                })
+                .catch(err => console.log(err))
+        },
+
+        /**
+         * Функция отправляет запрос на получение списка групп пользователей
+         * */
+        getGroups: (context) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.getGroups), JSON.stringify({}))
+                .then(response => {
+                    context.commit('addGroups', response.datas.findings)
+                })
+        },
+
+        /**
+         * Функция отправляет запрос на получение списка пользователей
+         * */
+        getUsers: (context) => {
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.getAllUsers), JSON.stringify({}))
+                .then(response => {
+                    context.commit('addUsers', response.datas.findings)
+                })
+        },
+
+        sendUser: (context, payload) => {
+            let url
+            if (payload.user._id) {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit)
+            }
+            else {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew)
+            }
+
+            asyncRequest(
+                url,
+                JSON.stringify(payload.user)
+            )
+                .then(response => {
+                    if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                        context.commit('setUser', response.datas)
+                        context.commit('setResponseMessage', 'Профиль пользователя обновлён')
+                    }
+                    if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
+                        context.commit('setUser', response.datas)
+                        context.commit('setResponseMessage', 'Профиль пользователя создан')
                     }
                     payload.customThen()
                 })

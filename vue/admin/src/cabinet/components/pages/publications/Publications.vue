@@ -46,9 +46,9 @@
         reactive,
         ref,
         inject,
-        watch
-    }                      from 'vue'
-    import {asyncRequest}  from "@/js/web";
+        watch, onBeforeUnmount, onActivated
+    }                     from 'vue'
+    import {asyncRequest} from "@/js/web";
     import {useStore}      from 'vuex'
     import {
         Button,
@@ -109,6 +109,16 @@
                 '--shift': '0%',
                 '--opacity_list': '1',
                 '--opacity_p': '0',
+            })
+
+            onBeforeUnmount(() => {
+                publicationsState.list.value = store.getters.publications({author: user.value})
+                draftsState.list.value = store.getters.drafts({author: user.value})
+            })
+
+            onActivated(() => {
+                publicationsState.list.value = store.getters.publications({author: user.value})
+                draftsState.list.value = store.getters.drafts({author: user.value})
             })
 
             onDeactivated(() => {

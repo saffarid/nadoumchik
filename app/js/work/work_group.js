@@ -64,7 +64,7 @@ const getGroups = (data) => {
                   return
               }
               resolve({
-                  ...api.CODES_RESPONSE.notFound,
+                  ...api.CODES_RESPONSE.ok,
                   datas: {
                       findings: findings
                   }

@@ -42,14 +42,16 @@
         Button,
         Loading,
         TextField,
-    }                     from 'saffarid-ui-kit'
+    }                 from 'saffarid-ui-kit'
     import {
-        computed,
+        onBeforeUnmount,
+        onActivated,
         onDeactivated,
+        computed,
         ref,
         reactive,
-    }                     from 'vue'
-    import {useStore}     from 'vuex'
+    }                 from 'vue'
+    import {useStore} from 'vuex'
     import ThemeItem      from "@/cabinet/components/pages/themes/ThemeItem";
     import Checkmark      from "@/assets/img/checkmark";
     import Cancel         from "@/assets/img/cancel";
@@ -79,6 +81,14 @@
             })
 
             const response = computed(() => store.getters.responseMessage)
+
+            onBeforeUnmount(() => {
+                themes.value = store.getters.themesOfPublication
+            })
+
+            onActivated(() => {
+                themes.value = store.getters.themesOfPublication
+            })
 
             onDeactivated(() => {
                 clearLocalTheme()

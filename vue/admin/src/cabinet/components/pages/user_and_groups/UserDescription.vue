@@ -2,7 +2,7 @@
     <Popup class="user-description" @close="$emit('dismiss')">
         <template v-slot:default>
             <TitlePane class="user-description-title-pane"
-                    :title="user._id == null ? 'Новый пользователь' : `Пользователь ${user.personal.s_name} ${user.personal.f_name}`">
+                       :title="user._id == null ? 'Новый пользователь' : `Пользователь ${user.personal.s_name} ${user.personal.f_name}`">
                 <div class="popup-content">
                     <TitlePane title="Аутентификация" v-if="user._id == null">
                         <Row>
@@ -67,6 +67,7 @@
     }                          from 'saffarid-ui-kit'
     import Row                 from "@/components/commons/Row";
     import {hasValueTextField} from "@/js/checker";
+    import {useStore}          from 'vuex'
 
     export default {
         name: "UserDescription",
@@ -89,8 +90,8 @@
             }
         },
         setup(props) {
-            const groups = inject('groups')
-
+            const store = useStore()
+            const groups = store.getters.groups
             const _groups = reactive([])
 
             const formGroups = () => {

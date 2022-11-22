@@ -1,6 +1,5 @@
 <template>
-    <div v-if="isLoading"
-         class="system-settings">
+    <div class="system-settings">
         <TitlePane class="ads" title="Рекламные блоки">
             <Row>
                 <span>Показ рекламы</span>
@@ -13,7 +12,6 @@
             </Row>
         </TitlePane>
     </div>
-    <Loading v-else/>
 </template>
 
 <script>
@@ -25,11 +23,12 @@
     import Row            from "@/components/commons/Row";
     import {
         computed,
-        ref,
-        watch
+        inject,
+        onActivated,
+        onBeforeUnmount,
+        onDeactivated,
     }                     from 'vue'
     import {useStore}     from 'vuex'
-    import {asyncRequest} from "@/js/web";
 
     export default {
         name: "System",
@@ -42,12 +41,21 @@
         setup() {
             const store = useStore()
             const systemData = computed(() => store.getters.system)
-            const isLoading = ref(false)
+            const workObject = inject('workObject')
 
-            watch(systemData, () => store.dispatch('updateSystemData', systemData))
+            onBeforeUnmount(() => {
+                workObject.objectCopy(store.getters.system, systemData.value)
+            })
+
+            onActivated(() => {
+                workObject.objectCopy(store.getters.system, systemData.value)
+            })
+
+            onDeactivated(() => {
+
+            })
 
             return {
-                isLoading,
                 systemData,
             }
         }

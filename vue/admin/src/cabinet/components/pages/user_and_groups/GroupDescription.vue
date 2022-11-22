@@ -1,6 +1,5 @@
 <template>
     <Popup class="group-description" @close="$emit('dismiss')">
-
         <template v-if="group._id != null" v-slot:default>
             <TitlePane class="group-description-title-pane"
                        :title="`Группа ${group.name}`">
@@ -42,7 +41,11 @@
                         </div>
                     </Tab>
                     <Tab name="Пользователи">
-                        <Users class="popup-content" :users="groupsUsers"/>
+                        <List :headers="[
+                                            {name: 'Пользователь'},
+                                            {name: 'Группа'},
+                                        ]"
+                              :items="groupsUsers"/>
                     </Tab>
                 </Tabs>
                 <div class="tool-bar">
@@ -106,26 +109,27 @@
         reactive,
         inject,
         computed
-    }            from 'vue'
+    }                 from 'vue'
     import {
         Tabs,
         Tab
-    }            from 'vue3-tabs-component'
+    }                 from 'vue3-tabs-component'
     import {
         Button,
         TitlePane,
         ComboBox,
         TextField,
         Popup
-    }            from 'saffarid-ui-kit'
-    import Users from "@/cabinet/components/pages/user_and_groups/ListUsers";
-    import Row   from "@/components/commons/Row";
+    }                 from 'saffarid-ui-kit'
+    import Row        from "@/components/commons/Row";
+    import {useStore} from 'vuex'
+    import List       from "@/cabinet/components/pages/user_and_groups/List";
 
     export default {
         name: "GroupDescription",
         components: {
+            List,
             Button,
-            Users,
             TitlePane,
             ComboBox,
             Tabs,
@@ -144,10 +148,11 @@
                 required: true
             },
         },
-        setup(props, context) {
+        setup(props) {
+            const store = useStore()
             const api = inject('$api')
-            const _users = inject('users')
             const accessRights = reactive([])
+            const users = store.getters.users
 
             const formAccessRights = () => {
                 for (const key of Object.keys(api.ACCESS_RIGHTS)) {
@@ -160,17 +165,17 @@
                 }
             }
 
-            const rights = computed(() => {
-                return {}
-            })
-
             const groupsUsers = computed(() => {
                 const res = []
-
-                for (const user of _users.value) {
-                    if (user.group.name === props.group.name) res.push(user)
+                for (const user of Object.values(users)) {
+                    if (user.group.name == props.group.name) {
+                        res.push({
+                            _id: user._id,
+                            name: `${user.personal.f_name} ${user.personal.s_name}`,
+                            desc: user.group.name
+                        })
+                    }
                 }
-
                 return res
             })
 
@@ -180,7 +185,6 @@
                 accessRights,
                 groupsUsers
             }
-
         }
     }
 </script>
@@ -206,6 +210,7 @@
 
                         min-height: 230px;
                         overflow-y: auto;
+
                         .title-pane {
                             width: calc(100% - 12px) !important;
 

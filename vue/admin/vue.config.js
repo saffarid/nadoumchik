@@ -15,7 +15,6 @@ const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 module.exports = {
 
     outputDir: p.resolve(__dirname, './../../www'),
-    // publicPath: '\./',
 
     pages: {
         index: {
@@ -67,33 +66,33 @@ module.exports = {
         const IS_VENDOR = /[\\/]node_modules[\\/]/
 
         config.optimization
-            .splitChunks({
-                cacheGroups: {
-                    vendors: {
-                        name: 'chunk-vendors',
-                        priority: -10,
-                        chunks: 'initial',
-                        minChunks: 2,
-                        test: IS_VENDOR,
-                        enforce: true,
-                    },
-                    ...pageKeys.map(key => ({
-                        name: `chunk-${key}-vendors`,
-                        priority: -11,
-                        chunks: chunk => chunk.name === key,
-                        test: IS_VENDOR,
-                        enforce: true,
-                    })),
-                    common: {
-                        name: 'chunk-common',
-                        priority: -20,
-                        chunks: 'initial',
-                        minChunks: 2,
-                        reuseExistingChunk: true,
-                        enforce: true,
-                    },
-                },
-            })
+              .splitChunks({
+                  cacheGroups: {
+                      vendors: {
+                          name: 'chunk-vendors',
+                          priority: -10,
+                          chunks: 'initial',
+                          minChunks: 2,
+                          test: IS_VENDOR,
+                          enforce: true,
+                      },
+                      ...pageKeys.map(key => ({
+                          name: `chunk-${key}-vendors`,
+                          priority: -11,
+                          chunks: chunk => chunk.name === key,
+                          test: IS_VENDOR,
+                          enforce: true,
+                      })),
+                      common: {
+                          name: 'chunk-common',
+                          priority: -20,
+                          chunks: 'initial',
+                          minChunks: 2,
+                          reuseExistingChunk: true,
+                          enforce: true,
+                      },
+                  },
+              })
     },
 
     configureWebpack: {
@@ -118,33 +117,30 @@ module.exports = {
 
         optimization: {
             runtimeChunk: true,
-            minimize: true,
-            minimizer: [
-                // new TerserPlugin({
-                //    test: /\.js(\?.*)?$/i,
+            // minimize: true,
+            // minimizer: [
+                // new UglifyJsPlugin({
+                //     uglifyOptions: {
+                //         compress: {
+                //             unsafe: true,
+                //             inline: true,
+                //             passes: 2,
+                //             keep_fargs: false,
+                //         },
+                //         output: {
+                //             beautify: false,
+                //         },
+                //         mangle: true,
+                //     },
                 // }),
-                new UglifyJsPlugin({
-                    uglifyOptions: {
-                        compress: {
-                            unsafe: true,
-                            inline: true,
-                            passes: 2,
-                            keep_fargs: false,
-                        },
-                        output: {
-                            beautify: false,
-                        },
-                        mangle: true,
-                    },
-                }),
-                new OptimizeCSSPlugin({
-                    cssProcessorOptions: {
-                        "preset": "advanced",
-                        "safe": true,
-                        "map": { "inline": false },
-                    },
-                }),
-            ],
+                // new OptimizeCSSPlugin({
+                //     cssProcessorOptions: {
+                //         "preset": "advanced",
+                //         "safe": true,
+                //         "map": {"inline": false},
+                //     },
+                // }),
+            // ],
         },
     },
 

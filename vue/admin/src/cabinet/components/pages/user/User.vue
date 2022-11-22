@@ -73,12 +73,13 @@
         inject,
         ref,
         reactive,
-        watch
+        onBeforeUnmount,
+        onActivated,
+        onDeactivated,
     }                          from 'vue'
     import Row                 from "@/components/commons/Row";
     import {useStore}          from 'vuex'
     import {hasValueTextField} from "@/js/checker";
-
 
     export default {
         name: "User",
@@ -93,8 +94,20 @@
             const store = useStore()
             const workObject = inject('workObject')
             const user = reactive({})
-
+            console.log([store, store.getters])
             workObject.objectCopy(store.getters.user, user)
+
+            onBeforeUnmount(() => {
+                workObject.objectCopy(store.getters.user, user)
+            })
+
+            onActivated(() => {
+                workObject.objectCopy(store.getters.user, user)
+            })
+
+            onDeactivated(() => {
+
+            })
 
             const isShowChangePass = ref(false)
             const newOldPass = reactive({

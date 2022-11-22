@@ -9,7 +9,11 @@
             </template>
 
             <template v-slot:center>
-                <ListUsers :users="users" :click-user="clickUser"/>
+                <List :headers="[
+                                    {name: 'Пользователь'},
+                                    {name: 'Группа'},
+                                ]" :items="usersList"
+                      :click-item="clickUser"/>
             </template>
         </BorderPane>
 
@@ -23,81 +27,78 @@
 
 <script>
     import {
+        computed,
         inject,
         ref,
-        reactive
+        reactive,
+        onBeforeUnmount,
+        onActivated,
+        onDeactivated
     }                      from 'vue'
     import {
         BorderPane,
         Button,
     }                      from 'saffarid-ui-kit'
     import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
-    import {asyncRequest}  from "@/js/web";
-    import ListUsers       from "@/cabinet/components/pages/user_and_groups/ListUsers";
+    import {useStore}      from 'vuex';
+    import List            from "@/cabinet/components/pages/user_and_groups/List";
 
     export default {
         name: "Users",
         components: {
-            ListUsers,
+            List,
             UserDescription,
             BorderPane,
             Button,
         },
         setup() {
+            const store = useStore()
             const api = inject('$api')
-            const users = inject('users')
             const workObject = inject('workObject')
+            const users = computed(() => Object.values(store.getters.users))
+
             const showingUser = reactive({})
             const showUserDescription = ref(false)
 
-            const clickUser = (user) => {
-                workObject.objectCopy(user, showingUser)
+            onBeforeUnmount(() => {
+                users.value = Object.values(store.getters.users)
+            })
+
+            onActivated(() => {
+                users.value = Object.values(store.getters.users)
+            })
+
+            onDeactivated(() => {
+
+            })
+
+            const usersList = computed(() => {
+                const res = []
+                for (const user of Object.values(users.value)) {
+                    res.push({
+                        _id: user._id,
+                        name: `${user.personal.f_name} ${user.personal.s_name}`,
+                        desc: user.group.name
+                    })
+                }
+                return res
+            })
+
+            const clickUser = ($event) => {
+                console.log($event)
+                workObject.objectCopy($event, showingUser)
                 showUserDescription.value = true
             }
-
             const closeUserDescription = () => {
                 showUserDescription.value = false
                 for (const key of Object.keys(showingUser)) {
                     delete showingUser[key]
                 }
             }
-
-            const send = () => {
-                if (showingUser._id) {
-                    //Редактируем
-                    asyncRequest(
-                        api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit),
-                        JSON.stringify(showingUser)
-                    )
-                        .then(data => {
-                            if (data.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                                for (const user of users.value) {
-                                    if (user._id == data.datas._id) {
-                                        workObject.objectCopy(showingUser, user)
-                                        break
-                                    }
-                                }
-                                hasShowingUser.value = false
-                            }
-                        })
-                        .catch(err => console.log(err))
-                }
-                else {
-                    //Добавляем
-                    asyncRequest(
-                        api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew),
-                        JSON.stringify(showingUser)
-                    )
-                        .then(data => {
-                            if (data.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                                users.value.push(data.datas)
-                                hasShowingUser.value = false
-                            }
-                        })
-                        .catch(err => console.log(err))
-                }
-            }
-
+            const send = () => store.dispatch('sendUser', {
+                user: showingUser,
+                customThen: closeUserDescription
+            })
             const create = () => {
                 workObject.objectCopy(api.NEW_OBJECTS.user, showingUser)
                 showUserDescription.value = true
@@ -110,12 +111,9 @@
                 clickUser,
                 create,
                 send,
-                users
+                users,
+                usersList
             }
         }
     }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -44,10 +44,10 @@
         },
         setup() {
             const store = useStore()
-            const _pages = getPages(inject('user').value)
+            const _pages = getPages(store.getters.user)
             const showingPage = ref(_pages.Main)
 
-            // store.dispatch('cabinetInit')
+            store.dispatch('cabinetInit')
 
             const setActivePage = (page) => {
                 showingPage.value = _pages[page].workspace
