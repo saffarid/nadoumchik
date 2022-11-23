@@ -101,24 +101,17 @@
                     selected: false,
                     disabled: true
                 })
-                for (let i = 0; i < groups.value.length; i++) {
+                for (const group of Object.values(groups)) {
                     _groups.push({
-                        value: (groups.value)[i]._id,
-                        label: (groups.value)[i].name,
+                        value: group._id,
+                        label: group.name,
                         selected: false,
                         disabled: false
                     })
                 }
             }
 
-            const changeGroup = (id) => {
-                for (let i = 0; i < groups.value.length; i++) {
-                    if (id == (groups.value)[i]._id) {
-                        props.user.group = (groups.value)[i]
-                        break
-                    }
-                }
-            }
+            const changeGroup = (id) => props.user.group = groups[id]
 
             formGroups()
 

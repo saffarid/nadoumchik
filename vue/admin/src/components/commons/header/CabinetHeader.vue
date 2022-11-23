@@ -27,7 +27,7 @@
         },
         setup() {
             const store = useStore()
-            const user = store.getters.user
+            const user = computed(() => store.getters.user)
 
             return {
                 originUrl: location.origin,

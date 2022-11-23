@@ -269,7 +269,6 @@
 
             const themesOptions = computed(() => {
                 const res = {}
-
                 const themes = store.getters.themesOfPublication
 
                 res['-1'] = {
@@ -289,18 +288,15 @@
                 return res
             })
 
-
             const imgFromWeb = reactive({
                 preview: false,
                 title: false,
             })
-
             const styleVars = reactive({
                 '--shift': '0%',
                 '--opacity_settings': '1',
                 '--opacity_wysiwyg': '0',
             })
-
             const setTheme = (newTheme, isMajor = true) => {
                 if (isMajor) {
                     props.publication.theme.major = store.getters.themesOfPublication[newTheme]
@@ -309,11 +305,9 @@
                     props.publication.theme.minor = store.getters.themesOfPublication[newTheme]
                 }
             }
-
             const setFont = (value) => {
                 props.publication.view.title.text.fontFamily = value
             }
-
             const fontIndex = computed(() => {
                 return font[props.publication.view.title.text.fontFamily]
             })

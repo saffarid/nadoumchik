@@ -4,16 +4,18 @@
             <template v-slot:top>
                 <div class="tool-bar">
                     <Button class="text-button" text="Создать" @click="create"/>
-                    <Button class="text-button" text="Удалить"/>
+                    <!--                    <Button class="text-button" text="Удалить"/>-->
                 </div>
             </template>
 
             <template v-slot:center>
-                <List :headers="[
+                <List v-if="usersList.length != 0"
+                      :headers="[
                                     {name: 'Пользователь'},
                                     {name: 'Группа'},
                                 ]" :items="usersList"
                       :click-item="clickUser"/>
+                <span v-else>Нет пользователей</span>
             </template>
         </BorderPane>
 
@@ -55,17 +57,17 @@
             const store = useStore()
             const api = inject('$api')
             const workObject = inject('workObject')
-            const users = computed(() => Object.values(store.getters.users))
+            const users = computed(() => store.getters.users)
 
             const showingUser = reactive({})
             const showUserDescription = ref(false)
 
             onBeforeUnmount(() => {
-                users.value = Object.values(store.getters.users)
+                users.value = store.getters.users
             })
 
             onActivated(() => {
-                users.value = Object.values(store.getters.users)
+                users.value = store.getters.users
             })
 
             onDeactivated(() => {
@@ -85,8 +87,7 @@
             })
 
             const clickUser = ($event) => {
-                console.log($event)
-                workObject.objectCopy($event, showingUser)
+                workObject.objectCopy(users.value[$event._id], showingUser)
                 showUserDescription.value = true
             }
             const closeUserDescription = () => {

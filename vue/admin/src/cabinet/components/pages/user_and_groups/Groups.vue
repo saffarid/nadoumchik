@@ -9,12 +9,14 @@
             </template>
 
             <template v-slot:center>
-                <List :headers="[
+                <List v-if="groupsList.length != 0"
+                      :headers="[
                                     {name: 'Группа'},
                                     {name: 'Описание'},
                                 ]"
                       :items="groupsList"
                       :click-item="updateGroup"/>
+                <span v-else>Нет пользователей</span>
             </template>
 
         </BorderPane>
@@ -58,17 +60,17 @@
             const api = inject('$api')
             const workObject = inject('workObject')
 
-            const groups = computed(() => Object.values(store.getters.groups))
+            const groups = computed(() => store.getters.groups)
 
             const showGroupDescription = ref(false)
             const showingGroup = reactive({})
 
             onBeforeUnmount(() => {
-                groups.value = Object.values(store.getters.groups)
+                groups.value = store.getters.groups
             })
 
             onActivated(() => {
-                groups.value = Object.values(store.getters.groups)
+                groups.value = store.getters.groups
             })
 
             onDeactivated(() => {
@@ -77,7 +79,7 @@
 
             const groupsList = computed(() => {
                 const res = []
-                for(const group of Object.values(groups.value)){
+                for (const group of Object.values(groups.value)) {
                     res.push({
                         _id: group._id,
                         name: group.name,
@@ -88,7 +90,7 @@
             })
 
             const updateGroup = (group) => {
-                workObject.objectCopy(group, showingGroup)
+                workObject.objectCopy(groups.value[group._id], showingGroup)
                 showGroupDescription.value = true
             }
 

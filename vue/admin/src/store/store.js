@@ -111,19 +111,21 @@ export const store = new Vuex.Store({
 
         /* ---------- Users ---------- */
 
+        setUser: (state, payload) => state.user = payload,
+
         addGroups: (state, payload) => {
             for (const p of payload) {
                 state.groups[p._id] = p
             }
         },
+
         addUsers: (state, payload) => {
             for (const p of payload) {
                 state.users[p._id] = p
             }
         },
-
-        setGroup: (state, payload) => state.groups[payload._id] = payload,
-        setUser: (state, payload) => state.user = payload,
+        addGroup: (state, payload) => state.groups[payload._id] = payload,
+        addUser: (state, payload) => state.users[payload._id] = payload,
 
         /* ---------- System ---------- */
 
@@ -169,7 +171,7 @@ export const store = new Vuex.Store({
                         context.commit('addDrafts', response.datas.findings)
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
         /**
          * Функция отправляет запрос на удаление черновика из БД
@@ -181,7 +183,7 @@ export const store = new Vuex.Store({
                         context.commit('removeDraft', response.datas._id)
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
         /**
          * Функция отправляет запрос на сохранение черновика в БД
@@ -199,7 +201,7 @@ export const store = new Vuex.Store({
                     return response
                 })
                 .then(payload.customThen)
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /* ---------- Publications ---------- */
@@ -221,7 +223,7 @@ export const store = new Vuex.Store({
                         context.commit('addPublications', response.datas.findings)
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
         /**
          * Функция отправляет запрос на удаление публикации из БД
@@ -233,7 +235,7 @@ export const store = new Vuex.Store({
                         context.commit('removePublication', response.datas._id)
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
         /**
          * Функция отправдяет запрос на публикацию/обновление публикации
@@ -264,7 +266,7 @@ export const store = new Vuex.Store({
 
                 })
                 .then(payload.customThen)
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /* ---------- Themes ---------- */
@@ -283,7 +285,7 @@ export const store = new Vuex.Store({
                 .then((response) => {
                     context.commit('addThemes', response.datas.findings)
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.error(err))
         },
         /**
          * Функция отправляет запрос на добавление новой темы для публикаций
@@ -302,7 +304,7 @@ export const store = new Vuex.Store({
                 })
                 .then(payload.customThen)
                 .catch(err => {
-                    console.log(err)
+                    console.error(err)
                 })
         },
         /**
@@ -317,7 +319,7 @@ export const store = new Vuex.Store({
                 })
                 .then(payload.customThen)
                 .catch(err => {
-                    console.log(err)
+                    console.error(err)
                 })
         },
 
@@ -333,7 +335,7 @@ export const store = new Vuex.Store({
                         context.commit('setSystemData', response.datas.findings[0])
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /**
@@ -359,7 +361,7 @@ export const store = new Vuex.Store({
                     return response
                 })
                 .then(payload.customThen)
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /**
@@ -393,7 +395,7 @@ export const store = new Vuex.Store({
                     context.commit('setResponseMessage', message)
 
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /**
@@ -406,6 +408,7 @@ export const store = new Vuex.Store({
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
+                        context.commit('setUser', payload.user)
                         context.commit('setResponseMessage', 'Профиль обновлен')
                     }
                 })
@@ -426,16 +429,16 @@ export const store = new Vuex.Store({
             asyncRequest(url, JSON.stringify(payload.group))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                        context.commit('setGroup', response.datas.findings)
+                        context.commit('addGroup', response.datas)
                         context.commit('setResponseMessage', 'Группа пользователей обновлена')
                     }
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                        context.commit('setGroup', response.datas.findings)
+                        context.commit('addGroup', response.datas)
                         context.commit('setResponseMessage', 'Группа пользователей создана')
                     }
                     payload.customThen()
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         },
 
         /**
@@ -473,16 +476,16 @@ export const store = new Vuex.Store({
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                        context.commit('setUser', response.datas)
+                        context.commit('addUser', response.datas)
                         context.commit('setResponseMessage', 'Профиль пользователя обновлён')
                     }
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode) {
-                        context.commit('setUser', response.datas)
+                        context.commit('addUser', response.datas)
                         context.commit('setResponseMessage', 'Профиль пользователя создан')
                     }
                     payload.customThen()
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         }
 
     },

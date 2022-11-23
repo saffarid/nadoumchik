@@ -72,10 +72,10 @@
             Tab
         },
         setup() {
-            const user = inject('user')
+            const store = useStore()
+            const user = store.getters.user
             const api = inject('$api')
             const workObject = inject('workObject')
-            const store = useStore()
             let lastWatchingDraft = null
 
             const publicationsState = reactive({
@@ -132,8 +132,8 @@
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
                 workObject.objectCopy(api.NEW_OBJECTS.publication, draft)
 
-                publication.author = user.value
-                draft.author = user.value
+                publication.author = user
+                draft.author = user
                 publication.dateStamp = new Date()
 
                 startWatchDraft()
@@ -191,8 +191,8 @@
                 workObject.objectCopy(editDraft, draft)
                 // workObject.objectCopy(user.value, draft.author)
 
-                publication.author = user.value
-                draft.author = user.value
+                publication.author = user
+                draft.author = user
 
                 startWatchDraft()
             }

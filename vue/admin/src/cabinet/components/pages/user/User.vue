@@ -94,7 +94,6 @@
             const store = useStore()
             const workObject = inject('workObject')
             const user = reactive({})
-            console.log([store, store.getters])
             workObject.objectCopy(store.getters.user, user)
 
             onBeforeUnmount(() => {
@@ -120,7 +119,7 @@
             /**
              * Функция отправляет запрос на сервер о изменении профиля пользователя
              * */
-            const updateUser = () => store.dispatch('editUser', user)
+            const updateUser = () => store.dispatch('editUser', {user: user})
 
             const showChangePassPopup = () => {
                 isShowChangePass.value = true

@@ -1,8 +1,8 @@
 <template>
     <Popup class="group-description" @close="$emit('dismiss')">
-        <template v-if="group._id != null" v-slot:default>
+        <template v-slot:default>
             <TitlePane class="group-description-title-pane"
-                       :title="`Группа ${group.name}`">
+                       :title="group._id != null ? `Группа ${group.name}` : 'Новая группа'">
                 <Tabs :options="{ useUrlFragment: false }">
                     <Tab name="Настройка группы">
                         <div class="popup-content">
@@ -40,63 +40,21 @@
                             </TitlePane>
                         </div>
                     </Tab>
-                    <Tab name="Пользователи">
-                        <List :headers="[
+                    <Tab v-if="group._id != null"
+                         name="Пользователи">
+                        <List v-if="groupsUsers.length != 0"
+                              :headers="[
                                             {name: 'Пользователь'},
                                             {name: 'Группа'},
                                         ]"
                               :items="groupsUsers"/>
+                        <span v-else>Нет пользователей в этой группе</span>
                     </Tab>
                 </Tabs>
                 <div class="tool-bar">
                     <Button class="text-button"
                             :disabled="group.name == ''"
-                            :text="'ОБНОВИТЬ'"
-                            @click="send"/>
-                </div>
-            </TitlePane>
-        </template>
-        <template v-else v-slot:default>
-            <TitlePane class="group-description-title-pane"
-                       title="Новая группа">
-                <div class="popup-content">
-                    <TitlePane title="Описание">
-                        <Row>
-                            <span>Наименование</span>
-                            <TextField v-model="group.name"/>
-                        </Row>
-                        <Row>
-                            <span>Описание</span>
-                            <TextField v-model="group.description"/>
-                        </Row>
-                    </TitlePane>
-                    <TitlePane title="Права доступа">
-                        <Row>
-                            <span>Пользователи</span>
-                            <ComboBox :options="accessRights" v-model="group.rights.users.value"/>
-                        </Row>
-                        <Row>
-                            <span>Группы</span>
-                            <ComboBox :options="accessRights" v-model="group.rights.groups.value"/>
-                        </Row>
-                        <Row>
-                            <span>Публикации</span>
-                            <ComboBox :options="accessRights" v-model="group.rights.publications.value"/>
-                        </Row>
-                        <Row>
-                            <span>Темы публикаций</span>
-                            <ComboBox :options="accessRights" v-model="group.rights.themesOfPublication.value"/>
-                        </Row>
-                        <Row>
-                            <span>Система</span>
-                            <ComboBox :options="accessRights" :model-value="group.rights.system.value"/>
-                        </Row>
-                    </TitlePane>
-                </div>
-                <div class="tool-bar">
-                    <Button class="text-button"
-                            :disabled="group.name == ''"
-                            :text="'СОЗДАТЬ'"
+                            :text="group._id != null ? 'ОБНОВИТЬ' : 'СОЗДАТЬ'"
                             @click="send"/>
                 </div>
             </TitlePane>
