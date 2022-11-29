@@ -106,30 +106,30 @@ module.exports = {
 
         optimization: {
             runtimeChunk: true,
-            // minimize: true,
-            // minimizer: [
-                // new UglifyJsPlugin({
-                //     uglifyOptions: {
-                //         compress: {
-                //             unsafe: true,
-                //             inline: true,
-                //             passes: 2,
-                //             keep_fargs: false,
-                //         },
-                //         output: {
-                //             beautify: false,
-                //         },
-                //         mangle: true,
-                //     },
-                // }),
-                // new OptimizeCSSPlugin({
-                //     cssProcessorOptions: {
-                //         "preset": "advanced",
-                //         "safe": true,
-                //         "map": {"inline": false},
-                //     },
-                // }),
-            // ],
+            minimize: true,
+            minimizer: [
+                new UglifyJsPlugin({
+                    uglifyOptions: {
+                        compress: {
+                            unsafe: true,
+                            inline: true,
+                            passes: 2,
+                            keep_fargs: false,
+                        },
+                        output: {
+                            beautify: false,
+                        },
+                        mangle: true,
+                    },
+                }),
+                new OptimizeCSSPlugin({
+                    cssProcessorOptions: {
+                        "preset": "advanced",
+                        "safe": true,
+                        "map": {"inline": false},
+                    },
+                }),
+            ],
         },
     },
 
