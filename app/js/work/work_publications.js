@@ -21,7 +21,7 @@ const findSampleByAuthor = (data) => {
                 ...api.CODES_RESPONSE.noContent,
                 datas: {
                     findings: [],
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -34,7 +34,7 @@ const findSampleByAuthor = (data) => {
                 ...api.CODES_RESPONSE.ok,
                 datas: {
                     findings: findings,
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -48,7 +48,7 @@ const findSampleByAuthor = (data) => {
                     ...api.CODES_RESPONSE.ok,
                     datas: {
                         findings: findings.slice(data.shift, range),
-                        thereIsMore: true
+                        noMore: false
                     }
                 }
             )
@@ -58,8 +58,8 @@ const findSampleByAuthor = (data) => {
                 {
                     ...api.CODES_RESPONSE.ok,
                     datas: {
-                        findings: findings.slice(data.shift, data.count+1),
-                        thereIsMore: false
+                        findings: findings.slice(data.shift, findings.length),
+                        noMore: true
                     }
                 }
             )
@@ -84,7 +84,7 @@ const findDraftsByAuthor = (data) => {
                 ...api.CODES_RESPONSE.noContent,
                 datas: {
                     findings: [],
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -92,13 +92,30 @@ const findDraftsByAuthor = (data) => {
 
         findings = findings.reverse()
 
-        resolve({
-            ...api.CODES_RESPONSE.ok,
-            datas: {
-                findings: findings,
-                thereIsMore: false
-            }
-        })
+        const range = data.shift + data.count
+
+        if (range < findings.length) {
+            resolve(
+                {
+                    ...api.CODES_RESPONSE.ok,
+                    datas: {
+                        findings: findings.slice(data.shift, range),
+                        noMore: false
+                    }
+                }
+            )
+        }
+        else {
+            resolve(
+                {
+                    ...api.CODES_RESPONSE.ok,
+                    datas: {
+                        findings: findings.slice(data.shift, findings.length),
+                        noMore: true
+                    }
+                }
+            )
+        }
 
     })
 }
@@ -122,7 +139,7 @@ const findByTitle = (data) => {
                 ...api.CODES_RESPONSE.noContent,
                 datas: {
                     findings: [],
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -131,7 +148,7 @@ const findByTitle = (data) => {
             ...api.CODES_RESPONSE.noContent,
             datas: {
                 findings: finding,
-                thereIsMore: false
+                noMore: true
             }
         })
 
@@ -143,7 +160,6 @@ const findByTitle = (data) => {
  * Функция возвращает выборку публикаций
  * */
 const findSample = (data) => {
-
     return new Promise(async (resolve, reject) => {
 
         let findings = await db.execute(
@@ -156,7 +172,7 @@ const findSample = (data) => {
                 ...api.CODES_RESPONSE.noContent,
                 datas: {
                     findings: [],
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -169,7 +185,7 @@ const findSample = (data) => {
                 ...api.CODES_RESPONSE.ok,
                 datas: {
                     findings: findings,
-                    thereIsMore: false
+                    noMore: true
                 }
             })
             return
@@ -183,7 +199,7 @@ const findSample = (data) => {
                     ...api.CODES_RESPONSE.ok,
                     datas: {
                         findings: findings.slice(data.shift, range),
-                        thereIsMore: true
+                        noMore: false
                     }
                 }
             )
@@ -193,15 +209,13 @@ const findSample = (data) => {
                 {
                     ...api.CODES_RESPONSE.ok,
                     datas: {
-                        findings: findings.slice(data.shift, data.count),
-                        thereIsMore: false
+                        findings: findings.slice(data.shift, findings.length),
+                        noMore: true
                     }
                 }
             )
         }
-
     })
-
 }
 
 /**

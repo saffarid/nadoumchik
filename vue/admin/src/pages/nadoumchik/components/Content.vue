@@ -3,13 +3,13 @@
 
         <div class="new-content">
             <List :type="list_types.new"
-                  :list="publications.newP"
+                  :list="newP"
                   @read="showPublication"
             />
         </div>
         <div class="other-content">
             <List :type="list_types.zigzag"
-                  :list="publications.oldP"
+                  :list="oldP"
                   @read="showPublication"
             />
         </div>
@@ -25,12 +25,12 @@
 </template>
 
 <script>
-    import List                             from "@/components/commons/publications_list/lists/List";
-    import {list_types}                     from "@/components/commons/publications_list/lists/list_types";
-    import {computed, ref, reactive, watch} from "vue";
-    import PublicationView                  from "@/components/commons/publications/PublicationView";
-    import Loader                           from "@/components/Loader";
-    import {useStore}                       from 'vuex'
+    import List                      from "@/components/commons/publications_list/lists/List";
+    import {list_types}              from "@/components/commons/publications_list/lists/list_types";
+    import {computed, ref, reactive} from "vue";
+    import PublicationView           from "@/components/commons/publications/PublicationView";
+    import Loader                    from "@/components/Loader";
+    import {useStore}                from 'vuex'
 
     export default {
         name: "Content",
@@ -39,28 +39,20 @@
             List,
             PublicationView
         },
-        setup( ) {
+        setup() {
             const showedPublication = ref(null)
             const store = useStore()
 
-            const p = computed(() => store.getters.publications())
-
-            const publications = reactive({
-                newP: store.getters.newPublications,
-                oldP: store.getters.otherPublications
-            })
-
-            watch(p.value, () => {
-                publications.newP = store.getters.newPublications
-                publications.oldP = store.getters.otherPublications
-            })
+            const newP = computed(() => store.getters.newPublications)
+            const oldP = computed(() => store.getters.otherPublications)
 
             const showPublication = (publication) => {
                 showedPublication.value = publication
             }
 
             return {
-                publications,
+                newP,
+                oldP,
                 list_types,
                 showPublication,
                 showedPublication,
@@ -78,12 +70,10 @@
         width: 1330px;
 
         .new-content {
-
             display: grid;
             align-self: stretch;
             justify-self: stretch;
             align-content: center;
-
         }
 
         .other-content {

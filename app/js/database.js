@@ -264,7 +264,6 @@ const insertOne = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data['_id'] = uuid()
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        console.log(data)
         models[collection].create(data)
                           .then(value => resolve(value))
                           .catch(err => {

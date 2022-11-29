@@ -8,14 +8,11 @@
 
 body {
     margin: 0;
-    height: calc(100 * var(--height_per));
     width: 100vw;
     background-color: var(--background);
-    //overflow-y: hidden;
 }
 
 #app {
-    height: calc(100 * var(--height_per));
     width: 100vw;
     font-family: "Yandex Sans Text";
     background-color: var(--background);
@@ -29,7 +26,6 @@ body {
         }
 
         .content-viewport {
-
             top: 100px;
             margin: 0 auto;
             width: max-content;

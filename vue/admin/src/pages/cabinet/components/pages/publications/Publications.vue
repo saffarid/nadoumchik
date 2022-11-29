@@ -15,6 +15,7 @@
                                 :state="publicationsState"
                                 :remove="removePublication"
                                 :edit="updatePublication"
+                                :scroll="publicationsScroll"
                         />
                     </Tab>
                     <Tab :name="'Черновики'">
@@ -23,6 +24,7 @@
                                 :state="draftsState"
                                 :remove="removeDraft"
                                 :edit="updateDraft"
+                                :scroll="draftsScroll"
                         />
                     </Tab>
                 </Tabs>
@@ -47,8 +49,8 @@
         ref,
         inject,
         watch, onBeforeUnmount, onActivated
-    }                     from 'vue'
-    import {asyncRequest} from "@/js/web";
+    }                      from 'vue'
+    import {asyncRequest}  from "@/js/web";
     import {useStore}      from 'vuex'
     import {
         Button,
@@ -58,8 +60,8 @@
         Tabs,
         Tab
     }                      from 'vue3-tabs-component'
-    import EditPublication from "@/cabinet/components/pages/publications/EditPublication";
-    import P_D_Lists       from "@/cabinet/components/pages/publications/P_D_Lists";
+    import EditPublication from "@/pages/cabinet/components/pages/publications/EditPublication";
+    import P_D_Lists       from "@/pages/cabinet/components/pages/publications/P_D_Lists";
 
     export default {
         name: "Publications",
@@ -79,17 +81,19 @@
             let lastWatchingDraft = null
 
             const publicationsState = reactive({
-                list: computed(() => store.getters.publications({author: user.value})),
+                list: computed(() => store.getters.publications),
                 thereIsMore: false,
                 isLoading: false,
                 isReady: true
             })
             const draftsState = reactive({
-                list: computed(() => store.getters.drafts({author: user.value})),
+                list: computed(() => store.getters.drafts),
                 thereIsMore: false,
                 isLoading: false,
                 isReady: true
             })
+
+
 
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
@@ -112,13 +116,13 @@
             })
 
             onBeforeUnmount(() => {
-                publicationsState.list.value = store.getters.publications({author: user.value})
-                draftsState.list.value = store.getters.drafts({author: user.value})
+                publicationsState.list.value = store.getters.publications
+                draftsState.list.value = store.getters.drafts
             })
 
             onActivated(() => {
-                publicationsState.list.value = store.getters.publications({author: user.value})
-                draftsState.list.value = store.getters.drafts({author: user.value})
+                publicationsState.list.value = store.getters.publications
+                draftsState.list.value = store.getters.drafts
             })
 
             onDeactivated(() => {
@@ -182,14 +186,12 @@
              * */
             const updateDraft = (editDraft) => {
                 workObject.objectCopy(api.NEW_OBJECTS.publication, publication)
-                // workObject.objectCopy(user.value, publication.author)
                 publication.dateStamp = new Date()
 
                 updatePublication(editDraft)
                 delete publication['_id']
 
                 workObject.objectCopy(editDraft, draft)
-                // workObject.objectCopy(user.value, draft.author)
 
                 publication.author = user
                 draft.author = user
@@ -237,11 +239,35 @@
                 styleVars['--opacity_p'] = '1'
             }
 
+            const publicationsScroll = ($event) => {
+                const scrollHeight = $event.target.scrollHeight;
+                const scrollTop = $event.target.scrollTop;
+                const clientHeight = $event.target.clientHeight;
+
+                if ((scrollHeight - (scrollTop + clientHeight)) < 300) {
+                    if (!store.getters.noMorePublications) {
+                        store.dispatch('loadPublication', {author: store.getters.user})
+                    }
+                }
+            }
+            const draftsScroll = ($event) => {
+                const scrollHeight = $event.target.scrollHeight;
+                const scrollTop = $event.target.scrollTop;
+                const clientHeight = $event.target.clientHeight;
+
+                if ((scrollHeight - (scrollTop + clientHeight)) < 300) {
+                    if (!store.getters.noMoreDrafts) {
+                        store.dispatch('loadDraft', {author: store.getters.user})
+                    }
+                }
+            }
+
             return {
                 closeEdit,
                 draftsState,
                 publicationsState,
-
+                publicationsScroll,
+                draftsScroll,
                 newPublication,
                 saveDraft,
                 removeDraft,

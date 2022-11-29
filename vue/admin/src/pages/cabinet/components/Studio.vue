@@ -5,9 +5,7 @@
         </template>
         <template v-slot:left>
             <NavigationMenu
-                    :buttons="_pages" @navigate="setActivePage"
-
-            />
+                    :buttons="_pages" @navigate="setActivePage"/>
         </template>
         <template v-slot:center>
             <div class="workspace">
@@ -21,10 +19,8 @@
 
 <script>
     import {
-        inject,
         ref
     }                     from 'vue'
-    import {useStore}     from 'vuex'
     import {
         getPages
     }                     from './pages/pages.js'
@@ -32,6 +28,7 @@
         BorderPane,
         NavigationMenu
     }                     from 'saffarid-ui-kit'
+    import {useStore}     from 'vuex'
     import Header         from "@/components/commons/header/Header";
     import {header_types} from "@/components/commons/header/header_types";
 
@@ -49,9 +46,9 @@
 
             store.dispatch('cabinetInit')
 
-            const setActivePage = (page) => {
-                showingPage.value = _pages[page].workspace
-            }
+            document.body.classList.toggle('no-scroll')
+
+            const setActivePage = (page) => showingPage.value = _pages[page].workspace
 
             return {
                 header_types,
@@ -60,10 +57,5 @@
                 setActivePage,
             }
         }
-
     }
 </script>
-
-<style lang="scss" scoped>
-    /*@import "../../assets/style/main";*/
-</style>

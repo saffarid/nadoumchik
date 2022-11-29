@@ -41,9 +41,9 @@
         BorderPane,
         Button,
     }                      from 'saffarid-ui-kit'
-    import UserDescription from "@/cabinet/components/pages/user_and_groups/UserDescription";
+    import UserDescription from "@/pages/cabinet/components/pages/user_and_groups/UserDescription";
     import {useStore}      from 'vuex';
-    import List            from "@/cabinet/components/pages/user_and_groups/List";
+    import List            from "@/pages/cabinet/components/pages/user_and_groups/List";
 
     export default {
         name: "Users",

@@ -2,10 +2,23 @@ import Vuex                              from 'vuex'
 import {asyncRequest, setUser, storages} from "@/js/web";
 import api                               from "../../../../app/api/api_desc.js"
 
+const pages = {
+    index: 'nadoumchik',
+    cabinet: 'cabinet'
+}
+
 export const store = new Vuex.Store({
     state: {
+        /**
+         * Активная страница сайта. Определяется объектом pages.
+         * @see pages
+         * */
+        page: '',
+
         drafts: {},
+        noMoreDrafts: false,
         publications: {},
+        noMorePublications: false,
         themesOfPublication: {},
 
         user: null,
@@ -17,42 +30,19 @@ export const store = new Vuex.Store({
         system: {}
     },
     getters: {
-
         /* ---------- Draft ---------- */
 
-        drafts: state => terms => {
-            if (Object.keys(state.drafts).length == 0) {
-                store.dispatch('loadDraft', terms)
-            }
-            return state.drafts
-        },
-        draftsById: state => (id) => {
-            return state.publications[id]
-        },
+        drafts: state => state.drafts,
+        draftsById: state => (id) => state.drafts[id],
 
         /* ---------- Publications ---------- */
 
         newPublications: state => Object.values(state.publications).slice(0, 4),
         otherPublications: state => Object.values(state.publications).slice(4, Object.values(state.publications).length),
-        publications: (state) => (terms = undefined) => {
-            if (Object.keys(state.publications).length == 0) {
-                if (terms == undefined) {
-                    terms = {
-                        shift: 0,
-                        count: 10,
-                    }
-                }
-                else {
-                    terms['shift'] = 0
-                    terms['count'] = 10
-                }
-                store.dispatch('loadPublication', terms)
-            }
-            return state.publications
-        },
-        publicationById: state => (id) => {
-            return state.publications[id]
-        },
+        publications: (state) => state.publications,
+        publicationById: state => (id) => state.publications[id],
+        noMorePublications: state => state.noMorePublications,
+        noMoreDrafts: state => state.noMoreDrafts,
 
         /* ---------- Themes ---------- */
 
@@ -77,6 +67,8 @@ export const store = new Vuex.Store({
         responseMessage: state => state.responseMessage,
     },
     mutations: {
+        setPage: (state, payload) => state.page = payload,
+
         /* ---------- Draft ---------- */
 
         addDrafts: (state, payload) => {
@@ -95,6 +87,8 @@ export const store = new Vuex.Store({
             }
         },
         addPublication: (state, payload) => state.publications[payload._id] = payload,
+        setNoMorePublications: (state, payload) => state.noMorePublications = payload,
+        setNoMoreDrafts: (state, payload) => state.noMoreDrafts = payload,
         removePublication: (state, payload) => delete state.publications[payload],
 
         /* ---------- Themes ---------- */
@@ -135,7 +129,6 @@ export const store = new Vuex.Store({
             state.responseMessage = payload
             setTimeout(() => state.responseMessage = '', 5000)
         },
-
     },
     actions: {
 
@@ -145,11 +138,22 @@ export const store = new Vuex.Store({
          * Функция загружает все нобходимые состояния для работы в кабинете
          * */
         cabinetInit: (context) => {
-            context.dispatch('loadDraft', {author: context.getters.user})
+            context.commit('setPage', pages.cabinet)
+            context.dispatch('getSystemData')
+            context.dispatch('loadDraft')
             context.dispatch('loadPublication', {author: context.getters.user})
             context.dispatch('loadThemes')
             context.dispatch('getGroups')
             context.dispatch('getUsers')
+        },
+
+        /**
+         * Функция загружает все нобходимые состояния для работы на индексной страничке
+         * */
+        nadoumchikInit: (context) => {
+            context.commit('setPage', pages.index)
+            context.dispatch('getSystemData')
+            context.dispatch('loadPublication')
         },
 
         /* ---------- Draft ---------- */
@@ -159,7 +163,14 @@ export const store = new Vuex.Store({
          * если запрос проходит удачно, публикации добавляются в список
          * @param terms Условие выборки публикаций
          * */
-        loadDraft: (context, terms) => {
+        loadDraft: (context) => {
+            if ('value' in context.state.drafts) delete context.state.drafts.value
+            const terms = {
+                shift: Object.keys(context.state.drafts).length,
+                count: (Object.keys(context.state.drafts).length == 0) ? (10) : (6),
+                author: context.getters.user
+            }
+
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
                 api.ESSENCE.publication.actions.findDraftsByAuthor
@@ -169,6 +180,7 @@ export const store = new Vuex.Store({
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                         context.commit('addDrafts', response.datas.findings)
+                        context.commit('setNoMoreDrafts', response.datas.noMore)
                     }
                 })
                 .catch(err => console.error(err))
@@ -211,19 +223,29 @@ export const store = new Vuex.Store({
          * если запрос проходит удачно, публикации добавляются в список
          * @param terms Условие выборки публикаций
          * */
-        loadPublication: (context, terms = {}) => {
+        loadPublication: (context, t = {}) => {
+            if (context.state.noMorePublications) return
+            if ('value' in context.state.publications) delete context.state.publications.value
+            const terms = {
+                shift: Object.values(context.state.publications).length,
+                count: (Object.values(context.state.publications).length == 0) ? (10) : (6),
+                ...t
+            }
+
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
-                ('user' in terms) ? (api.ESSENCE.publication.actions.findSampleByAuthor) : (api.ESSENCE.publication.actions.findSample)
+                ('author' in terms) ? (api.ESSENCE.publication.actions.findSampleByAuthor) : (api.ESSENCE.publication.actions.findSample)
             )
 
             asyncRequest(urlRequest, JSON.stringify(terms))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                         context.commit('addPublications', response.datas.findings)
+                        context.commit('setNoMorePublications', response.datas.noMore)
                     }
                 })
                 .catch(err => console.error(err))
+
         },
         /**
          * Функция отправляет запрос на удаление публикации из БД

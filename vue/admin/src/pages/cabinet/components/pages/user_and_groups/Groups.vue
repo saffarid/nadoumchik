@@ -44,7 +44,7 @@
         Button,
     }                       from 'saffarid-ui-kit'
     import GroupDescription from "./GroupDescription";
-    import List             from "@/cabinet/components/pages/user_and_groups/List";
+    import List             from "@/pages/cabinet/components/pages/user_and_groups/List";
     import {useStore}       from 'vuex';
 
     export default {

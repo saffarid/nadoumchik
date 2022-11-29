@@ -81,7 +81,7 @@
     }                 from 'saffarid-ui-kit'
     import Row        from "@/components/commons/Row";
     import {useStore} from 'vuex'
-    import List       from "@/cabinet/components/pages/user_and_groups/List";
+    import List       from "@/pages/cabinet/components/pages/user_and_groups/List";
 
     export default {
         name: "GroupDescription",

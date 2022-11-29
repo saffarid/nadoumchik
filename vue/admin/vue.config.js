@@ -18,7 +18,7 @@ module.exports = {
 
     pages: {
         index: {
-            entry: './src/nadoumchik/main.js',
+            entry: './src/pages/nadoumchik/main.js',
             template: './public/index.html',
             filename: 'index.html',
             title: '#Надоумчик - для интеллектуалов',
@@ -33,7 +33,7 @@ module.exports = {
             }
         },
         cabinet: {
-            entry: './src/cabinet/main.js',
+            entry: './src/pages/cabinet/main.js',
             template: './public/index.html',
             filename: 'cabinet.html',
             title: 'Кабинет',
@@ -44,15 +44,6 @@ module.exports = {
         },
     },
 
-    css: {
-        loaderOptions: {
-            sass: {
-                // additionalData: '@import "@/assets/style/variable.scss";'
-            }
-        }
-    },
-
-
     chainWebpack: config => {
         config.plugins.delete('preload')
         config.plugins.delete('prefetch')
@@ -60,8 +51,6 @@ module.exports = {
         const options = module.exports
         const pages = options.pages
         const pageKeys = Object.keys(pages)
-
-        // Long-term caching
 
         const IS_VENDOR = /[\\/]node_modules[\\/]/
 

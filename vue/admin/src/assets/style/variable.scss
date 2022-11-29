@@ -1,4 +1,3 @@
-
 .dimension{
   --button_font:16px;
   --button_border: 2px;
@@ -16,7 +15,7 @@
 
   --header_h: 75px;
 
-  --workspace_h: calc(100 * var(--height_per) - var(--header_h))
+  --workspace_h: calc(100 * var(--height_per) - var(--header_h) - 10px)
 }
 
 .light {
@@ -36,7 +35,6 @@
   --text_color: black;
   --btn_text_color: black;
 }
-
 
 @media (max-width: 600px) {
   .dimension {

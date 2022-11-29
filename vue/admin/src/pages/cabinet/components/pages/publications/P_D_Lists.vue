@@ -5,6 +5,7 @@
           :type="list_types.simple"
           :list="state.list"
           :d="d"
+          @scroll="scroll"
     />
 
     <Loading v-if="state.isLoading || !state.isReady"/>
@@ -43,6 +44,11 @@
             state: {
                 type: Object,
                 required: true
+            },
+            scroll: {
+                type: Function,
+                required: false,
+                default: () => {}
             }
         },
         setup() {

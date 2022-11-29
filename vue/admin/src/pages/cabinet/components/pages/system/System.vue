@@ -19,15 +19,15 @@
         TitlePane,
         Loading,
         Toggle
-    }                     from "saffarid-ui-kit"
-    import Row            from "@/components/commons/Row";
+    }          from "saffarid-ui-kit"
+    import Row from "@/components/commons/Row";
     import {
-        computed,
         inject,
+        reactive,
         onActivated,
         onBeforeUnmount,
         onDeactivated,
-    }                     from 'vue'
+    }          from 'vue'
     import {useStore}     from 'vuex'
 
     export default {
@@ -40,17 +40,15 @@
         },
         setup() {
             const store = useStore()
-            const systemData = computed(() => store.getters.system)
+            const systemData = reactive({})
             const workObject = inject('workObject')
 
             onBeforeUnmount(() => {
-                workObject.objectCopy(store.getters.system, systemData.value)
+                workObject.objectCopy(store.getters.system, systemData)
             })
-
             onActivated(() => {
-                workObject.objectCopy(store.getters.system, systemData.value)
+                workObject.objectCopy(store.getters.system, systemData)
             })
-
             onDeactivated(() => {
 
             })

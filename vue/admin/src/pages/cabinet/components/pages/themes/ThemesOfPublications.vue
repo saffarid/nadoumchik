@@ -52,9 +52,9 @@
         reactive,
     }                 from 'vue'
     import {useStore} from 'vuex'
-    import ThemeItem      from "@/cabinet/components/pages/themes/ThemeItem";
-    import Checkmark      from "@/assets/img/checkmark";
-    import Cancel         from "@/assets/img/cancel";
+    import ThemeItem  from "@/pages/cabinet/components/pages/themes/ThemeItem";
+    import Checkmark  from "@/assets/img/checkmark";
+    import Cancel     from "@/assets/img/cancel";
 
     export default {
         name: "ThemesOfPublications",
