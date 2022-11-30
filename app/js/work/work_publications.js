@@ -1,122 +1,32 @@
 const db = require('./../database')
 const api = require('./../../api/api_desc')
 
-
 /**
  * Функция возвращает выборку опубликованных публикаций или черновиков по автору
  * */
 const findSampleByAuthor = (data) => {
     return new Promise(async (resolve, reject) => {
-        if (!('author' in data)) reject(api.CODES_RESPONSE.badRequest)
-
-        let findings = await db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
-            {
-                author: data.author._id
-            }
-        )
-
-        if (findings.length == 0) {
-            resolve({
-                ...api.CODES_RESPONSE.noContent,
-                datas: {
-                    findings: [],
-                    noMore: true
-                }
-            })
-            return
-        }
-
-        findings = findings.reverse()
-
-        if (!('shift' in data && 'count' in data)) {
-            resolve({
-                ...api.CODES_RESPONSE.ok,
-                datas: {
-                    findings: findings,
-                    noMore: true
-                }
-            })
-            return
-        }
-
-        const range = data.shift + data.count
-
-        if (range < findings.length) {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, range),
-                        noMore: false
-                    }
-                }
-            )
-        }
-        else {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, findings.length),
-                        noMore: true
-                    }
-                }
-            )
-        }
-
+        if (!('author' in data.filter)) reject(api.CODES_RESPONSE.badRequest)
+        resolve(await findSample(data))
     })
 }
 
 const findDraftsByAuthor = (data) => {
     return new Promise(async (resolve, reject) => {
-        if (!('author' in data)) reject(api.CODES_RESPONSE.badRequest)
-
+        if (!('author' in data.filter)) reject(api.CODES_RESPONSE.badRequest)
         let findings = await db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.select),
+            data
+        )
+        resolve(
             {
-                author: data.author._id
+                ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
+                datas: {
+                    findings: findings,
+                    noMore: findings.length < data.limit
+                }
             }
         )
-
-        if (findings.length == 0) {
-            resolve({
-                ...api.CODES_RESPONSE.noContent,
-                datas: {
-                    findings: [],
-                    noMore: true
-                }
-            })
-            return
-        }
-
-        findings = findings.reverse()
-
-        const range = data.shift + data.count
-
-        if (range < findings.length) {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, range),
-                        noMore: false
-                    }
-                }
-            )
-        }
-        else {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, findings.length),
-                        noMore: true
-                    }
-                }
-            )
-        }
-
     })
 }
 
@@ -166,55 +76,15 @@ const findSample = (data) => {
             api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
             data
         )
-
-        if (findings.length == 0) {
-            resolve({
-                ...api.CODES_RESPONSE.noContent,
-                datas: {
-                    findings: [],
-                    noMore: true
-                }
-            })
-            return
-        }
-
-        findings = findings.reverse()
-
-        if (!('shift' in data && 'count' in data)) {
-            resolve({
-                ...api.CODES_RESPONSE.ok,
+        resolve(
+            {
+                ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
                 datas: {
                     findings: findings,
-                    noMore: true
+                    noMore: findings.length < data.limit
                 }
-            })
-            return
-        }
-
-        const range = data.shift + data.count
-
-        if (range < findings.length) {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, range),
-                        noMore: false
-                    }
-                }
-            )
-        }
-        else {
-            resolve(
-                {
-                    ...api.CODES_RESPONSE.ok,
-                    datas: {
-                        findings: findings.slice(data.shift, findings.length),
-                        noMore: true
-                    }
-                }
-            )
-        }
+            }
+        )
     })
 }
 
@@ -223,7 +93,6 @@ const findSample = (data) => {
  * */
 const saveDraft = (draft) => {
     return new Promise((resolve, reject) => {
-
         if (!('_id' in draft)) {
             db.execute(
                 api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.insert),
@@ -262,7 +131,6 @@ const saveDraft = (draft) => {
                   reject(err)
               })
         }
-
     })
 }
 
@@ -403,21 +271,14 @@ const getThemes = (data) => {
             data
         )
           .then(findings => {
-              if (findings.length == 0) {
-                  resolve({
-                      ...api.CODES_RESPONSE.notFound,
+              resolve(
+                  {
+                      ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
                       datas: {
-                          findings: []
+                          findings: findings,
                       }
-                  })
-                  return
-              }
-              resolve({
-                  ...api.CODES_RESPONSE.ok,
-                  datas: {
-                      findings: findings
                   }
-              })
+              )
           })
     })
 }

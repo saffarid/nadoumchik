@@ -55,13 +55,13 @@ const init = async () => {
  * Функция проверяет наличие идентификатора
  * */
 const isById = (data) => {
-    return (work_object.isObject(data) && ('_id' in data))
+    return (work_object.isObject(data.filter) && ('_id' in data.filter))
 }
 /**
  * Функция проверяет наличие параметров кол-ва выборки
  * */
 const isSampling = (data) => {
-    return (work_object.isObject(data) && ('shift' in data) && ('count' in data))
+    return (work_object.isObject(data) && ('skip' in data) && ('limit' in data))
 }
 
 /**
@@ -161,37 +161,9 @@ const find = (collection, terms) => {
     if (isById(terms)) {
         return findById(collection, terms)
     }
-    else if (isSampling(terms)) {
-        return findBySampling(collection)
-    }
     else {
-        return findAllByCustomKeys(collection, terms)
+        return findBySampling(collection, terms)
     }
-}
-
-/**
- * Поиск по произвольным ключам.
- * @return массив элементов, удовлетворяющих условиям выборки
- * */
-const findAllByCustomKeys = (collection, terms) => {
-    return new Promise((resolve, reject) => {
-        models[collection].find(terms)
-                          .then(async findings => {
-                              if (findings == null) {
-                                  resolve([])
-                                  return
-                              }
-
-                              for (let i = 0; i < findings.length; i++) {
-                                  findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
-                              }
-                              resolve(findings)
-                          })
-                          .catch(err => {
-                              logger.error(['findAllByCustomKeys', err])
-                              reject(err)
-                          })
-    })
 }
 
 /**
@@ -218,9 +190,12 @@ const findById = (collection, terms) => {
  * Поиск всего.
  * @return массив элементов
  * */
-const findBySampling = (collection) => {
+const findBySampling = (collection, terms) => {
     return new Promise((resolve, reject) => {
-        models[collection].find()
+        models[collection].find(terms.filter)
+                          .sort(terms.sort)
+                          .skip(terms.skip)
+                          .limit(terms.limit)
                           .then(async findings => {
                               if (findings.length === 0) {
                                   resolve([])

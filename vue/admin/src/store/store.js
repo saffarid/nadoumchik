@@ -166,9 +166,12 @@ export const store = new Vuex.Store({
         loadDraft: (context) => {
             if ('value' in context.state.drafts) delete context.state.drafts.value
             const terms = {
-                shift: Object.keys(context.state.drafts).length,
-                count: (Object.keys(context.state.drafts).length == 0) ? (10) : (6),
-                author: context.getters.user
+                skip: Object.keys(context.state.drafts).length,
+                limit: (Object.keys(context.state.drafts).length == 0) ? (10) : (6),
+                sort: {dateStamp: -1},
+                filter: {
+                    author: context.getters.user
+                }
             }
 
             const urlRequest = api.MODEL_REQUESTS.work_e(
@@ -227,9 +230,10 @@ export const store = new Vuex.Store({
             if (context.state.noMorePublications) return
             if ('value' in context.state.publications) delete context.state.publications.value
             const terms = {
-                shift: Object.values(context.state.publications).length,
-                count: (Object.values(context.state.publications).length == 0) ? (10) : (6),
-                ...t
+                skip: Object.values(context.state.publications).length,
+                limit: (Object.values(context.state.publications).length == 0) ? (10) : (6),
+                sort: {dateStamp: -1},
+                filter: t
             }
 
             const urlRequest = api.MODEL_REQUESTS.work_e(
