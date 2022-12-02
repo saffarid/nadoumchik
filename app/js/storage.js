@@ -4,11 +4,11 @@ const api = require('./../api/api_desc')
 let isInit = true
 
 const keysStorage = {
-    accessRights:'accessRights',
-    groups:'groups',
-    users:'users',
-    themesOfPublication:'themesOfPublication',
-    publications:'publications',
+    accessRights: 'accessRights',
+    groups: 'groups',
+    users: 'users',
+    themesOfPublication: 'themesOfPublication',
+    publications: 'publications',
 }
 
 let storage = {
@@ -20,7 +20,7 @@ let storage = {
 }
 
 const getData = (key) => {
-    if(!(key in keysStorage)) return null
+    if (!(key in keysStorage)) return null
     return storage[key]
 }
 
@@ -36,7 +36,6 @@ const readData = () => {
                     themesOfPublication: {},
                     publications: []
                 }
-
                 const change = resolve[0]._doc.change
 
                 if (needRead(change.accessRights)) {
@@ -46,6 +45,7 @@ const readData = () => {
                     for (const accessRight of accessRights) {
                         localStorage.accessRights[accessRight._id] = accessRight
                     }
+                    change.accessRights = false
                 }
 
                 if (needRead(change.groups)) {
@@ -60,6 +60,7 @@ const readData = () => {
                         }
                         localStorage.groups[group._id] = group
                     }
+                    change.groups = false
                 }
 
                 if (needRead(change.users)) {
@@ -73,6 +74,7 @@ const readData = () => {
                         delete user.auth
                         localStorage.users[user._id] = user
                     }
+                    change.users = false
                 }
 
                 if (needRead(change.themesOfPublication)) {
@@ -82,6 +84,7 @@ const readData = () => {
                     for (const theme of themes) {
                         localStorage.themesOfPublication[theme._id] = theme
                     }
+                    change.themesOfPublication = false
                 }
 
                 if (needRead(change.publications)) {
@@ -94,7 +97,7 @@ const readData = () => {
                                 limit: 50,
                                 sort: {dateStamp: -1},
                             })
-                        if(publications.length < 50) noMore = true
+                        if (publications.length < 50) noMore = true
                         for (const publication of publications) {
                             publication.author = localStorage.users[publication.author]
                             publication.theme.major = publication.theme.major != '-1' ? localStorage.themesOfPublication[publication.theme.major] : publication.theme.major
@@ -102,10 +105,32 @@ const readData = () => {
                             localStorage.publications.push(publication)
                         }
                     }
+                    change.publications = false
                 }
 
                 isInit = false
                 storage = localStorage
+
+                let hasChangeDatabase
+                for (const needFlag of Object.values(change)) {
+                    if (hasChangeDatabase == undefined) {
+                        hasChangeDatabase = needFlag
+                    }
+                    else {
+                        hasChangeDatabase = hasChangeDatabase && needFlag
+                    }
+                    if (!hasChangeDatabase) break
+                }
+
+                if (!hasChangeDatabase) {
+                    database.execute(
+                        api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.update),
+                        {
+                            filter: {_id: resolve[0]._doc._id},
+                            data: {change: change}
+                        }
+                    )
+                }
 
                 setTimeout(readData, getTime())
             })
