@@ -403,8 +403,6 @@ module.exports = {
      * */
     BODY_REQUEST: {
         termsSampling: {
-            shift: 0,
-            count: 0
         }
     },
     /**
@@ -713,6 +711,31 @@ module.exports = {
                             type: Boolean,
                             required: true
                         }
+                    },
+                    /**
+                     * Флаг отслеживания изменений в БД. Используется для определения целесообразности перечитывания определённых сегментов
+                     * */
+                    change: {
+                        accessRights: {
+                            type: Boolean,
+                            required: true
+                        },
+                        groups: {
+                            type: Boolean,
+                            required: true
+                        },
+                        users: {
+                            type: Boolean,
+                            required: true
+                        },
+                        themesOfPublication: {
+                            type: Boolean,
+                            required: true
+                        },
+                        publications: {
+                            type: Boolean,
+                            required: true
+                        },
                     }
                 }
             },

@@ -12,7 +12,7 @@
             </div>
             <div class="p-theme-date">
                 <div class="p-theme">
-                    <span>{{`${data.publication.theme.major.value} ${data.publication.theme.minor.value ? '/ '+data.publication.theme.minor.value : ''}`}}</span>
+                    <span>{{`${data.publication.theme.major.value} ${(data.publication.theme.minor && data.publication.theme.minor.value) ? '/ '+data.publication.theme.minor.value : ''}`}}</span>
                 </div>
                 <div class="p-date">
                     <span>{{datePublication}}</span>

@@ -39,14 +39,35 @@ const runOnObject = (sysDef, sysDb) => {
 }
 
 const init = async () => {
+    //Создаем модели и складываем их в словарь
     for (const value of Object.values(api.DATABASE.collections)) {
         models[value.name] = mongoose.model(value.name, value.schema);
     }
 
-    for (const key of Object.keys(initDataDB)) {
-        const dataFindings = await find(key, api.BODY_REQUEST.termsSampling)
-        if (dataFindings.length === 0) {
-            await insert(key, initDataDB[key])
+    for (const collectionName of Object.keys(initDataDB)) {
+        const dataFindings = await find(collectionName, api.BODY_REQUEST.termsSampling)
+        if (dataFindings.length == 0) {
+            await insert(collectionName, initDataDB[collectionName])
+        }
+        else {
+            if (!Array.isArray(initDataDB[collectionName])) {
+                const added = {}
+                for (const dataFindingObject of dataFindings) {
+                    for (const collectionFieldName of Object.keys(initDataDB[collectionName])) {
+                        if (collectionFieldName in dataFindingObject._doc &&
+                            Object.keys(dataFindingObject._doc[collectionFieldName]).length != 0 &&
+                            dataFindingObject._doc[collectionFieldName] != undefined) {
+                            continue
+                        }
+
+                        added[collectionFieldName] = initDataDB[collectionName][collectionFieldName]
+                    }
+                }
+                await update(collectionName, {
+                    filter: {_id: dataFindings[0]._id},
+                    data: added
+                })
+            }
         }
     }
 }
@@ -55,7 +76,10 @@ const init = async () => {
  * Функция проверяет наличие идентификатора
  * */
 const isById = (data) => {
-    return (work_object.isObject(data.filter) && ('_id' in data.filter))
+    return (data != undefined) &&
+        (data.filter != undefined) &&
+        (work_object.isObject(data.filter) &&
+            ('_id' in data.filter))
 }
 /**
  * Функция проверяет наличие параметров кол-ва выборки
@@ -177,7 +201,8 @@ const findById = (collection, terms) => {
                                   resolve([])
                                   return
                               }
-                              resolve([await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)])
+                              // resolve([await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)])
+                              resolve(finding)
                           })
                           .catch(err => {
                               logger.error(['findById', err])
@@ -202,9 +227,9 @@ const findBySampling = (collection, terms) => {
                                   return
                               }
 
-                              for (let i = 0; i < findings.length; i++) {
-                                  findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
-                              }
+                              // for (let i = 0; i < findings.length; i++) {
+                              //     findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
+                              // }
 
                               resolve(findings)
                           })
@@ -343,7 +368,7 @@ const update = (collection, data) => {
 const updateById = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findByIdAndUpdate(data._id, data)
+        models[collection].findByIdAndUpdate(data.filter._id, data.data)
                           .then(updated => resolve(updated))
                           .catch(err => {
                               logger.error(['updateById', err])
@@ -360,7 +385,7 @@ const updateById = (collection, data) => {
 const updateByCustomKeys = (collection, data) => {
     return new Promise(async (resolve, reject) => {
         data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findOneAndUpdate(data, data)
+        models[collection].findOneAndUpdate(data.filter, data.data)
                           .then(updated => resolve(updated))
                           .catch(err => {
                               logger.error(['updateByCustomKeys', err])
@@ -378,7 +403,7 @@ const updateByCustomKeys = (collection, data) => {
  * для комманды удаления - удаляемые данные;
  * для комманды выборки - Условие выборки (по id, по custom_keys, выборка нескольких документов)
  * */
-const execute = (url, data) => {
+const execute = (url, data= {filter:{}, data:{}}) => {
     const request = url.split('/')
     switch (request[3]) {
         case api.ACTS.insert: {

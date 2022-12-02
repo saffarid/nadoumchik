@@ -1,5 +1,7 @@
 const db = require('./../database')
 const api = require('./../../api/api_desc')
+const storage = require('./../storage')
+
 
 /**
  * Функция возвращает выборку опубликованных публикаций или черновиков по автору
@@ -71,20 +73,18 @@ const findByTitle = (data) => {
  * */
 const findSample = (data) => {
     return new Promise(async (resolve, reject) => {
-
-        let findings = await db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
-            data
-        )
-        resolve(
-            {
+        // let findings = await db.execute(
+        //     api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
+        //     data
+        // )
+        let findings = storage.getData(storage.keysStorage.publications).slice(data.skip, data.limit)
+        resolve({
                 ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
                 datas: {
                     findings: findings,
                     noMore: findings.length < data.limit
                 }
-            }
-        )
+            })
     })
 }
 
@@ -385,3 +385,5 @@ const execute = (url, data) => {
 module.exports = {
     execute
 }
+
+

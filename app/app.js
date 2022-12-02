@@ -6,6 +6,7 @@ const mongoos = require("mongoose")
 const bodyParser = require("body-parser")
 
 const database = require('./js/database')
+const storage = require('./js/storage')
 const work = require('./js/work/work')
 
 const winston = require('winston')
@@ -40,6 +41,7 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
     await database.init()
     if (err) return console.error(err)
     logger.info(`Connection to DB ${DB_CONNECTION_STRING} is success`)
+    storage.readData()
     app.listen(APP_PORT, APP_IP, () => {
         logger.info(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
         console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
