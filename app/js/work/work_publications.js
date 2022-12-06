@@ -9,7 +9,19 @@ const storage = require('./../storage')
 const findSampleByAuthor = (data) => {
     return new Promise(async (resolve, reject) => {
         if (!('author' in data.filter)) reject(api.CODES_RESPONSE.badRequest)
-        resolve(await findSample(data))
+        let findings = await db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
+            data
+        )
+
+        resolve({
+            ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
+            datas: {
+                findings: findings,
+                noMore: findings.length < data.limit
+            }
+        })
+        // resolve(await findSample(data))
     })
 }
 
@@ -36,31 +48,18 @@ const findDraftsByAuthor = (data) => {
  * Функция возвращает публикацию по её названию
  * */
 const findByTitle = (data) => {
-
     return new Promise(async (resolve, reject) => {
-
         if (!('title') in data) reject(api.CODES_RESPONSE.badRequest)
-
-        const finding = await db.execute(
+        let findings = await db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
             data
         )
 
-        if (findings.length == 0) {
-            resolve({
-                ...api.CODES_RESPONSE.noContent,
-                datas: {
-                    findings: [],
-                    noMore: true
-                }
-            })
-            return
-        }
         resolve({
-            ...api.CODES_RESPONSE.noContent,
+            ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
             datas: {
-                findings: finding,
-                noMore: true
+                findings: findings,
+                noMore: findings.length < data.limit
             }
         })
 
@@ -93,44 +92,23 @@ const findSample = (data) => {
  * */
 const saveDraft = (draft) => {
     return new Promise((resolve, reject) => {
-        if (!('_id' in draft)) {
-            db.execute(
-                api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.insert),
-                draft
-            )
-              .then(value => resolve({
-                  ...api.CODES_RESPONSE.created,
-                  datas: value
-              }))
-              .catch(err => {
-                  if (err.code == db.codes.duplicate) {
-                      resolve({
-                          ...api.CODES_RESPONSE.alreadyReported,
-                          datas: err.keyValue
-                      })
-                  }
-                  reject(err)
-              })
-        }
-        else {
-            db.execute(
-                api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.update),
-                draft
-            )
-              .then(value => resolve({
-                  ...api.CODES_RESPONSE.updated,
-                  datas: value
-              }))
-              .catch(err => {
-                  if (err.code == db.codes.duplicate) {
-                      resolve({
-                          ...api.CODES_RESPONSE.alreadyReported,
-                          datas: err.keyValue
-                      })
-                  }
-                  reject(err)
-              })
-        }
+        db.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, ('_id' in draft)?(api.ACTS.update):(api.ACTS.insert)),
+            draft
+        )
+          .then(value => resolve({
+              ...(('_id' in draft)?(api.CODES_RESPONSE.updated):(api.CODES_RESPONSE.created)),
+              datas: value
+          }))
+          .catch(err => {
+              if (err.code == db.codes.duplicate) {
+                  resolve({
+                      ...api.CODES_RESPONSE.alreadyReported,
+                      datas: err.keyValue
+                  })
+              }
+              reject(err)
+          })
     })
 }
 
