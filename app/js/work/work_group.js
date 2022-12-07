@@ -1,13 +1,16 @@
 const db = require('./../database')
 const api = require('./../../api/api_desc')
 
-const add = (group) => {
-    return new Promise((resolve, reject) => {
+const storage = require('./../storage')
+const system = require('./work_system')
+
+const add = (data) => new Promise((resolve, reject) => {
         db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.insert),
-            group
+            data
         )
           .then(value => {
+              system.setChange(system.keysChange.groups)
               resolve({
                   ...api.CODES_RESPONSE.created,
                   datas: value
@@ -23,15 +26,14 @@ const add = (group) => {
               reject(err)
           })
     })
-}
 
-const edit = (group) => {
-    return new Promise((resolve, reject) => {
+const edit = (data) => new Promise((resolve, reject) => {
         db.execute(
             api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.update),
-            group
+            data
         )
           .then(value => {
+              system.setChange(system.keysChange.groups)
               resolve({
                   ...api.CODES_RESPONSE.updated,
                   datas: value
@@ -47,32 +49,14 @@ const edit = (group) => {
               reject(err)
           })
     })
-}
 
-const getGroups = (data) => {
-    return new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select),
-            {}
-        )
-          .then(findings => {
-              if (findings.length == 0) {
-                  resolve({
-                      ...api.CODES_RESPONSE.notFound,
-                      datas: null
-                  })
-                  return
-              }
-              resolve({
-                  ...api.CODES_RESPONSE.ok,
-                  datas: {
-                      findings: findings
-                  }
-              })
-          })
-          .catch(err => reject(err))
+const getGroups = (data) => new Promise((resolve, reject) => {
+        const findings = Object.values(storage.getGroups())
+        resolve({
+            ...((findings.length == 0) ? (api.CODES_RESPONSE.notFound) : (api.CODES_RESPONSE.ok)),
+            datas: {findings: (findings.length == 0) ? (null) : (findings)}
+        })
     })
-}
 
 const execute = (url, data) => {
     const request = url.split('/')

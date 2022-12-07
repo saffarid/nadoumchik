@@ -1,146 +1,127 @@
 const db = require('./../database')
 const api = require('./../../api/api_desc')
+const hash = require('jshashes')
+const storage = require('./../storage')
+const system = require('./work_system')
 
-const addNew = (user) => {
-    return new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.insert),
-            {
-                registrationDate: new Date(),
-                ...user
-            }
-        )
-          .then(value => {
+const addNew = (data) => new Promise((resolve, reject) => {
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.insert),
+        {
+            registrationDate: new Date(),
+            ...data.data
+        }
+    )
+      .then(value => {
+          system.setChange(system.keysChange.users)
+          resolve({
+              ...api.CODES_RESPONSE.created,
+              datas: value
+          })
+      })
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.created,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
-}
+          }
+          reject(err)
+      })
+})
 
-const edit = (user) => {
-    return new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.update),
-            user
-        )
-          .then(value => {
+const edit = (data) => new Promise((resolve, reject) => {
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.update),
+        data
+    )
+      .then(value => {
+          system.setChange(system.keysChange.users)
+          resolve({
+              ...api.CODES_RESPONSE.updated,
+              datas: value
+          })
+      })
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.updated,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
+          }
+          reject(err)
+      })
+})
+
+const changePass = (data) => new Promise((resolve, reject) => {
+    db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), data)
+      .then(async response => {
+
+          //Определяем существование пользователя с переданным _id
+          if (Object.keys(response).length == 0) {
+              //Условыие выполняется если пользователь не найден
+              resolve({
+                  ...api.CODES_RESPONSE.notFound,
+              })
+              return
+          }
+
+          const user = await db.convertRefsToClearObj(api.DATABASE.collections.users.schema, response)
+
+          //Проверяем совпадение старых паролей
+          if (new hash.SHA1().b64(data.data.oldPass).localeCompare(user.auth.pass) != 0) {
+              resolve({
+                  ...api.CODES_RESPONSE.notAcceptable,
+              })
+              return
+          }
+
+          user.auth.pass = new hash.SHA1().b64(data.data.newPass)
+          db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.update), {
+              filter: {_id: user._id},
+              data: user
           })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
-}
+            .then(response => {
+                resolve({
+                        ...api.CODES_RESPONSE.updated,
+                        datas: {
+                            findings: user
+                        }
+                    }
+                )
+            })
 
-const changePass = (data) => {
-    return new Promise((resolve, reject) => {
-        db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), {_id: data._id})
-          .then(response => {
+      })
+      .catch(err => reject(err))
+})
 
-              //Определяем существование пользователя с переданным _id
-              if (response.length == 0) {
-                  //Условыие выполняется если пользователь не найден
-                  resolve({
-                      ...api.CODES_RESPONSE.notFound,
-                  })
-                  return
-              }
-
-              const user = response[0]
-              //Проверяем совпадение старых паролей
-              if (data.oldPass.localeCompare(user.auth.pass) != 0) {
-                  resolve({
-                      ...api.CODES_RESPONSE.notAcceptable,
-                  })
-                  return
-              }
-
-              user.auth.pass = data.newPass
-
-              db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.update), user)
-                  .then(response => {
-                      if(response[0].auth.pass.localeCompare(data.newPass) == 0) {
-                          resolve(
-                              ...api.CODES_RESPONSE.updated
-                          )
-                      } else {
-                          resolve(
-                              ...api.CODES_RESPONSE.notImplemented
-                          )
-                      }
-                  })
-
-          })
-          .catch(err => reject(err))
-    })
-}
-
-const checkAuth = (user) => {
-    return new Promise((resolve, reject) => {
-        db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), {auth: user})
-          .then(user => {
-              if (user.length == 0) {
-                  reject(api.CODES_RESPONSE.unauthorized)
-              }
-              else {
-                  const _user = user[0]
-                  _user.auth = undefined
-                  resolve({
-                          ...api.CODES_RESPONSE.ok,
-                          datas: {
-                              findings: _user
-                          }
-                      }
-                  )
-              }
-          })
-    })
-}
-
-const getAllUsers = (data) => {
-    return new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select),
-            {}
-        )
-          .then(findings => {
-              if (findings.length == 0) {
-                  resolve({
-                      ...api.CODES_RESPONSE.notFound,
-                      datas: null
-                  })
-                  return
-              }
+const checkAuth = (data) => new Promise((resolve, reject) => {
+    db.execute(api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select), data)
+      .then(async user => {
+          if (user.length == 0) {
+              reject(api.CODES_RESPONSE.unauthorized)
+          }
+          else {
+              let _user = user[0]
+              _user.auth = undefined
+              _user = await db.convertRefsToClearObj(api.DATABASE.collections.users.schema, _user)
               resolve({
                   ...api.CODES_RESPONSE.ok,
                   datas: {
-                      findings: findings
+                      findings: _user
                   }
               })
-          })
-          .catch(err => reject(err))
+          }
+      })
+})
+
+const getAllUsers = (data) => new Promise((resolve, reject) => {
+    const findings = Object.values(storage.getUsers())
+    resolve({
+        ...((findings.length == 0) ? (api.CODES_RESPONSE.notFound) : (api.CODES_RESPONSE.ok)),
+        datas: {findings: (findings.length == 0) ? (null) : (findings)}
     })
-}
+})
 
 const execute = (url, data) => {
     const request = url.split('/')

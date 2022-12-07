@@ -93,8 +93,6 @@
                 isReady: true
             })
 
-
-
             /**
              * Объект публикации, содержит описание контента и описание внешнего представления в списке.
              * Используется для создания новых публикаций или редактирования уже существующих
@@ -156,7 +154,7 @@
             /**
              * Функция отправляет запрос на удаление публикации
              * */
-            const removePublication = (removedPublication) => store.dispatch('removePublication', {_id: removedPublication._id})
+            const removePublication = (removedPublication) => store.dispatch('removePublication', removedPublication._id)
 
             const startWatchDraft = () => {
                 stopWatchDraft = watch(publication, () => {
@@ -202,7 +200,7 @@
             /**
              * Функция отправляет запрос на удаление черновика
              * */
-            const removeDraft = (removedDraft) => store.dispatch('removeDraft', {_id: removedDraft._id})
+            const removeDraft = (removedDraft) => store.dispatch('removeDraft', removedDraft._id)
 
             /**
              * Функция собирает объект публикации и отсылает его на сервер

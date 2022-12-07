@@ -3,14 +3,6 @@ const api = require('./../api/api_desc')
 
 let isInit = true
 
-const keysStorage = {
-    accessRights: 'accessRights',
-    groups: 'groups',
-    users: 'users',
-    themesOfPublication: 'themesOfPublication',
-    publications: 'publications',
-}
-
 let storage = {
     accessRights: {},
     groups: {},
@@ -19,16 +11,40 @@ let storage = {
     publications: []
 }
 
-const getData = (key) => {
-    if (!(key in keysStorage)) return null
-    return storage[key]
+const getPublications = async (skip, limit) => {
+    let publications
+    const localPublications = []
+    const _skip = skip ?? 0
+    const _limit = limit ?? 0
+
+    if (_skip + _limit > storage.publications.length) {
+        publications = await database.execute(
+            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
+            {
+                skip: Object.values(storage.publications).length,
+                limit: 50,
+                sort: {dateStamp: -1},
+            })
+        for (const publication of publications) {
+            publication.author = storage.users[publication.author]
+            publication.theme.major = publication.theme.major != '-1' ? storage.themesOfPublication[publication.theme.major] : publication.theme.major
+            publication.theme.minor = publication.theme.minor != '-1' ? storage.themesOfPublication[publication.theme.minor] : publication.theme.minor
+            localPublications.push(publication)
+        }
+    }
+
+    return [...(storage.publications.slice( _skip , _skip + _limit )), ...localPublications]
 }
+const getThemes = () => storage.themesOfPublication
+const getAccessRights = () => storage.accessRights
+const getGroups = () => storage.groups
+const getUsers = () => storage.users
 
 const readData = () => {
     database.execute(
         api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select)
     )
-            .then(async resolve => {
+            .then(async response => {
                 const localStorage = {
                     accessRights: {},
                     groups: {},
@@ -36,7 +52,7 @@ const readData = () => {
                     themesOfPublication: {},
                     publications: []
                 }
-                const change = resolve[0]._doc.change
+                const change = response[0].change
 
                 if (needRead(change.accessRights)) {
                     const accessRights = await database.execute(
@@ -126,7 +142,7 @@ const readData = () => {
                     database.execute(
                         api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.update),
                         {
-                            filter: {_id: resolve[0]._doc._id},
+                            filter: {_id: response[0]._id},
                             data: {change: change}
                         }
                     )
@@ -146,11 +162,13 @@ const getTime = () => {
     const updateTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() + 1)
 
     return (updateTime.getTime() - currentTime.getTime())
-
 }
 
 module.exports = {
-    keysStorage,
-    getData,
+    getpublications: getPublications,
+    getThemes,
+    getAccessRights,
+    getGroups,
+    getUsers,
     readData
 }

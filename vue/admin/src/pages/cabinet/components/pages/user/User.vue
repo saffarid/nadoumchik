@@ -119,7 +119,7 @@
             /**
              * Функция отправляет запрос на сервер о изменении профиля пользователя
              * */
-            const updateUser = () => store.dispatch('editUser', {user: user})
+            const updateUser = () => store.dispatch('editUser', user)
 
             const showChangePassPopup = () => {
                 isShowChangePass.value = true
@@ -135,10 +135,13 @@
             /**
              * Функция отправляет запрос на сервер об изменении пароля
              * */
-            const changePass = () => store.dispatch('changePass', {
-                dataPass: newOldPass,
-                customThen: closeChangePassPopup()
-            })
+            const changePass = () => {
+                console.log(newOldPass)
+                store.dispatch('changePass', {
+                    dataPass: newOldPass,
+                    customThen: closeChangePassPopup
+                })
+            }
 
             const isDisabledChangePassBtn = computed(() => {
                 return !(hasValueTextField(newOldPass.oldPass) &&

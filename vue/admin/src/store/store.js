@@ -192,7 +192,10 @@ export const store = new Vuex.Store({
          * Функция отправляет запрос на удаление черновика из БД
          * */
         removeDraft: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft), JSON.stringify(payload))
+            asyncRequest(
+                api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.removeDraft),
+                JSON.stringify({filter: {_id: payload}})
+            )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
                         context.commit('removeDraft', response.datas._id)
@@ -206,7 +209,7 @@ export const store = new Vuex.Store({
         saveDraft: (context, payload) => {
             asyncRequest(
                 api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.saveDraft),
-                JSON.stringify(payload.draft)
+                JSON.stringify({filter: {_id: payload.draft._id}, data: payload.draft})
             )
                 .then(response => {
                     if ((response.responseCode == api.CODES_RESPONSE.created.responseCode) || (response.responseCode == api.CODES_RESPONSE.updated.responseCode)) {
@@ -238,7 +241,7 @@ export const store = new Vuex.Store({
 
             const urlRequest = api.MODEL_REQUESTS.work_e(
                 api.ESSENCE.publication.name,
-                ('author' in terms) ? (api.ESSENCE.publication.actions.findSampleByAuthor) : (api.ESSENCE.publication.actions.findSample)
+                ('author' in t) ? (api.ESSENCE.publication.actions.findSampleByAuthor) : (api.ESSENCE.publication.actions.findSample)
             )
 
             asyncRequest(urlRequest, JSON.stringify(terms))
@@ -255,7 +258,10 @@ export const store = new Vuex.Store({
          * Функция отправляет запрос на удаление публикации из БД
          * */
         removePublication: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove), JSON.stringify(payload))
+            asyncRequest(
+                api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.remove),
+                JSON.stringify({filter: {_id: payload}})
+            )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.removed.responseCode) {
                         context.commit('removePublication', response.datas._id)
@@ -268,15 +274,21 @@ export const store = new Vuex.Store({
          * */
         publish: (context, payload) => {
             let url
+            let data
             if (payload.publication._id) {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.edit)
+                data = {
+                    filter: {_id: payload.publication._id},
+                    data: payload.publication
+                }
             }
             else {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.publish)
+                data = {data: payload.publication}
             }
             asyncRequest(
                 url,
-                JSON.stringify(payload.publication)
+                JSON.stringify(data)
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
@@ -317,30 +329,26 @@ export const store = new Vuex.Store({
          * Функция отправляет запрос на добавление новой темы для публикаций
          * */
         sendTheme: (context, payload) => {
-            const url = (payload.theme._id) ? (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme)) : (api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme))
-
-            asyncRequest(url, JSON.stringify(payload.theme))
+            let url
+            let data
+            if (payload.theme._id) {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme);
+                data = {
+                    filter: {_id: payload.theme._id},
+                    data: payload.theme
+                }
+            }
+            else {
+                url = api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.addTheme);
+                data = {data: payload.theme}
+            }
+            asyncRequest(url, JSON.stringify(data))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.created.responseCode || response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
                         context.dispatch('loadThemes')
                     }
                     else {
                         context.commit('setResponseMessage', response.message)
-                    }
-                })
-                .then(payload.customThen)
-                .catch(err => {
-                    console.error(err)
-                })
-        },
-        /**
-         * Функция отправляет запрос на изменение темы для публикаций
-         * */
-        editTheme: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.publication.name, api.ESSENCE.publication.actions.editTheme), JSON.stringify(payload.theme))
-                .then(response => {
-                    if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
-                        context.dispatch('loadThemes')
                     }
                 })
                 .then(payload.customThen)
@@ -358,7 +366,7 @@ export const store = new Vuex.Store({
             asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.system.name, api.ESSENCE.system.actions.get), JSON.stringify({}))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
-                        context.commit('setSystemData', response.datas.findings[0])
+                        context.commit('setSystemData', response.datas.findings)
                     }
                 })
                 .catch(err => console.error(err))
@@ -379,7 +387,7 @@ export const store = new Vuex.Store({
          * Функция отправляет запрос на авторизацию пользователя
          * */
         auth: (context, payload) => {
-            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify(payload.user))
+            asyncRequest(api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.auth), JSON.stringify({filter: {auth: payload.user}}))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.ok.responseCode) {
                         context.commit('setUser', response.datas.findings)
@@ -396,7 +404,7 @@ export const store = new Vuex.Store({
         changePass: (context, payload) => {
             asyncRequest(
                 api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.changePass),
-                JSON.stringify(payload.dataPass))
+                JSON.stringify({filter: {_id: payload.dataPass._id}, data: payload.dataPass}))
                 .then(response => {
                     let message
                     switch (response.responseCode) {
@@ -414,12 +422,15 @@ export const store = new Vuex.Store({
                         }
                         case api.CODES_RESPONSE.updated.responseCode : {
                             message = 'Ваш пароль изменен'
+                            setUser(storages.local, JSON.stringify({
+                                name: response.datas.findings.auth.name,
+                                pass: response.datas.findings.auth.pass}
+                            ))
                             payload.customThen()
                             break
                         }
                     }
                     context.commit('setResponseMessage', message)
-
                 })
                 .catch(err => console.error(err))
         },
@@ -430,7 +441,7 @@ export const store = new Vuex.Store({
         editUser: (context, payload) => {
             asyncRequest(
                 api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit),
-                JSON.stringify(payload.user)
+                JSON.stringify({filter: payload.user._id, data: payload.user})
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
@@ -446,13 +457,19 @@ export const store = new Vuex.Store({
          * */
         sendGroup: (context, payload) => {
             let url
+            let data
             if (payload.group._id) {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.edit)
+                data = {
+                    filter: payload.group._id,
+                    data: payload.group
+                }
             }
             else {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.group.name, api.ESSENCE.group.actions.addNew)
+                data = {data: payload.group}
             }
-            asyncRequest(url, JSON.stringify(payload.group))
+            asyncRequest(url, JSON.stringify(data))
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {
                         context.commit('addGroup', response.datas)
@@ -489,16 +506,19 @@ export const store = new Vuex.Store({
 
         sendUser: (context, payload) => {
             let url
+            let data
             if (payload.user._id) {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.edit)
+                data = {filter: payload.user._id, data: payload.user}
             }
             else {
                 url = api.MODEL_REQUESTS.work_e(api.ESSENCE.user.name, api.ESSENCE.user.actions.addNew)
+                data = {data: payload.user}
             }
 
             asyncRequest(
                 url,
-                JSON.stringify(payload.user)
+                JSON.stringify(data)
             )
                 .then(response => {
                     if (response.responseCode == api.CODES_RESPONSE.updated.responseCode) {

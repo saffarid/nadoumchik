@@ -51,22 +51,25 @@ const init = async () => {
         }
         else {
             if (!Array.isArray(initDataDB[collectionName])) {
-                const added = {}
+
                 for (const dataFindingObject of dataFindings) {
+                    const added = {}
                     for (const collectionFieldName of Object.keys(initDataDB[collectionName])) {
-                        if (collectionFieldName in dataFindingObject._doc &&
-                            Object.keys(dataFindingObject._doc[collectionFieldName]).length != 0 &&
-                            dataFindingObject._doc[collectionFieldName] != undefined) {
+                        if (collectionFieldName in dataFindingObject &&
+                            Object.keys(dataFindingObject[collectionFieldName]).length != 0 &&
+                            dataFindingObject[collectionFieldName] != undefined) {
                             continue
                         }
-
                         added[collectionFieldName] = initDataDB[collectionName][collectionFieldName]
                     }
+                    if (Object.keys(added).length == 0) continue
+                    await update(collectionName, {
+                        filter: {_id: dataFindings[0]._id},
+                        data: added
+                    })
+
+
                 }
-                await update(collectionName, {
-                    filter: {_id: dataFindings[0]._id},
-                    data: added
-                })
             }
         }
     }
@@ -81,164 +84,143 @@ const isById = (data) => {
         (work_object.isObject(data.filter) &&
             ('_id' in data.filter))
 }
-/**
- * Функция проверяет наличие параметров кол-ва выборки
- * */
-const isSampling = (data) => {
-    return (work_object.isObject(data) && ('skip' in data) && ('limit' in data))
-}
 
 /**
  * Функция конвертирует объект с ссылками в "чистый" объект
  * @param obj {Object} конвертируемый объект
  * @param schema {Object} Часть схемы коллекцииконвертируемого объекта
  * */
-const convertRefsToClearObj = (schema, obj) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            for (const key of Object.keys(schema)) {
-                if (key === '_id') continue
+const convertRefsToClearObj = (schema, obj) => new Promise(async (resolve, reject) => {
+    try {
+        for (const key of Object.keys(schema)) {
+            if (key === '_id') continue
 
-                //Получаем объект-описание поля документа коллекции
-                const desc = schema[key]
+            //Получаем объект-описание поля документа коллекции
+            const desc = schema[key]
 
-                //Определяем содержит описание тип объектаили нет
-                if ('type' in desc) {
-                    if (!('ref' in desc)) continue
+            //Определяем содержит описание тип объектаили нет
+            if ('type' in desc) {
+                if (!('ref' in desc)) continue
 
-
-                    const term = {
-                        _id: obj[key]
-                    }
-                    const finded = await find(schema[key].ref, term)
-                    obj[key] = (finded.length != 0) ? (finded[0]) : (term)
+                const term = {
+                    filter: {_id: obj[key]}
                 }
-                else {
-                    obj[key] = await convertRefsToClearObj(schema[key], obj[key])
-                }
+                const finded = await find(schema[key].ref, term)
+                obj[key] = finded ?? term.filter
             }
-            resolve(obj)
+            else {
+                obj[key] = await convertRefsToClearObj(schema[key], obj[key])
+            }
         }
-        catch (e) {
-            logger.error([`convertRefsToClearObj`, e])
-        }
-    })
-}
+        resolve(obj)
+    }
+    catch (e) {
+        logger.error([`convertRefsToClearObj`, e])
+    }
+})
 
 /**
  * Функция конвертирует "чистый" объект в объект с ссылками
  * @param obj {Object} конвертируемый объект
  * @param schema {Object} Часть схемы коллекцииконвертируемого объекта
  * */
-const convertClearToRefsObj = (schema, obj) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            //key - наименование поля в БД
-            for (const key of Object.keys(schema)) {
-                if (key === '_id') continue
-                //Получаем объект-описание поля документа коллекции
-                const desc = schema[key]
+const convertClearToRefsObj = (schema, obj) => new Promise(async (resolve, reject) => {
+    try {
+        //key - наименование поля в БД
+        for (const key of Object.keys(schema)) {
+            if (key === '_id') continue
+            if (!(key in obj)) continue
+            //Получаем объект-описание поля документа коллекции
+            const desc = schema[key]
 
-                //Определяем содержит описание тип объектаили нет
-                if ('type' in desc) {
-                    if (!('ref' in desc)) {
-                        continue
-                    }
-                    /*
-                    * Тот объект, который получим из obj по ключу key, является условием выборки.
-                    * Проверим его на наличие поля _id.
-                    * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
-                    * */
-                    if (work_object.isObject(obj[key]) && '_id' in obj[key]) {
-                        obj[key] = obj[key]['_id']
-                    }
-                    else {
-                        obj[key] = (await find(schema[key].ref, obj[key]))[0]
-                    }
+            //Определяем содержит описание тип объектаили нет
+            if ('type' in desc) {
+                if (!('ref' in desc)) {
+                    continue
+                }
+                /*
+                * Тот объект, который получим из obj по ключу key, является условием выборки.
+                * Проверим его на наличие поля _id.
+                * Если поле есть выделим его и подставим, иначе найдём в БД объект и определим его идентификатор
+                * */
+                if (work_object.isObject(obj[key]) && '_id' in obj[key]) {
+                    obj[key] = obj[key]['_id']
                 }
                 else {
-                    obj[key] = await convertClearToRefsObj(schema[key], obj[key])
+                    obj[key] = (await find(schema[key].ref, obj[key]))[0]
                 }
             }
-            resolve(obj)
+            else {
+                obj[key] = await convertClearToRefsObj(schema[key], obj[key])
+            }
         }
-        catch (e) {
-            logger.error(['convertClearToRefsObj', e])
-        }
-    })
-
-
-}
+        resolve(obj)
+    }
+    catch (e) {
+        logger.error(['convertClearToRefsObj', e])
+    }
+})
 
 /* --- Функции выборки --- */
 
 /**
  * Функиця выполняет выборку в коллекции
  * @param collection {String} Наименование коллекции
- * @param terms {Object} условие выборки.
- * Для выборки по идентификатору - передавать объект вида {_id: some_data};
- * для выборки по кастомному параметру - {custom_key: some_data, ..., custom_key: some_data};
- * для выборки нескольких документов - {shift: начало_выборки, length: кол-во документов},
- * если необходимо получить все возможные объекты, достаточно передать нули {shift: 0, count: 0}.
+ * @param data {Object} условие выборки.
  */
-const find = (collection, terms) => {
-    if (isById(terms)) {
-        return findById(collection, terms)
+const find = (collection, data) => {
+    if (isById(data)) {
+        return findById(collection, data)
     }
     else {
-        return findBySampling(collection, terms)
+        return findBySampling(collection, data)
     }
 }
 
 /**
  * Поиск по идентификатору.
  * */
-const findById = (collection, terms) => {
-    return new Promise((resolve, reject) => {
-        models[collection].findById(terms._id)
-                          .then(async finding => {
-                              if (finding == null) {
-                                  resolve([])
-                                  return
-                              }
-                              // resolve([await convertRefsToClearObj(api.DATABASE.collections[collection].schema, finding)])
-                              resolve(finding)
-                          })
-                          .catch(err => {
-                              logger.error(['findById', err])
-                              reject(err)
-                          })
-    })
-}
+const findById = (collection, data) => new Promise((resolve, reject) => {
+    models[collection].findById(data.filter._id)
+                      .then(async finding => {
+                          if (finding == null) {
+                              resolve([])
+                              return
+                          }
+                          resolve(finding._doc ?? finding)
+                      })
+                      .catch(err => {
+                          logger.error(['findById', err])
+                          reject(err)
+                      })
+})
 
 /**
  * Поиск всего.
  * @return массив элементов
  * */
-const findBySampling = (collection, terms) => {
-    return new Promise((resolve, reject) => {
-        models[collection].find(terms.filter)
-                          .sort(terms.sort)
-                          .skip(terms.skip)
-                          .limit(terms.limit)
-                          .then(async findings => {
-                              if (findings.length === 0) {
-                                  resolve([])
-                                  return
-                              }
+const findBySampling = (collection, data) => new Promise((resolve, reject) => {
+    models[collection].find(data.filter)
+                      .sort(data.sort)
+                      .skip(data.skip)
+                      .limit(data.limit)
+                      .then(async findings => {
+                          if (findings.length === 0) {
+                              resolve([])
+                              return
+                          }
 
-                              // for (let i = 0; i < findings.length; i++) {
-                              //     findings[i] = await convertRefsToClearObj(api.DATABASE.collections[collection].schema, findings[i])
-                              // }
+                          for (let i = 0; i < findings.length; i++) {
+                              findings[i] = findings[i]._doc ?? findings[i]
+                          }
 
-                              resolve(findings)
-                          })
-                          .catch(err => {
-                              logger.error(['findBySampling', err])
-                              reject(err)
-                          })
-    })
-}
+                          resolve(findings)
+                      })
+                      .catch(err => {
+                          logger.error(['findBySampling', err])
+                          reject(err)
+                      })
+})
 
 /* --- Функции вставки --- */
 
@@ -260,41 +242,37 @@ const insert = (collection, data) => {
  * @param collection {String}
  * @param data {Object}
  * */
-const insertOne = (collection, data) => {
-    return new Promise(async (resolve, reject) => {
-        data['_id'] = uuid()
-        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].create(data)
-                          .then(value => resolve(value))
-                          .catch(err => {
-                              logger.error(['insertOne', err])
-                              reject(err)
-                          })
-    })
-}
+const insertOne = (collection, data) => new Promise(async (resolve, reject) => {
+    data.data['_id'] = uuid()
+    data.data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data.data)
+    models[collection].create(data.data)
+                      .then(value => resolve(value))
+                      .catch(err => {
+                          logger.error(['insertOne', err])
+                          reject(err)
+                      })
+})
 
 /**
  * @param collection {String}
  * @param data {Array}
  * */
-const insertMany = (collection, data) => {
-    return new Promise(async (resolve, reject) => {
-        const schema = api.DATABASE.collections[collection].schema
-        for (let i = 0; i < data.length; i++) {
-            data[i]['_id'] = uuid()
-            data[i] = await convertClearToRefsObj(schema, data[i])
-        }
-        models[collection].insertMany(data)
-                          .then(value => resolve({
-                              ...api.CODES_RESPONSE.created,
-                              datas: value
-                          }))
-                          .catch(err => {
-                              logger.error(['insertMany', err])
-                              reject(err)
-                          })
-    })
-}
+const insertMany = (collection, data) => new Promise(async (resolve, reject) => {
+    const schema = api.DATABASE.collections[collection].schema
+    for (let i = 0; i < data.data.length; i++) {
+        data.data[i]['_id'] = uuid()
+        data.data[i] = await convertClearToRefsObj(schema, data.data[i])
+    }
+    models[collection].insertMany(data.data)
+                      .then(value => resolve({
+                          ...api.CODES_RESPONSE.created,
+                          datas: value
+                      }))
+                      .catch(err => {
+                          logger.error(['insertMany', err])
+                          reject(err)
+                      })
+})
 
 /* --- Функции удаления --- */
 
@@ -317,32 +295,28 @@ const remove = (collection, data) => {
  * @param collection {String} Наименование коллекции
  * @param data {Object} удаляемые данные.
  * */
-const removeById = (collection, data) => {
-    return new Promise((resolve, reject) => {
-        models[collection].findByIdAndDelete(data._id)
-                          .then(removed => resolve(removed))
-                          .catch(err => {
-                              logger.error(['removeById', err])
-                              reject(err)
-                          })
-    })
-}
+const removeById = (collection, data) => new Promise((resolve, reject) => {
+    models[collection].findByIdAndDelete(data.filter._id)
+                      .then(removed => resolve(removed))
+                      .catch(err => {
+                          logger.error(['removeById', err])
+                          reject(err)
+                      })
+})
 
 /**
  * Удаление по произвольному набору ключей.
  * @param collection {String} Наименование коллекции
  * @param data {Object} удаляемые данные.
  * */
-const removeByCustomKeys = (collection, data) => {
-    return new Promise((resolve, reject) => {
-        models[collection].findOneAndDelete(data)
-                          .then(removed => resolve(removed))
-                          .catch(err => {
-                              logger.error(['removeByCustomKeys', err])
-                              reject(err)
-                          })
-    })
-}
+const removeByCustomKeys = (collection, data) => new Promise((resolve, reject) => {
+    models[collection].findOneAndDelete(data.filter)
+                      .then(removed => resolve(removed))
+                      .catch(err => {
+                          logger.error(['removeByCustomKeys', err])
+                          reject(err)
+                      })
+})
 
 /* --- Функции обновления --- */
 
@@ -365,34 +339,30 @@ const update = (collection, data) => {
  * @param collection {String} Наименование коллекции
  * @param data {Object} удаляемые данные.
  * */
-const updateById = (collection, data) => {
-    return new Promise(async (resolve, reject) => {
-        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findByIdAndUpdate(data.filter._id, data.data)
-                          .then(updated => resolve(updated))
-                          .catch(err => {
-                              logger.error(['updateById', err])
-                              reject(err)
-                          })
-    })
-}
+const updateById = (collection, data) => new Promise(async (resolve, reject) => {
+    data.data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data.data)
+    models[collection].findByIdAndUpdate(data.filter._id, data.data)
+                      .then(updated => resolve(updated))
+                      .catch(err => {
+                          logger.error(['updateById', err])
+                          reject(err)
+                      })
+})
 
 /**
  * Обновление по произвольному набору ключей.
  * @param collection {String} Наименование коллекции
  * @param data {Object} обновляемые данные.
  * */
-const updateByCustomKeys = (collection, data) => {
-    return new Promise(async (resolve, reject) => {
-        data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data)
-        models[collection].findOneAndUpdate(data.filter, data.data)
-                          .then(updated => resolve(updated))
-                          .catch(err => {
-                              logger.error(['updateByCustomKeys', err])
-                              reject(err)
-                          })
-    })
-}
+const updateByCustomKeys = (collection, data) => new Promise(async (resolve, reject) => {
+    data.data = await convertClearToRefsObj(api.DATABASE.collections[collection].schema, data.data)
+    models[collection].findOneAndUpdate(data.filter, data.data)
+                      .then(updated => resolve(updated))
+                      .catch(err => {
+                          logger.error(['updateByCustomKeys', err])
+                          reject(err)
+                      })
+})
 
 /**
  * Функция выполняет некоторую комманду с базой данных.
@@ -403,7 +373,7 @@ const updateByCustomKeys = (collection, data) => {
  * для комманды удаления - удаляемые данные;
  * для комманды выборки - Условие выборки (по id, по custom_keys, выборка нескольких документов)
  * */
-const execute = (url, data= {filter:{}, data:{}}) => {
+const execute = (url, data = {filter: {}, data: {}}) => {
     const request = url.split('/')
     switch (request[3]) {
         case api.ACTS.insert: {
@@ -434,6 +404,8 @@ const codes = {
 }
 
 module.exports = {
+    convertClearToRefsObj,
+    convertRefsToClearObj,
     codes,
     execute,
     init
