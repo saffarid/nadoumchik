@@ -18,7 +18,6 @@ const logger = winston.createLogger({
 })
 
 const execute = (url, data) => {
-
     logger.info(['Execute', url, data])
 
     const request = url.split('/')

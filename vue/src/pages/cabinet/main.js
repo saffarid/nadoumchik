@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App           from './App.vue'
-import api           from "../../../../../app/api/api_desc"
-import workObject    from "../../../../../app/js/work_object"
+import api           from "../../../../app/api/api_desc"
+import workObject    from "../../../../app/js/work_object"
 import {store}       from "@/store/store";
 
 const app = createApp(App);

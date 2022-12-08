@@ -1,6 +1,6 @@
 import Vuex                              from 'vuex'
 import {asyncRequest, setUser, storages} from "@/js/web";
-import api                               from "../../../../app/api/api_desc.js"
+import api                               from "../../../app/api/api_desc.js"
 
 const pages = {
     index: 'nadoumchik',
@@ -319,7 +319,7 @@ export const store = new Vuex.Store({
                 api.ESSENCE.publication.actions.getThemes
             )
 
-            asyncRequest(urlRequest, JSON.stringify(api.BODY_REQUEST.termsSampling))
+            asyncRequest(urlRequest)
                 .then((response) => {
                     context.commit('addThemes', response.datas.findings)
                 })

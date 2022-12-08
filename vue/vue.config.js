@@ -14,7 +14,7 @@ const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
 module.exports = {
 
-    outputDir: p.resolve(__dirname, './../../www'),
+    outputDir: p.resolve(__dirname, './../www'),
 
     pages: {
         index: {

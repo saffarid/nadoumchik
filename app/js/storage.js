@@ -165,7 +165,7 @@ const getTime = () => {
 }
 
 module.exports = {
-    getpublications: getPublications,
+    getPublications,
     getThemes,
     getAccessRights,
     getGroups,

@@ -5,12 +5,10 @@ const storage = require('./../storage')
 const system = require('./work_system')
 
 const addNew = (data) => new Promise((resolve, reject) => {
+    data.data['registrationDate'] = new Date()
     db.execute(
         api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.insert),
-        {
-            registrationDate: new Date(),
-            ...data.data
-        }
+        data
     )
       .then(value => {
           system.setChange(system.keysChange.users)
@@ -25,6 +23,7 @@ const addNew = (data) => new Promise((resolve, reject) => {
                   ...api.CODES_RESPONSE.alreadyReported,
                   datas: err.keyValue
               })
+              return
           }
           reject(err)
       })
@@ -48,6 +47,7 @@ const edit = (data) => new Promise((resolve, reject) => {
                   ...api.CODES_RESPONSE.alreadyReported,
                   datas: err.keyValue
               })
+              return
           }
           reject(err)
       })
@@ -81,16 +81,12 @@ const changePass = (data) => new Promise((resolve, reject) => {
               filter: {_id: user._id},
               data: user
           })
-            .then(response => {
-                resolve({
-                        ...api.CODES_RESPONSE.updated,
-                        datas: {
-                            findings: user
-                        }
-                    }
-                )
-            })
-
+            .then(response => resolve({
+                ...api.CODES_RESPONSE.updated,
+                datas: {
+                    findings: user
+                }
+            }))
       })
       .catch(err => reject(err))
 })

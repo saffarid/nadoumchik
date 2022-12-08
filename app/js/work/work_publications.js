@@ -71,7 +71,7 @@ const findByTitle = (data) => new Promise(async (resolve, reject) => {
  * Функция возвращает выборку публикаций
  * */
 const findSample = (data) => new Promise(async (resolve, reject) => {
-    let findings = await storage.getpublications(data.skip, data.limit)
+    let findings = await storage.getPublications(data.skip, data.limit)
     resolve({
         ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
         datas: {
@@ -99,6 +99,7 @@ const saveDraft = (data) => new Promise((resolve, reject) => {
                   ...api.CODES_RESPONSE.alreadyReported,
                   datas: err.keyValue
               })
+              return
           }
           reject(err)
       })
@@ -125,6 +126,7 @@ const publish = (data) => new Promise((resolve, reject) => {
                   ...api.CODES_RESPONSE.alreadyReported,
                   datas: err.keyValue
               })
+              return
           }
           reject(err)
       })
@@ -151,6 +153,7 @@ const edit = (data) => new Promise((resolve, reject) => {
                   ...api.CODES_RESPONSE.alreadyReported,
                   datas: err.keyValue
               })
+              return
           }
           reject(err)
       })
@@ -160,130 +163,131 @@ const edit = (data) => new Promise((resolve, reject) => {
  * Функция удаляет полученный объект из БД
  * */
 const removeDraft = (data) => new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.remove),
-            data
-        )
-          .then(value => {
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.drafts.name, api.ACTS.remove),
+        data
+    )
+      .then(value => resolve({
+          ...api.CODES_RESPONSE.removed,
+          datas: value
+      }))
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.removed,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
+              return
+          }
+          reject(err)
+      })
+})
 
 /**
  * Функция удаляет полученный объект из БД
  * */
 const remove = (data) => new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove),
-            data
-        )
-          .then(value => {
-              system.setChange(system.keysChange.publications)
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.remove),
+        data
+    )
+      .then(value => {
+          system.setChange(system.keysChange.publications)
+          resolve({
+              ...api.CODES_RESPONSE.removed,
+              datas: value
+          })
+      })
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.removed,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
+              return
+          }
+          reject(err)
+      })
+})
 
 const addTheme = (data) => new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.insert),
-            data
-        )
-          .then(value => {
-              system.setChange(system.keysChange.themesOfPublication)
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.insert),
+        data
+    )
+      .then(value => {
+          system.setChange(system.keysChange.themesOfPublication)
+          resolve({
+              ...api.CODES_RESPONSE.created,
+              datas: value
+          })
+      })
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.created,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
+              return
+          }
+          reject(err)
+      })
+})
 
 const getThemes = (data) => new Promise((resolve, reject) => {
-        const findings = Object.values(storage.getThemes())
-        resolve({
-            ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
-            datas: {
-                findings: findings,
-            }
-        })
+    const findings = Object.values(storage.getThemes())
+    resolve({
+        ...((findings.length == 0) ? (api.CODES_RESPONSE.noContent) : (api.CODES_RESPONSE.ok)),
+        datas: {
+            findings: findings,
+        }
     })
+})
 
 const editTheme = (data) => new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.update),
-            data
-        )
-          .then(value => {
-              system.setChange(system.keysChange.themesOfPublication)
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.update),
+        data
+    )
+      .then(value => {
+          system.setChange(system.keysChange.themesOfPublication)
+          resolve({
+              ...api.CODES_RESPONSE.updated,
+              datas: value
+          })
+      })
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.updated,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
+              return
+          }
+          reject(err)
+      })
+})
 
 const removeTheme = (data) => new Promise((resolve, reject) => {
-        db.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.remove),
-            data
-        )
-          .then(value => {
+    db.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.remove),
+        data
+    )
+      .then(value => resolve({
+              ...api.CODES_RESPONSE.removed,
+              datas: value
+          }))
+      .catch(err => {
+          if (err.code == db.codes.duplicate) {
               resolve({
-                  ...api.CODES_RESPONSE.removed,
-                  datas: value
+                  ...api.CODES_RESPONSE.alreadyReported,
+                  datas: err.keyValue
               })
-          })
-          .catch(err => {
-              if (err.code == db.codes.duplicate) {
-                  resolve({
-                      ...api.CODES_RESPONSE.alreadyReported,
-                      datas: err.keyValue
-                  })
-              }
-              reject(err)
-          })
-    })
+              return
+          }
+          reject(err)
+      })
+})
 
 const execute = (url, data) => {
     const request = url.split('/')

@@ -22,6 +22,7 @@ const add = (data) => new Promise((resolve, reject) => {
                       ...api.CODES_RESPONSE.alreadyReported,
                       datas: err.keyValue
                   })
+                  return
               }
               reject(err)
           })
@@ -45,6 +46,7 @@ const edit = (data) => new Promise((resolve, reject) => {
                       ...api.CODES_RESPONSE.alreadyReported,
                       datas: err.keyValue
                   })
+                  return
               }
               reject(err)
           })

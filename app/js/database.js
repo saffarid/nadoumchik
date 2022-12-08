@@ -22,21 +22,19 @@ const logger = winston.createLogger({
 
 const models = {}
 
-const runOnObject = (sysDef, sysDb) => {
-    Object.keys(sysDef).forEach(((key, index, array) => {
-        if (sysDb[key] === undefined || sysDb[key] === null) {
-            //Если запись в БД не определена, тупо добавляем всё поле целиком
-            sysDb[key] = sysDef[key]
+const runOnObject = (sysDef, sysDb) => Object.keys(sysDef).forEach(((key, index, array) => {
+    if (sysDb[key] === undefined || sysDb[key] === null) {
+        //Если запись в БД не определена, тупо добавляем всё поле целиком
+        sysDb[key] = sysDef[key]
+    }
+    else {
+        //Если запись определена и...
+        if (work_object.isObject(sysDb[key])) {
+            // и является объектом
+            runOnObject(sysDef[key], sysDb[key])
         }
-        else {
-            //Если запись определена и...
-            if (work_object.isObject(sysDb[key])) {
-                // и является объектом
-                runOnObject(sysDef[key], sysDb[key])
-            }
-        }
-    }))
-}
+    }
+}))
 
 const init = async () => {
     //Создаем модели и складываем их в словарь
@@ -45,7 +43,7 @@ const init = async () => {
     }
 
     for (const collectionName of Object.keys(initDataDB)) {
-        const dataFindings = await find(collectionName, api.BODY_REQUEST.termsSampling)
+        const dataFindings = await find(collectionName)
         if (dataFindings.length == 0) {
             await insert(collectionName, initDataDB[collectionName])
         }
@@ -168,7 +166,7 @@ const convertClearToRefsObj = (schema, obj) => new Promise(async (resolve, rejec
  * @param collection {String} Наименование коллекции
  * @param data {Object} условие выборки.
  */
-const find = (collection, data) => {
+const find = (collection, data= {filter:{}}) => {
     if (isById(data)) {
         return findById(collection, data)
     }
@@ -209,11 +207,9 @@ const findBySampling = (collection, data) => new Promise((resolve, reject) => {
                               resolve([])
                               return
                           }
-
                           for (let i = 0; i < findings.length; i++) {
                               findings[i] = findings[i]._doc ?? findings[i]
                           }
-
                           resolve(findings)
                       })
                       .catch(err => {
@@ -281,7 +277,7 @@ const insertMany = (collection, data) => new Promise(async (resolve, reject) => 
  * @param collection {String} Наименование коллекции
  * @param data {Object} удаляемые данные.
  */
-const remove = (collection, data) => {
+const remove = (collection, data= {filter:{}}) => {
     if (isById(data)) {
         return removeById(collection, data)
     }
@@ -325,7 +321,7 @@ const removeByCustomKeys = (collection, data) => new Promise((resolve, reject) =
  * @param collection {String} Наименование коллекции
  * @param data {Object} удаляемые данные.
  */
-const update = (collection, data) => {
+const update = (collection, data = {filter: {}, data: {}}) => {
     if (isById(data)) {
         return updateById(collection, data)
     }

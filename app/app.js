@@ -46,7 +46,6 @@ mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser
         logger.info(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
         console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
     })
-
 })
 app
     .use(bodyParser.json({limit: '50mb'}))
@@ -80,9 +79,7 @@ app
     .post(/\/db(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         database.execute(req.url, req.body)
-                .then(data => {
-                    res.json(data)
-                })
+                .then(data => res.json(data))
                 .catch((err) => {
                     logger.warn([`Error with`, req.url, req.body])
                     logger.warn(err)
@@ -92,9 +89,7 @@ app
     .post(/\/work(\/.+)?/, (req, res) => {
         if (!req.body) res.sendStatus(400)
         work.execute(req.url, req.body)
-            .then(data => {
-                res.json(data)
-            })
+            .then(data => res.json(data))
             .catch((err) => {
                 logger.warn([`Error with`, req.url, req.body])
                 logger.warn(err)

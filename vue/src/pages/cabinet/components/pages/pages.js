@@ -1,4 +1,4 @@
-import api                    from "../../../../../../../app/api/api_desc"
+import api                    from "../../../../../../app/api/api_desc"
 import {defineAsyncComponent} from "vue";
 
 const getPages = (user) => {
