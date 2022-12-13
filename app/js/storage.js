@@ -12,25 +12,12 @@ let storage = {
 }
 
 const getPublications = async (skip, limit) => {
-    let publications
     const localPublications = []
     const _skip = skip ?? 0
     const _limit = limit ?? 0
 
     if (_skip + _limit > storage.publications.length) {
-        publications = await database.execute(
-            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
-            {
-                skip: Object.values(storage.publications).length,
-                limit: 50,
-                sort: {dateStamp: -1},
-            })
-        for (const publication of publications) {
-            publication.author = storage.users[publication.author]
-            publication.theme.major = publication.theme.major != '-1' ? storage.themesOfPublication[publication.theme.major] : publication.theme.major
-            publication.theme.minor = publication.theme.minor != '-1' ? storage.themesOfPublication[publication.theme.minor] : publication.theme.minor
-            localPublications.push(publication)
-        }
+        localPublications.push(...(await requestPublications(Object.values(storage.publications).length)))
     }
 
     return [...(storage.publications.slice( _skip , _skip + _limit )), ...localPublications]
@@ -40,116 +27,125 @@ const getAccessRights = () => storage.accessRights
 const getGroups = () => storage.groups
 const getUsers = () => storage.users
 
+const requestPublications = async (skip) => {
+    const localPublications = []
+    const publications = await database.execute(
+        api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
+        {
+            skip: skip,
+            limit: 50,
+            sort: {dateStamp: -1},
+        })
+    for (const publication of publications) {
+        publication.author = storage.users[publication.author]
+        publication.theme.major = publication.theme.major != '-1' ? storage.themesOfPublication[publication.theme.major] : publication.theme.major
+        publication.theme.minor = publication.theme.minor != '-1' ? storage.themesOfPublication[publication.theme.minor] : publication.theme.minor
+        localPublications.push(publication)
+    }
+    return localPublications
+}
+
 const readData = () => {
     database.execute(
         api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.select)
     )
-            .then(async response => {
-                const localStorage = {
-                    accessRights: {},
-                    groups: {},
-                    users: {},
-                    themesOfPublication: {},
-                    publications: []
-                }
-                const change = response[0].change
+        .then(async resolve => {
 
-                if (needRead(change.accessRights)) {
-                    const accessRights = await database.execute(
-                        api.MODEL_REQUESTS.db(api.DATABASE.collections.accessRights.name, api.ACTS.select)
-                    )
-                    for (const accessRight of accessRights) {
-                        localStorage.accessRights[accessRight._id] = accessRight
-                    }
-                    change.accessRights = false
-                }
+            const change = resolve[0].change
 
-                if (needRead(change.groups)) {
-                    const groups = await database.execute(
-                        api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select)
-                    )
-                    for (const group of groups) {
-                        for (const rightKey of Object.keys(group.rights)) {
-                            if (group.rights[rightKey] in localStorage.accessRights) {
-                                group.rights[rightKey] = localStorage.accessRights[group.rights[rightKey]]
-                            }
+            if (needRead(change.accessRights)) {
+                const _access = {}
+                const accessRights = await database.execute(
+                    api.MODEL_REQUESTS.db(api.DATABASE.collections.accessRights.name, api.ACTS.select)
+                )
+                for (const accessRight of accessRights) {
+                    _access[accessRight._id] = accessRight
+                }
+                storage.accessRights = _access
+                change.accessRights = false
+            }
+
+            if (needRead(change.groups)) {
+                const _groups = {}
+                const groups = await database.execute(
+                    api.MODEL_REQUESTS.db(api.DATABASE.collections.groups.name, api.ACTS.select)
+                )
+                for (const group of groups) {
+                    for (const rightKey of Object.keys(group.rights)) {
+                        if (group.rights[rightKey] in storage.accessRights) {
+                            group.rights[rightKey] = storage.accessRights[group.rights[rightKey]]
                         }
-                        localStorage.groups[group._id] = group
                     }
-                    change.groups = false
+                    _groups[group._id] = group
                 }
+                storage.groups = _groups
+                change.groups = false
+            }
 
-                if (needRead(change.users)) {
-                    const users = await database.execute(
-                        api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select)
-                    )
-                    for (const user of users) {
-                        if (user.group in localStorage.groups) {
-                            user.group = localStorage.groups[user.group]
-                        }
+            if (needRead(change.users)) {
+                const _users = {}
+                const users = await database.execute(
+                    api.MODEL_REQUESTS.db(api.DATABASE.collections.users.name, api.ACTS.select)
+                )
+                for (const user of users) {
+                    if (user.group in storage.groups) {
+                        user.group = storage.groups[user.group]
                         delete user.auth
-                        localStorage.users[user._id] = user
+                        _users[user._id] = user
                     }
-                    change.users = false
                 }
+                storage.users = _users
+                change.users = false
+            }
 
-                if (needRead(change.themesOfPublication)) {
-                    const themes = await database.execute(
-                        api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select)
-                    )
-                    for (const theme of themes) {
-                        localStorage.themesOfPublication[theme._id] = theme
+            if (needRead(change.themesOfPublication)) {
+                const _themes = {}
+                const themes = await database.execute(
+                    api.MODEL_REQUESTS.db(api.DATABASE.collections.themesOfPublication.name, api.ACTS.select)
+                )
+                for (const theme of themes) {
+                    _themes[theme._id] = theme
+                }
+                storage.themesOfPublication = _themes
+                change.themesOfPublication = false
+            }
+
+            if (needRead(change.publications)) {
+                let noMore = false
+                const _publications = []
+                while (_publications.length < 500 && !noMore) {
+                    const _publ = await requestPublications(_publications.length)
+                    if (_publ.length < 50) noMore = true
+                    _publications.push(..._publ)
+                }
+                storage.publications = _publications
+                change.publications = false
+            }
+
+            isInit = false
+
+            let hasChangeDatabase
+            for (const needFlag of Object.values(change)) {
+                if (hasChangeDatabase == undefined) {
+                    hasChangeDatabase = needFlag
+                } else {
+                    hasChangeDatabase = hasChangeDatabase && needFlag
+                }
+                if (!hasChangeDatabase) break
+            }
+
+            if (!hasChangeDatabase) {
+                database.execute(
+                    api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.update),
+                    {
+                        filter: {_id: resolve[0]._id},
+                        data: {change: change}
                     }
-                    change.themesOfPublication = false
-                }
+                )
+            }
 
-                if (needRead(change.publications)) {
-                    let noMore = false
-                    while (Object.values(localStorage.publications).length < 500 && !noMore) {
-                        const publications = await database.execute(
-                            api.MODEL_REQUESTS.db(api.DATABASE.collections.publications.name, api.ACTS.select),
-                            {
-                                skip: Object.values(localStorage.publications).length,
-                                limit: 50,
-                                sort: {dateStamp: -1},
-                            })
-                        if (publications.length < 50) noMore = true
-                        for (const publication of publications) {
-                            publication.author = localStorage.users[publication.author]
-                            publication.theme.major = publication.theme.major != '-1' ? localStorage.themesOfPublication[publication.theme.major] : publication.theme.major
-                            publication.theme.minor = publication.theme.minor != '-1' ? localStorage.themesOfPublication[publication.theme.minor] : publication.theme.minor
-                            localStorage.publications.push(publication)
-                        }
-                    }
-                    change.publications = false
-                }
-
-                isInit = false
-                storage = localStorage
-
-                let hasChangeDatabase
-                for (const needFlag of Object.values(change)) {
-                    if (hasChangeDatabase == undefined) {
-                        hasChangeDatabase = needFlag
-                    }
-                    else {
-                        hasChangeDatabase = hasChangeDatabase && needFlag
-                    }
-                    if (!hasChangeDatabase) break
-                }
-
-                if (!hasChangeDatabase) {
-                    database.execute(
-                        api.MODEL_REQUESTS.db(api.DATABASE.collections.system.name, api.ACTS.update),
-                        {
-                            filter: {_id: response[0]._id},
-                            data: {change: change}
-                        }
-                    )
-                }
-
-                setTimeout(readData, getTime())
-            })
+            setTimeout(readData, getTime())
+        })
 }
 
 /**
