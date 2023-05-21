@@ -16,7 +16,11 @@ const winston = require('winston')
  * */
 const jsonParser = express.json();
 
-const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING, HOME} = process.env;
+// const {APP_PORT, APP_IP, APP_PATH, DB_CONNECTION_STRING, HOME} = process.env;
+const APP_PORT = 20200
+const APP_IP = '127.0.0.1'
+const DB_CONNECTION_STRING = 'mongodb://127.0.0.1:27017/nadoumchik'
+const HOME = 'C:/Something/nad/s';
 
 const logger = winston.createLogger({
     format: winston.format.combine(
@@ -24,7 +28,7 @@ const logger = winston.createLogger({
         winston.format.prettyPrint()
     ),
     transports: [
-        new winston.transports.File({filename: HOME + '/log/log.txt'})
+        new winston.transports.File({filename: `${HOME}/log/log.txt`})
     ]
 })
 
@@ -37,12 +41,13 @@ const urlAdmin = path.join(path.resolve(''), './../www/cabinet.html')
 * Подключаемся к БД, при удачном подключении подвязываем к серверу слушателя подключений
 * */
 mongoos.connect(DB_CONNECTION_STRING, {useUnifiedTopology: true, useNewUrlParser: true}, async err => {
-    //Нужна инициализация БД
-    await database.init()
+
     if (err) return console.error(err)
+
+    await database.init()
     logger.info(`Connection to DB ${DB_CONNECTION_STRING} is success`)
     storage.readData()
-    app.listen(APP_PORT, APP_IP, () => {
+    app.listen(APP_PORT, () => {
         logger.info(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
         console.log(`Wait connection to http://${APP_IP}:${APP_PORT} or http://${APP_IP}:${APP_PORT}/cabinet `)
     })

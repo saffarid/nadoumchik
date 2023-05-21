@@ -1,6 +1,7 @@
 import Vuex                              from 'vuex'
-import {asyncRequest, setUser, storages} from "@/js/web";
+import {asyncRequest, getUser, removeUser, setUser, storages} from "@/js/web";
 import api                               from "../../../app/api/api_desc.js"
+import {watch} from "vue";
 
 const pages = {
     index: 'nadoumchik',
@@ -21,7 +22,7 @@ export const store = new Vuex.Store({
         noMorePublications: false,
         themesOfPublication: {},
 
-        user: null,
+        user: undefined,
         responseMessage: '',
 
         users: {},
@@ -532,6 +533,12 @@ export const store = new Vuex.Store({
                     payload.customThen()
                 })
                 .catch(err => console.error(err))
+        },
+
+        logout: (context) => {
+            removeUser(storages.local)
+            removeUser(storages.session)
+            context.commit('setUser', undefined)
         }
 
     },

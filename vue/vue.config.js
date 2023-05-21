@@ -1,16 +1,5 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const os = require('os')
 const p = require('path')
-
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-
-const HappyPack = require('happypack');
-const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
-
 
 module.exports = {
 
@@ -86,18 +75,7 @@ module.exports = {
 
     configureWebpack: {
 
-        plugins: [
-            // new BundleAnalyzerPlugin(),
-            new webpack.HashedModuleIdsPlugin(), // в результате хэши не будут неожиданно
-            new SpeedMeasurePlugin(),
-            new HappyPack({
-                id: 'vue',
-                loaders: ['sass-loader', 'vue-loader', "css-loader"],
-                threadPool: happyThreadPool,
-                cache: true,
-                verbose: true
-            })
-        ],
+        plugins: [ ],
 
         cache: {
             type: 'memory',
@@ -107,29 +85,7 @@ module.exports = {
         optimization: {
             runtimeChunk: true,
             minimize: true,
-            minimizer: [
-                new UglifyJsPlugin({
-                    uglifyOptions: {
-                        compress: {
-                            unsafe: true,
-                            inline: true,
-                            passes: 2,
-                            keep_fargs: false,
-                        },
-                        output: {
-                            beautify: false,
-                        },
-                        mangle: true,
-                    },
-                }),
-                new OptimizeCSSPlugin({
-                    cssProcessorOptions: {
-                        "preset": "advanced",
-                        "safe": true,
-                        "map": {"inline": false},
-                    },
-                }),
-            ],
+            minimizer: [ ],
         },
     },
 

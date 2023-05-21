@@ -3,15 +3,17 @@ const hash = require('jshashes')
 
 module.exports = {
     system: {
-        ads: {
-            isShowingAds: false,
-        },
-        change: {
-            accessRights: false,
-            groups: false,
-            users: false,
-            themesOfPublication: false,
-            publications: false
+        data: {
+            ads: {
+                isShowingAds: false,
+            },
+            change: {
+                accessRights: false,
+                groups: false,
+                users: false,
+                themesOfPublication: false,
+                publications: false
+            }
         }
     },
     accessRights: [
@@ -64,6 +66,7 @@ module.exports = {
                 f_name: "admin",
                 s_name: "admin",
             },
+            registrationDate: new Date(),
             group: {
                 name: 'administrators',
             }
@@ -78,6 +81,7 @@ module.exports = {
                 s_name: "Павлов",
                 mail: 'pavlov.nikita@mail.ru',
             },
+            registrationDate: new Date(),
             group: {
                 name: 'reader',
             }

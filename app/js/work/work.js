@@ -13,7 +13,7 @@ const logger = winston.createLogger({
         winston.format.prettyPrint()
     ),
     transports: [
-        new winston.transports.File({filename: HOME + '/log/log.txt'})
+        new winston.transports.File({filename: `${HOME}/log/log.txt`})
     ]
 })
 

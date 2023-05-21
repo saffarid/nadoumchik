@@ -14,6 +14,10 @@ const getUser = (storage) => {
     return storage.getItem(KEY_USER)
 }
 
+const removeUser = (storage) => {
+    return storage.removeItem(KEY_USER)
+}
+
 /**
  * Функция сохраняет параметры пользователя в хранилище
  * */
@@ -78,5 +82,6 @@ export {
     asyncRequest,
     getUser,
     setUser,
+    removeUser,
     storages
 }

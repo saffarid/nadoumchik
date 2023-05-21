@@ -1,5 +1,5 @@
 <template>
-    <Studio v-if="user != null"
+    <Studio v-if="user != undefined"
             class="light dimension site"
             :style="styleVars"/>
     <Auth v-else

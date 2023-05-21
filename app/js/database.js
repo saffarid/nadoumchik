@@ -15,7 +15,7 @@ const logger = winston.createLogger({
         winston.format.prettyPrint()
     ),
     transports: [
-        new winston.transports.File({filename: HOME + '/log/log.txt'})
+        new winston.transports.File({filename: `${HOME}/log/log.txt`})
     ]
 })
 
@@ -255,11 +255,11 @@ const insertOne = (collection, data) => new Promise(async (resolve, reject) => {
  * */
 const insertMany = (collection, data) => new Promise(async (resolve, reject) => {
     const schema = api.DATABASE.collections[collection].schema
-    for (let i = 0; i < data.data.length; i++) {
-        data.data[i]['_id'] = uuid()
-        data.data[i] = await convertClearToRefsObj(schema, data.data[i])
+    for (let i = 0; i < data.length; i++) {
+        data[i]['_id'] = uuid()
+        data[i] = await convertClearToRefsObj(schema, data[i])
     }
-    models[collection].insertMany(data.data)
+    models[collection].insertMany(data)
                       .then(value => resolve({
                           ...api.CODES_RESPONSE.created,
                           datas: value
